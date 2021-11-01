@@ -6,7 +6,7 @@ import { useState } from 'react';
 import SubscriptionFeed from '../components/SubscriptionFeed';
 
 // Max post to query per page
-const LIMIT = 1;
+const LIMIT = 3;
 
 export async function getServerSideProps(context) {
   const subscriptionsQuery = firestore
