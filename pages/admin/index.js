@@ -1,6 +1,6 @@
 import styles from '../../styles/Admin.module.css';
 import AuthCheck from '../../components/AuthCheck';
-import PostFeed from '../../components/PostFeed';
+import SubscriptionFeed from '../../components/SubscriptionFeed';
 import { UserContext } from '../../lib/context';
 import { firestore, auth, serverTimestamp } from '../../lib/firebase';
 
@@ -11,36 +11,36 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import kebabCase from 'lodash.kebabcase';
 import toast from 'react-hot-toast';
 
-export default function AdminPostsPage(props) {
+export default function AdminSubscriptionPage(props) {
   return (
     <main>
       <AuthCheck>
-        <PostList />
-        <CreateNewPost />
+        <SubscriptionList />
+        <CreateNewSubscription />
       </AuthCheck>
     </main>
   );
 }
 
-function PostList() {
-    const ref = firestore.collection('users').doc(auth.currentUser.uid).collection('posts');
+function SubscriptionList() {
+    const ref = firestore.collection('users').doc(auth.currentUser.uid).collection('subscriptions');
     const query = ref.orderBy('createdAt');
     const [querySnapshot] = useCollection(query);
   
-    const posts = querySnapshot?.docs.map((doc) => doc.data());
+    const subscriptions = querySnapshot?.docs.map((doc) => doc.data());
   
     return (
       <>
-        <h1>Manage your Posts</h1>
-        <PostFeed posts={posts} admin />
+        <h1>Manage your Subscriptions</h1>
+        <SubscriptionFeed subscriptions={subscriptions} admin />
       </>
     );
   }
 
-  function CreateNewPost() {
+  function CreateNewSubscription() {
     const router = useRouter();
-    const { username } = useContext(UserContext);
     const [title, setTitle] = useState('');
+    const { username } = useContext(UserContext);
   
     // Ensure slug is URL safe
     const slug = encodeURI(kebabCase(title));
@@ -49,10 +49,10 @@ function PostList() {
     const isValid = title.length > 3 && title.length < 100;
   
     // Create a new post in firestore
-    const createPost = async (e) => {
+    const createSubscription = async (e) => {
       e.preventDefault();
       const uid = auth.currentUser.uid;
-      const ref = firestore.collection('users').doc(uid).collection('posts').doc(slug);
+      const ref = firestore.collection('users').doc(uid).collection('subscriptions').doc(slug);
   
       // Tip: give all fields a default value here
       const data = {
@@ -62,14 +62,15 @@ function PostList() {
         username,
         published: false,
         content: '# hello world!',
+        price:0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        heartCount: 0,
+        customerCount: 0,
       };
   
       await ref.set(data);
   
-      toast.success('Post created!')
+      toast.success('Subscription created!')
   
       // Imperative navigation after doc is set
       router.push(`/admin/${slug}`);
@@ -77,18 +78,18 @@ function PostList() {
     };
   
     return (
-      <form onSubmit={createPost}>
+      <form onSubmit={createSubscription}>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="My Awesome Article!"
+          placeholder="Coffee Subscription!"
           className={styles.input}
         />
         <p>
           <strong>Slug:</strong> {slug}
         </p>
         <button type="submit" disabled={!isValid} className="btn-green">
-          Create New Post
+          Create New Subscription
         </button>
       </form>
     );

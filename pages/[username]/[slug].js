@@ -1,27 +1,27 @@
 import styles from '../../styles/Post.module.css';
-import PostContent from '../../components/PostContent';
-import { firestore, getUserWithUsername, postToJSON } from '../../lib/firebase';
+import SubscriptionContent from '../../components/SubscriptionContent';
+import { firestore, getUserWithUsername, subToJSON } from '../../lib/firebase';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import AuthCheck from '../../components/AuthCheck';
 import Link from 'next/link';
-import HeartButton from '../../components/HeartButton';
+import SubButton from '../../components/SubButton';
 
 export async function getStaticProps({ params }) {
   const { username, slug } = params;
   const userDoc = await getUserWithUsername(username);
 
-  let post;
+  let subscription;
   let path;
 
   if (userDoc) {
-    const postRef = userDoc.ref.collection('posts').doc(slug);
-    post = postToJSON(await postRef.get());
+    const subRef = userDoc.ref.collection('subscriptions').doc(slug);
+    subscription = subToJSON(await subRef.get());
 
-    path = postRef.path;
+    path = subRef.path;
   }
 
   return {
-    props: { post, path },
+    props: { subscription, path },
     revalidate: 5000,
   };
 }
@@ -46,22 +46,22 @@ export async function getStaticPaths() {
     fallback: 'blocking',
   };
 }
-export default function Post(props) {
-    const postRef = firestore.doc(props.path);
-    const [realtimePost] = useDocumentData(postRef);
+export default function Subscription(props) {
+    const subRef = firestore.doc(props.path);
+    const [realtimeSub] = useDocumentData(subRef);
   
-    const post = realtimePost || props.post;
+    const subscription = realtimeSub || props.subscription;
   
     return (
       <main className={styles.container}>
   
         <section>
-          <PostContent post={post} />
+          <SubscriptionContent subscription={subscription} />
         </section>
   
         <aside className="card">
           <p>
-            <strong>{post.heartCount || 0} 🤍</strong>
+            <strong>{subscription.customerCount || 0} 🤍</strong>
           </p>
           <AuthCheck
           fallback={
@@ -70,7 +70,7 @@ export default function Post(props) {
             </Link>
           }
         >
-          <HeartButton postRef={postRef} />
+          <SubButton subRef={subRef} />
         </AuthCheck>
         </aside>
       </main>

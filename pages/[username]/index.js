@@ -1,6 +1,6 @@
-import { getUserWithUsername, postToJSON } from '../../lib/firebase';
+import { getUserWithUsername, subToJSON } from '../../lib/firebase';
 import UserProfile from '../../components/UserProfile';
-import PostFeed from '../../components/PostFeed';
+import SubscriptionFeed from '../../components/SubscriptionFeed';
 
 export async function getServerSideProps({ query }) {
   const { username } = query;
@@ -14,28 +14,28 @@ export async function getServerSideProps({ query }) {
   }
   // JSON serializable data
   let user = null;
-  let posts = null;
+  let subscriptions = null;
 
   if (userDoc) {
     user = userDoc.data();
-    const postsQuery = userDoc.ref
-      .collection('posts')
+    const subscriptionsQuery = userDoc.ref
+      .collection('subscriptions')
       .where('published', '==', true)
       .orderBy('createdAt', 'desc')
       .limit(5);
-    posts = (await postsQuery.get()).docs.map(postToJSON);
+    subscriptions = (await subscriptionsQuery.get()).docs.map(subToJSON);
   }
 
   return {
-    props: { user, posts }, // will be passed to the page component as props
+    props: { user, subscriptions }, // will be passed to the page component as props
   };
 }
 
-export default function UserProfilePage({ user, posts }) {
+export default function UserProfilePage({ user, subscriptions }) {
   return (
     <main>
       <UserProfile user={user} />
-      <PostFeed posts={posts} />
+      <SubscriptionFeed subscriptions={subscriptions} />
     </main>
   );
 }

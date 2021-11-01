@@ -11,38 +11,38 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
-export default function AdminPostEdit(props) {
+export default function AdminSubscriptionEdit(props) {
   return (
     <AuthCheck>
-        <PostManager />
+        <SubscriptionManager />
     </AuthCheck>
   );
 }
 
-function PostManager() {
+function SubscriptionManager() {
   const [preview, setPreview] = useState(false);
 
   const router = useRouter();
   const { slug } = router.query;
 
-  const postRef = firestore.collection('users').doc(auth.currentUser.uid).collection('posts').doc(slug);
-  const [post] = useDocumentData(postRef);
+  const subRef = firestore.collection('users').doc(auth.currentUser.uid).collection('subscriptions').doc(slug);
+  const [subscription] = useDocumentData(subRef);
 
   return (
     <main className={styles.container}>
-      {post && (
+      {subscription && (
         <>
           <section>
-            <h1>{post.title}</h1>
-            <p>ID: {post.slug}</p>
+            <h1>{subscription.title}</h1>
+            <p>ID: {subscription.slug}</p>
 
-            <PostForm postRef={postRef} defaultValues={post} preview={preview} />
+            <SubForm subRef={subRef} defaultValues={subscription} preview={preview} />
           </section>
 
           <aside>
           <h3>Tools</h3>
             <button onClick={() => setPreview(!preview)}>{preview ? 'Edit' : 'Preview'}</button>
-            <Link href={`/${post.username}/${post.slug}`}>
+            <Link href={`/${subscription.username}/${subscription.slug}`}>
               <button className="btn-blue">Live view</button>
             </Link>
           </aside>
@@ -52,23 +52,24 @@ function PostManager() {
   );
 }
 
-function PostForm({ defaultValues, postRef, preview }) {
+function SubForm({ defaultValues, subRef, preview }) {
     const { register, handleSubmit, reset, watch, formState: { isDirty, isValid, errors } } = useForm({ defaultValues, mode: 'onChange' });
 
-    const updatePost = async ({ content, published }) => {
-        await postRef.update({
+    const updateSubscription = async ({ content, published,price }) => {
+        await subRef.update({
         content,
         published,
+        price,
         updatedAt: serverTimestamp(),
         });
 
-        reset({ content, published });
+        reset({ content, published,price });
 
-        toast.success('Post updated successfully!')
+        toast.success('Subscription updated successfully!')
     };
 
     return (
-        <form onSubmit={handleSubmit(updatePost)}>
+        <form onSubmit={handleSubmit(updateSubscription)}>
         {preview && (
             <div className="card">
             <ReactMarkdown>{watch('content')}</ReactMarkdown>
@@ -84,11 +85,18 @@ function PostForm({ defaultValues, postRef, preview }) {
             required: { value: true, message: 'content is required'}
           })}></textarea>
 
+          
+
             {errors.content && <p className="text-danger">{errors.content.message}</p>}
 
             <fieldset>
             <input className={styles.checkbox} name="published" type="checkbox" {...register('published')}/>
             <label>Published</label>
+            </fieldset>
+
+            <fieldset>
+            <input name="price" type="number" {...register('price')}/>
+            <label>Price</label>
             </fieldset>
 
             <button type="submit" disabled={!isDirty || !isValid}>
