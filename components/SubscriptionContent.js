@@ -11,10 +11,9 @@ export default function SubscriptionContent({ subscription }) {
       <h1>$ {subscription?.price}</h1>
       <span className="text-sm">
         Created by{' '}
-        <Link href={`/${subscription.username}/`}>
-          <a className="text-info">@{subscription.username}</a>
-        </Link>{' '}
-        on {createdAt.toISOString()}
+          <a className="text-info">@{subscription.businessName}</a>
+        {' '}
+        on {createdAt.toISOString()}ß
       </span>
       <ReactMarkdown>{subscription?.content}</ReactMarkdown>
     </div>

@@ -1,29 +1,54 @@
 import Link from 'next/link';
 import { useContext } from 'react';
-import { UserContext } from '../lib/context';
+import { AuthContext } from '../lib/context';
 // Top navbar
 export default function Navbar() {
-    const { user, username } = useContext(UserContext)
+    const { userType, user } = useContext(AuthContext)
 
   return (
     <nav className="navbar">
       <ul>
         <li>
           <Link href="/">
-            <button className="btn-logo">FEED</button>
+            <button className="btn-logo">LEAL</button>
+          </Link>
+        </li>
+        <li>
+          <Link href="/shops">
+            <button className="btn-logo">Shops</button>
+          </Link>
+        </li>
+        <li>
+          <Link href="/about">
+            <button className="btn-logo">About Us</button>
           </Link>
         </li>
 
         {/* user is signed-in and has username */}
-        {username && (
+        {(userType==='business'&& user) && (
           <>
             <li className="push-left">
-              <Link href="/admin">
+              <Link href="/business">
                 <button className="btn-blue">Create Subscriptions</button>
               </Link>
             </li>
             <li>
-              <Link href={`/${username}`}>
+              <Link href="/businessLogin">
+                <img src={user?.photoURL} />
+              </Link>
+            </li>
+          </>
+        )}
+
+        {(userType==='customer'&& user) && (
+          <>
+            <li className="push-left">
+              <Link href="/customer">
+                <button className="btn-blue">My Subscriptions</button>
+              </Link>
+            </li>
+            <li>
+              <Link href="/customerLogin">
                 <img src={user?.photoURL} />
               </Link>
             </li>
@@ -31,12 +56,19 @@ export default function Navbar() {
         )}
 
         {/* user is not signed OR has not created username */}
-        {!username && (
-          <li>
-            <Link href="/enter">
-              <button className="btn-blue">Log in</button>
-            </Link>
-          </li>
+        {!user && (
+        <>
+            <li>
+                <Link href="/businessLogin">
+                <button className="btn-blue">Business Log In</button>
+                </Link>
+            </li>
+            <li>
+                <Link href="/customerLogin">
+                <button className="btn-blue">Customer Log in</button>
+                </Link>
+            </li>
+          </>
         )}
       </ul>
     </nav>

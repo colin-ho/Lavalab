@@ -11,13 +11,13 @@ function SubscriptionItem({ subscription, admin = false }) {
 
   return (
     <div className="card">
-      <Link href={`/${subscription.username}`}>
+      <Link href={`/shops/${subscription.businessId}/${subscription.slug}`}>
         <a>
-          <strong>By @{subscription.username}</strong>
+          <strong>By @{subscription.businessName}</strong>
         </a>
       </Link>
       <h2>$ {subscription.price}</h2>
-      <Link href={`/${subscription.username}/${subscription.slug}`}>
+      <Link href={`/shops/${subscription.businessId}/${subscription.slug}`}>
         <h2>
           <a>{subscription.title}</a>
         </h2>
@@ -33,7 +33,7 @@ function SubscriptionItem({ subscription, admin = false }) {
       {/* If admin view, show extra controls for user */}
       {admin && (
         <>
-          <Link href={`/admin/${subscription.slug}`}>
+          <Link href={`/business/${subscription.slug}`}>
             <h3>
               <button className="btn-blue">Edit</button>
             </h3>

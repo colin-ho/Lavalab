@@ -1,65 +1,13 @@
-import toast from 'react-hot-toast';
-import Loader from '../components/Loader';
-import { firestore, fromMillis, subToJSON } from '../lib/firebase';
-
-import { useState } from 'react';
-import SubscriptionFeed from '../components/SubscriptionFeed';
-
-// Max post to query per page
-const LIMIT = 3;
-
-export async function getServerSideProps(context) {
-  const subscriptionsQuery = firestore
-    .collectionGroup('subscriptions')
-    .where('published', '==', true)
-    .orderBy('createdAt', 'desc')
-    .limit(LIMIT);
-
-  const subscriptions = (await subscriptionsQuery.get()).docs.map(subToJSON);
-
-  return {
-    props: { subscriptions }, // will be passed to the page component as props
-  };
-}
+import Link from 'next/link';
+import { useContext } from 'react';
+import { AuthContext } from '../lib/context';
 
 export default function Home(props) {
-  const [subscriptions, setSubscriptions] = useState(props.subscriptions);
-  const [loading, setLoading] = useState(false);
-
-  const [subscriptionsEnd, setSubscriptionsEnd] = useState(false);
-
-  const getMoreSubscriptions = async () => {
-    setLoading(true);
-    const last = subscriptions[subscriptions.length - 1];
-
-    const cursor = typeof last.createdAt === 'number' ? fromMillis(last.createdAt) : last.createdAt;
-
-    const query = firestore
-      .collectionGroup('subscriptions')
-      .where('published', '==', true)
-      .orderBy('createdAt', 'desc')
-      .startAfter(cursor)
-      .limit(LIMIT);
-
-    const newSubscriptions = (await query.get()).docs.map((doc) => doc.data());
-
-    setSubscriptions(subscriptions.concat(newSubscriptions));
-    setLoading(false);
-
-    if (newSubscriptions.length < LIMIT) {
-      setSubscriptionsEnd(true);
-    }
-  };
 
   return (
+
       <main>
-        <SubscriptionFeed subscriptions={subscriptions} />
-
-        {!loading && !subscriptionsEnd && <button onClick={getMoreSubscriptions}>Load more</button>}
-
-        <Loader show={loading} />
-
-        {subscriptionsEnd && 'You have reached the end!'}
+        Landing page
       </main>
   );
 }

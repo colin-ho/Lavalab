@@ -1,29 +1,46 @@
 import { auth, firestore, googleAuthProvider } from '../lib/firebase';
-import { UserContext } from '../lib/context';
+import { AuthContext } from '../lib/context';
 import { useEffect, useState, useCallback, useContext } from 'react';
 import debounce from 'lodash.debounce';
 
-export default function Enter(props) {
-  const { user, username } = useContext(UserContext);
+export default function CustomerLogin(props) {
+  const { userType, user } = useContext(AuthContext);
 
   // 1. user signed out <SignInButton />
   // 2. user signed in, but missing username <UsernameForm />
   // 3. user signed in, has username <SignOutButton />
   return (
     <main>
-      {user ? !username ? <UsernameForm /> : <SignOutButton /> : <SignInButton />}
+      {userType ==='business' ? <UserIsBusiness/> : user ? <SignOutButton /> : <SignInButton />}
     </main>
   );
 }
 
+function UserIsBusiness(){
+    return (
+        <div>User already has a business account</div>
+    );
+}
+
 // Sign in with Google button
 function SignInButton() {
-  const signInWithGoogle = async () => {
+
+  const onSubmit = async () => {
     await auth.signInWithPopup(googleAuthProvider);
+    const userDoc = firestore.doc(`users/${auth.currentUser.uid}`);
+    const { exists } = await userDoc.get();
+    if(!exists){
+      const customerDoc = firestore.doc(`customers/${auth.currentUser.uid}`);
+      // Commit both docs together as a batch write.
+      const batch = firestore.batch();
+      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: auth.currentUser.displayName, userType:'customer'});
+      batch.set(customerDoc, { uid: auth.currentUser.uid });
+      await batch.commit();
+    }
   };
 
   return (
-      <button className="btn-google" onClick={signInWithGoogle}>
+      <button className="btn-google" onClick={onSubmit}>
         <img src={'/google.png'} width="30px" /> Sign in with Google
       </button>
   );

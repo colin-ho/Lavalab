@@ -1,5 +1,5 @@
 import styles from '../../styles/Admin.module.css';
-import AuthCheck from '../../components/AuthCheck';
+import BusinessCheck from '../../components/BusinessCheck';
 import { firestore, auth, serverTimestamp } from '../../lib/firebase';
 import ImageUploader from '../../components/ImageUploader';
 import { useState } from 'react';
@@ -11,11 +11,11 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
-export default function AdminSubscriptionEdit(props) {
+export default function BusinessSubscriptionEdit(props) {
   return (
-    <AuthCheck>
+    <BusinessCheck>
         <SubscriptionManager />
-    </AuthCheck>
+    </BusinessCheck>
   );
 }
 
@@ -25,7 +25,7 @@ function SubscriptionManager() {
   const router = useRouter();
   const { slug } = router.query;
 
-  const subRef = firestore.collection('users').doc(auth.currentUser.uid).collection('subscriptions').doc(slug);
+  const subRef = firestore.collection('businesses').doc(auth.currentUser.uid).collection('subscriptions').doc(slug);
   const [subscription] = useDocumentData(subRef);
 
   return (
