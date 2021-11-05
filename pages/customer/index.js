@@ -22,7 +22,8 @@ function SubscriptionList() {
     const subscriptionSlugs = snapshot?.docs.map((doc) => doc.data().subscription);
     console.log(subscriptionSlugs)
     let subscriptionsQuery;
-    if(subscriptionSlugs){
+    if(subscriptionSlugs && subscriptionSlugs.length!==0){
+        console.log('check',subscriptionSlugs)
         subscriptionsQuery = firestore
         .collectionGroup('subscriptions')
         .where('slug', 'in', subscriptionSlugs)

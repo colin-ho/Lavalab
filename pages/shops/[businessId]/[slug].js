@@ -70,7 +70,7 @@ export default function Subscription(props) {
             </Link>
           }
         >
-          <SubButton subRef={subRef} />
+          <SubButton subscription = {subscription} subRef={subRef} />
         </CustomerCheck>
         </aside>
       </main>
