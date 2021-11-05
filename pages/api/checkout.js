@@ -3,7 +3,9 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export default async function CreateStripeSession(req, res) {
     const { item } = req.body;
     console.log(item);
-    const redirectURL = 'http://localhost:3000/shops/'
+    const redirectURL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000/shops/'
+    : 'https://lavalab.vercel.app/shops/';
   
     const transformedItem = {
       price_data: {

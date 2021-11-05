@@ -2,10 +2,14 @@ import { firestore, auth, increment ,serverTimestamp} from '../lib/firebase';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
+import Loader from './Loader';
+import { useState } from 'react';
 
 
 // Allows user to heart or like a post
 export default function SubButton({ subRef ,subscription}) {
+
+  const [loading,setLoading] = useState(false);
   // Listen to heart document for currently logged in user
   const customerRef = subRef.collection('customers').doc(auth.currentUser.uid);
   const [customerDoc] = useDocument(customerRef);
@@ -13,6 +17,7 @@ export default function SubButton({ subRef ,subscription}) {
   const stripe = useStripe();
   // Create a user-to-post relationship
   const addCustomer = async () => {
+    setLoading(true);
     const uid = auth.currentUser.uid;
     const subscriptionId = subRef.id;
     const batch = firestore.batch();
@@ -51,9 +56,14 @@ export default function SubButton({ subRef ,subscription}) {
     await batch.commit();
   };
 
-  return customerDoc?.exists ? (
+  return (
+    <>
+    {customerDoc?.exists ? (
     <button onClick={removeCustomer}>💔 Unsubcribe</button>
   ) : (
     <button onClick={addCustomer}>💗 Subscribe</button>
+  )}
+  <Loader show={loading}/>
+  </>
   );
 }
