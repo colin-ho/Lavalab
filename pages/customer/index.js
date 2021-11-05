@@ -19,7 +19,7 @@ function SubscriptionList() {
     const ref = firestore.collection('customers').doc(auth.currentUser.uid).collection('subscribedTo');
     const query = ref.orderBy('boughtAt');
     const [snapshot] = useCollection(query);
-    const subscriptionSlugs = snapshot?.docs.map((doc) => doc.data().subscription);
+    const subscriptionSlugs = snapshot?.docs.map((doc) => doc.data().subscriptionId);
     console.log(subscriptionSlugs)
     let subscriptionsQuery;
     if(subscriptionSlugs && subscriptionSlugs.length!==0){
