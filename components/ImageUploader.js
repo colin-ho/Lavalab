@@ -3,7 +3,7 @@ import { auth, storage, STATE_CHANGED } from '../lib/firebase';
 import Loader from './Loader';
 
 // Uploads images to Firebase Storage
-export default function ImageUploader() {
+export default function ImageUploader({setPhotoUrl}) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [downloadURL, setDownloadURL] = useState(null);
@@ -31,6 +31,7 @@ export default function ImageUploader() {
         .then((d) => ref.getDownloadURL())
         .then((url) => {
           setDownloadURL(url);
+          setPhotoUrl(url);
           setUploading(false);
         });
     });

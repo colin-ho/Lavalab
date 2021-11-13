@@ -4,12 +4,12 @@ import { firestore, auth, serverTimestamp } from '../../lib/firebase';
 import ImageUploader from '../../components/ImageUploader';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { useForm } from 'react-hook-form';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export default function BusinessSubscriptionEdit(props) {
   return (
@@ -56,10 +56,14 @@ function SubForm({ defaultValues, subRef, preview }) {
     const { register, handleSubmit, reset, watch, formState: { isDirty, isValid, errors } } = useForm({ defaultValues, mode: 'onChange' });
 
     const updateSubscription = async ({ content, published,price }) => {
+        const createdProductPrice = await axios.post('/api/createPrice', {
+            id:defaultValues.stripeProductId,amount:price
+        });
         await subRef.update({
         content,
         published,
         price,
+        stripePriceId:createdProductPrice.data.id,
         updatedAt: serverTimestamp(),
         });
 

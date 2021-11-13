@@ -1,17 +1,39 @@
 import { auth, firestore, googleAuthProvider } from '../lib/firebase';
 import { AuthContext } from '../lib/context';
-import { useEffect, useState, useCallback, useContext } from 'react';
-import debounce from 'lodash.debounce';
+import { useEffect, useState, useContext } from 'react';
+import ImageUploader from '../components/ImageUploader';
+import { useRouter } from 'next/router';
+import { Address } from '../components/Address';
+import Geocode from "react-geocode";
+const geofire = require('geofire-common');
+// set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
+Geocode.setApiKey("AIzaSyBR1AIqhZpgpu67mr9ht0UaOkfuvkRAQBA");
 
 export default function BusinessLogin(props) {
   const { userType, user } = useContext(AuthContext);
+  const [businessName, setBusinessName] = useState(null);
 
+  useEffect(() => {
+    // turn off realtime subscription
+    let unsubscribe;
+
+    if (user) {
+      const ref = firestore.collection('businesses').doc(user.uid);
+      unsubscribe = ref.onSnapshot((doc) => {
+        setBusinessName(doc.data()?.businessName);
+      });
+    } else {
+      setBusinessName(null);
+    }
+
+    return unsubscribe;
+  }, [user]);
   // 1. user signed out <SignInButton />
   // 2. user signed in, but missing username <UsernameForm />
   // 3. user signed in, has username <SignOutButton />
   return (
     <main>
-      {userType ==='customer' ? <UserIsCustomer/> : user ? <SignOutButton /> : <SignInButton />}
+        {userType ==='customer' ? <UserIsCustomer/> : user ? businessName ? <SignOutButton /> : <BusinessNameForm/>:<SignInButton />}
     </main>
   );
 }
@@ -24,7 +46,7 @@ function UserIsCustomer(){
 
 // Sign in with Google button
 function SignInButton() {
-
+    const router = useRouter();
   const onSubmit = async () => {
     await auth.signInWithPopup(googleAuthProvider);
     const userDoc = firestore.doc(`users/${auth.currentUser.uid}`);
@@ -37,6 +59,8 @@ function SignInButton() {
       batch.set(businessDoc, { uid: auth.currentUser.uid });
       await batch.commit();
     }
+
+    //router.push(`/dashboard`);
   };
 
   return (
@@ -52,99 +76,52 @@ function SignOutButton() {
 }
 
 // Username form
-function UsernameForm() {
-  const [formValue, setFormValue] = useState('');
-  const [isValid, setIsValid] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const { user, username } = useContext(UserContext);
+function BusinessNameForm() {
+  const [businessName, setBusinessName] = useState('');
+  const [address, setAddress] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    const {lat,lng} = (await Geocode.fromAddress(address)).results[0].geometry.location;
+    console.log(lat,lng)
+    const geohash = geofire.geohashForLocation([lat, lng]);
     // Create refs for both documents
-    const userDoc = firestore.doc(`users/${user.uid}`);
-    const usernameDoc = firestore.doc(`usernames/${formValue}`);
+    const businessDoc = firestore.doc(`businesses/${auth.currentUser.uid}`);
 
     // Commit both docs together as a batch write.
     const batch = firestore.batch();
-    batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName });
-    batch.set(usernameDoc, { uid: user.uid });
-
+    batch.set(businessDoc, { businessName: businessName, photoURL: imageUrl, address: address,geohash: geohash,description:description,lat:lat,lng:lng },{ merge: true });
     await batch.commit();
   };
 
   const onChange = (e) => {
     // Force form value typed in form to match correct format
-    const val = e.target.value.toLowerCase();
-    const re = /^(?=[a-zA-Z0-9._]{3,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+    const val = e.target.value;
+    const name = e.target.name;
 
-    // Only set form value if length is < 3 OR it passes regex
-    if (val.length < 3) {
-      setFormValue(val);
-      setLoading(false);
-      setIsValid(false);
+    if(name==='businessName'){
+        setBusinessName(val)
     }
-
-    if (re.test(val)) {
-      setFormValue(val);
-      setLoading(true);
-      setIsValid(false);
+    if(name==='description'){
+        setDescription(val)
     }
   };
 
-  //
-
-  useEffect(() => {
-    checkUsername(formValue);
-  }, [formValue]);
-
-  // Hit the database for username match after each debounced change
-  // useCallback is required for debounce to work
-  const checkUsername = useCallback(
-    debounce(async (username) => {
-      if (username.length >= 3) {
-        const ref = firestore.doc(`usernames/${username}`);
-        const { exists } = await ref.get();
-        console.log('Firestore read executed!');
-        setIsValid(!exists);
-        setLoading(false);
-      }
-    }, 500),[]);
-
   return (
-    !username && (
       <section>
-        <h3>Choose Username</h3>
+        <h3>Business Form</h3>
+        <Address address={address} setAddress={setAddress}/>
         <form onSubmit={onSubmit}>
-          <input name="username" placeholder="myname" value={formValue} onChange={onChange} />
-          <UsernameMessage username={formValue} isValid={isValid} loading={loading} />
-          <button type="submit" className="btn-green" disabled={!isValid}>
-            Choose
+          <input name="businessName" placeholder="Name" value={businessName} onChange={onChange} />
+          <input name="description" placeholder="Description" value={description} onChange={onChange} />
+          <ImageUploader setPhotoUrl={setImageUrl}/>
+          <button type="submit" className="btn-green">
+            Submit
           </button>
-
-          <h3>Debug State</h3>
-          <div>
-            Username: {formValue}
-            <br />
-            Loading: {loading.toString()}
-            <br />
-            Username Valid: {isValid.toString()}
-          </div>
         </form>
       </section>
-    )
   );
-}
-
-function UsernameMessage({ username, isValid, loading }) {
-  if (loading) {
-    return <p>Checking...</p>;
-  } else if (isValid) {
-    return <p className="text-success">{username} is available!</p>;
-  } else if (username && !isValid) {
-    return <p className="text-danger">That username is taken!</p>;
-  } else {
-    return <p></p>;
-  }
 }

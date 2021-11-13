@@ -1,5 +1,11 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default function handler(req, res) {
-  res.status(200).json({ name: 'John Doe' })
-}
+export default async function CreateProduct(req, res) {
+    const { name,businessId } = req.body;
+    const product = await stripe.products.create({
+      name: name,
+      metadata:{businessId:businessId},
+    });
+  
+    res.json({ id: product.id });
+  }

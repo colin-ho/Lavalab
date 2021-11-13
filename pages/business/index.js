@@ -3,10 +3,9 @@ import BusinessCheck from '../../components/BusinessCheck';
 import SubscriptionFeed from '../../components/SubscriptionFeed';
 import { AuthContext } from '../../lib/context';
 import { firestore, auth, serverTimestamp } from '../../lib/firebase';
-
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-
+import axios from 'axios';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import kebabCase from 'lodash.kebabcase';
 import toast from 'react-hot-toast';
@@ -26,7 +25,6 @@ function SubscriptionList() {
     const ref = firestore.collection('businesses').doc(auth.currentUser.uid).collection('subscriptions');
     const query = ref.orderBy('createdAt');
     const [querySnapshot] = useCollection(query);
-    console.log(querySnapshot)
     const subscriptions = querySnapshot?.docs.map((doc) => doc.data());
   
     return (
@@ -41,7 +39,6 @@ function CreateNewSubscription() {
     const router = useRouter();
     const [title, setTitle] = useState('');
     const { user } = useContext(AuthContext);
-
     // Ensure slug is URL safe
     const slug = encodeURI(kebabCase(title));
 
@@ -53,12 +50,18 @@ function CreateNewSubscription() {
         e.preventDefault();
         const uid = auth.currentUser.uid;
         const ref = firestore.collection('businesses').doc(uid).collection('subscriptions').doc(slug);
-
+        const createdProductId = await axios.post('/api/createProduct', {
+            name:title,
+            businessId:uid,
+        });
+        console.log(createdProductId.data.id);
         // Tip: give all fields a default value here
         const data = {
         title,
         slug,
         uid,
+        stripePriceId:'',
+        stripeProductId:createdProductId.data.id,
         businessName:user.displayName,
         businessId:auth.currentUser.uid,
         published: false,
@@ -67,6 +70,7 @@ function CreateNewSubscription() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         customerCount: 0,
+        redemptionCount:0,
         };
 
         await ref.set(data);

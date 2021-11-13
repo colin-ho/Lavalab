@@ -5,11 +5,11 @@ import { useDocumentData } from 'react-firebase-hooks/firestore';
 import CustomerCheck from '../../../components/CustomerCheck';
 import Link from 'next/link';
 import SubButton from '../../../components/SubButton';
+import RedeemButton from '../../../components/RedeemButton';
 
 export async function getStaticProps({ params }) {
   const { businessId, slug } = params;
   const businessDoc = await getBusinessWithBusinessId(businessId);
-
   let subscription;
   let path;
 
@@ -71,6 +71,7 @@ export default function Subscription(props) {
           }
         >
           <SubButton subscription = {subscription} subRef={subRef} />
+          <RedeemButton subscription = {subscription} subRef={subRef} />
         </CustomerCheck>
         </aside>
       </main>
