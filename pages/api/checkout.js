@@ -1,8 +1,27 @@
 import {GetOrCreateCustomer} from '../../lib/customer'
+import Cors from 'cors'
+
+// Initializing the cors middleware
+const cors = Cors({
+  methods: ['GET', 'POST','HEAD'],
+})
+
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result)
+      }
+
+      return resolve(result)
+    })
+  })
+}
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function CreateStripeSession(req, res) {
+    await runMiddleware(req, res, cors)
     const { item,userId,subscriptionId,name } = req.body;
     console.log(name)
     const customer = await GetOrCreateCustomer(userId);
@@ -20,8 +39,8 @@ export default async function CreateStripeSession(req, res) {
         },
       ],
       mode: 'subscription',
-      success_url: redirectURL + item.id+'/'+item.slug,
-      cancel_url: redirectURL + item.id+'/'+item.slug,
+      success_url: redirectURL + item.id+'/'+item.slug + '?sc_checkout=success',
+      cancel_url: redirectURL + item.id+'/'+item.slug + '?sc_checkout=cancel',
       customer:customer.id,
       metadata:{userId:userId,
         name:name,
