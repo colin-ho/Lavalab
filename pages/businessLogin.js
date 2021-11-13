@@ -7,7 +7,7 @@ import { Address } from '../components/Address';
 import Geocode from "react-geocode";
 const geofire = require('geofire-common');
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
-Geocode.setApiKey("AIzaSyBR1AIqhZpgpu67mr9ht0UaOkfuvkRAQBA");
+Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
 
 export default function BusinessLogin(props) {
   const { userType, user } = useContext(AuthContext);

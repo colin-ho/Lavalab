@@ -5,12 +5,13 @@ export const Address = ({ address,setAddress }) => {
     placePredictions,
     getPlacePredictions,
   } = usePlacesService({
-    apiKey: "AIzaSyBR1AIqhZpgpu67mr9ht0UaOkfuvkRAQBA",
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
   });
 
   return (
     <div>
       <span>Debounced</span>
+      {console.log(process.env)}
       <input
         style={{ color: "black" }}
         value={address}
