@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     let event;
 
     try {
-      // 1. Retrieve the event by verifying the signature using the raw body and secret
+      // 1. Retrieve the event by ve rifying the signature using the raw body and secret
       const rawBody = await buffer(req);
       const signature = req.headers['stripe-signature'];
       event = stripe.webhooks.constructEvent(
