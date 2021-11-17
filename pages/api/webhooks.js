@@ -37,17 +37,14 @@ export default async function handler(req, res) {
     if (event.type === 'checkout.session.completed') {
         try {
             const metadata = event.data.object.metadata;
-            console.log(metadata)
-            const uid = metadata.userId;
-            const businessDoc = await getBusinessWithBusinessId(metadata.businessId);
-            const subRef = businessDoc.ref.collection('subscriptions').doc(metadata.slug);
-            const subscriptionId=subRef.id;
-            const customerRef = subRef.collection('customers').doc(uid);
-            const customerSub = firestore.collection('customers').doc(uid).collection('subscribedTo').doc(subRef.id);
+            const subRef = firestore.collection('businesses').doc(metadata.businessId).collection('subscriptions').doc(metadata.subscriptionId);
+            const customerRef = subRef.collection('customers').doc(metadata.customerId);
+            const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
+
             const batch = firestore.batch();
             batch.update(subRef, { customerCount: increment(1) });
-            batch.set(customerRef, { uid,name:metadata.name });
-            batch.set(customerSub, { subscriptionId,boughtAt: serverTimestamp(),stripeSubscriptionId:event.data.object.subscription });
+            batch.set(customerRef, { uid:metadata.customerId,name:metadata.name });
+            batch.set(customerSub, { subscriptionId:metadata.subscriptionId,boughtAt: serverTimestamp(),stripeSubscriptionId:event.data.object.subscription });
             await batch.commit();
           } catch (err) {
             console.log(`❌ Error message: ${err.message}`);

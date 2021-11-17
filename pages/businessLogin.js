@@ -5,13 +5,15 @@ import ImageUploader from '../components/ImageUploader';
 import { useRouter } from 'next/router';
 import { Address } from '../components/Address';
 import Geocode from "react-geocode";
+import { Select } from "@chakra-ui/react"
+
 const geofire = require('geofire-common');
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
 Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
 
 export default function BusinessLogin(props) {
   const { userType, user } = useContext(AuthContext);
-  const [businessName, setBusinessName] = useState(null);
+  const [businessName, setBusinessName] = useState("");
 
   useEffect(() => {
     // turn off realtime subscription
@@ -23,7 +25,7 @@ export default function BusinessLogin(props) {
         setBusinessName(doc.data()?.businessName);
       });
     } else {
-      setBusinessName(null);
+      setBusinessName(" ");
     }
 
     return unsubscribe;
@@ -32,8 +34,8 @@ export default function BusinessLogin(props) {
   // 2. user signed in, but missing username <UsernameForm />
   // 3. user signed in, has username <SignOutButton />
   return (
-    <main>
-        {userType ==='customer' ? <UserIsCustomer/> : user ? businessName ? <SignOutButton /> : <BusinessNameForm/>:<SignInButton />}
+    <main style={{marginTop:50}} >
+        {user ? userType ==='customer' ? <UserIsCustomer/> :  businessName!==" " ? <SignOutButton /> : <BusinessNameForm/>:<SignInButton />}
     </main>
   );
 }
@@ -46,21 +48,20 @@ function UserIsCustomer(){
 
 // Sign in with Google button
 function SignInButton() {
-    const router = useRouter();
+    
   const onSubmit = async () => {
     await auth.signInWithPopup(googleAuthProvider);
-    const userDoc = firestore.doc(`users/${auth.currentUser.uid}`);
+    const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
     const { exists } = await userDoc.get();
     if(!exists){
-      const businessDoc = firestore.doc(`businesses/${auth.currentUser.uid}`);
+      const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
       // Commit both docs together as a batch write.
       const batch = firestore.batch();
-      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: auth.currentUser.displayName, userType:'business'});
+      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business'});
       batch.set(businessDoc, { uid: auth.currentUser.uid });
       await batch.commit();
     }
 
-    //router.push(`/dashboard`);
   };
 
   return (
@@ -72,7 +73,12 @@ function SignInButton() {
 
 // Sign out button
 function SignOutButton() {
-  return <button onClick={() => auth.signOut()}>Sign Out</button>;
+  const router = useRouter();
+  return (<div>
+    <button onClick={()=>router.push(`/dashboard`)}>Go to Dashboard</button>
+    <button onClick={() => auth.signOut()}>Sign Out</button>
+    </div>
+  );
 }
 
 // Username form
@@ -81,19 +87,20 @@ function BusinessNameForm() {
   const [address, setAddress] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [businessType, setBusinessType] = useState('');
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
     const {lat,lng} = (await Geocode.fromAddress(address)).results[0].geometry.location;
-    console.log(lat,lng)
     const geohash = geofire.geohashForLocation([lat, lng]);
     // Create refs for both documents
-    const businessDoc = firestore.doc(`businesses/${auth.currentUser.uid}`);
-
+    const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
+    const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
     // Commit both docs together as a batch write.
     const batch = firestore.batch();
-    batch.set(businessDoc, { businessName: businessName, photoURL: imageUrl, address: address,geohash: geohash,description:description,lat:lat,lng:lng },{ merge: true });
+    batch.update(userDoc,{displayName:businessName})
+    batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: imageUrl, address: address,geohash: geohash,description:description,lat:lat,lng:lng },{ merge: true });
     await batch.commit();
   };
 
@@ -103,11 +110,14 @@ function BusinessNameForm() {
     const name = e.target.name;
 
     if(name==='businessName'){
-        setBusinessName(val)
+      setBusinessName(val)
     }
     if(name==='description'){
-        setDescription(val)
+      setDescription(val)
     }
+    if(name==='businessType'){
+      setBusinessType(val)
+  }
   };
 
   return (
@@ -116,6 +126,11 @@ function BusinessNameForm() {
         <Address address={address} setAddress={setAddress}/>
         <form onSubmit={onSubmit}>
           <input name="businessName" placeholder="Name" value={businessName} onChange={onChange} />
+          <Select name = "businessType" onChange={onChange} placeholder="Business Type">
+            <option value="cafe">cafe</option>
+            <option value="breakfast">breakfast</option>
+            <option value="italian">italian</option>
+          </Select>
           <input name="description" placeholder="Description" value={description} onChange={onChange} />
           <ImageUploader setPhotoUrl={setImageUrl}/>
           <button type="submit" className="btn-green">

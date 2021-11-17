@@ -22,9 +22,9 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function CreateStripeSession(req, res) {
     await runMiddleware(req, res, cors)
-    const { item,userId,subscriptionId,name } = req.body;
-    console.log(name)
-    const customer = await GetOrCreateCustomer(userId);
+    const { item,customerId,subscriptionId,name } = req.body;
+
+    const stripeCustomer = await GetOrCreateCustomer(customerId);
     const redirectURL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000/shops/'
     : 'https://lavalab.vercel.app/shops/';
@@ -39,14 +39,14 @@ export default async function CreateStripeSession(req, res) {
         },
       ],
       mode: 'subscription',
-      success_url: redirectURL + item.id+'/'+item.slug + '?sc_checkout=success',
-      cancel_url: redirectURL + item.id+'/'+item.slug + '?sc_checkout=cancel',
-      customer:customer.id,
-      metadata:{userId:userId,
+      success_url: redirectURL + '?sc_checkout=success',
+      cancel_url: redirectURL + '?sc_checkout=cancel',
+      customer:stripeCustomer.id,
+      metadata:{
+        customerId:customerId,
         name:name,
         subscriptionId:subscriptionId,
-        slug:item.slug,
-        businessId:item.id}
+        businessId:item.businessId}
     });
   
     res.json({ id: session.id });

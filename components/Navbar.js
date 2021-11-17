@@ -26,49 +26,20 @@ export default function Navbar() {
 
         {/* user is signed-in and has username */}
         {(userType==='business'&& user) && (
-          <>
-            <li className="push-left">
-              <Link href="/business">
-                <button className="btn-blue">Create Subscriptions</button>
-              </Link>
-            </li>
-            <li>
-              <Link href="/businessLogin">
-                <img src={user?.photoURL} />
-              </Link>
-            </li>
-          </>
-        )}
-
-        {(userType==='customer'&& user) && (
-          <>
-            <li className="push-left">
-              <Link href="/customer">
-                <button className="btn-blue">My Subscriptions</button>
-              </Link>
-            </li>
-            <li>
-              <Link href="/customerLogin">
-                <img src={user?.photoURL} />
-              </Link>
-            </li>
-          </>
+          <li>
+            <Link href="/businessLogin">
+              <img src={user?.photoURL} />
+            </Link>
+          </li>
         )}
 
         {/* user is not signed OR has not created username */}
         {!user && (
-        <>
-            <li>
-                <Link href="/businessLogin">
-                <button className="btn-blue">Business Log In</button>
-                </Link>
-            </li>
-            <li>
-                <Link href="/customerLogin">
-                <button className="btn-blue">Customer Log in</button>
-                </Link>
-            </li>
-          </>
+          <li>
+              <Link href="/businessLogin">
+              <button className="btn-blue">Business Log In</button>
+              </Link>
+          </li>
         )}
       </ul>
     </nav>
