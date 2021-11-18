@@ -4,6 +4,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function CancelSubscription(req, res) {
     const { userId,stripeSubscriptionId } = req.body;
+    console.log(userId)
     const customer = await GetOrCreateCustomer(userId);
     if (customer.metadata.firebaseUID !== userId) {
       throw Error('Firebase UID does not match Stripe Customer');

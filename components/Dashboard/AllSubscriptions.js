@@ -13,7 +13,7 @@ export default function AllSubscriptions({subscriptions}) {
     const[editableSub,setEditableSub] = useState(null);
 
     return (
-        formMode ? <SubscriptionForm editableSub={editableSub}/> : 
+        formMode ? <SubscriptionForm setFormMode={setFormMode} editableSub={editableSub}/> : 
         <div>
             <button onClick={()=> {setEditableSub(null);setFormMode(true)}}>Create Subscription</button>
             {subscriptions ? subscriptions.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : null}
@@ -38,14 +38,13 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
 }
 
 
-function SubscriptionForm({ editableSub }) {
+function SubscriptionForm({ editableSub,setFormMode }) {
     const{displayName} = useContext(AuthContext);
     const subscription = !editableSub ? {title:'',price:'',content:''} : {title:editableSub.title,price:editableSub.price,content:editableSub.content};
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues:subscription, mode: 'onSubmit' });
     const initialPhoto = editableSub ? editableSub.photoURL : '';
     const [photoURL,setPhotoURL] = useState(initialPhoto);
     const [photoError,setPhotoError] = useState(false);
-    console.log(subscription);
 
     const submitSubscription = async ({title,content,price})=>{
         if(!photoURL){
@@ -68,6 +67,7 @@ function SubscriptionForm({ editableSub }) {
                 };
             await ref.update(data);
             toast.success('Subscription updated successfully!')
+            setFormMode(false)
         } else{
             const createdProductId = await axios.post('/api/createProduct', {
                 name:title,
@@ -80,11 +80,10 @@ function SubscriptionForm({ editableSub }) {
                 title:title,
                 photoURL:photoURL,
                 slug:slug,
-                uid:uid,
                 stripePriceId:createdProductPrice.data.id,
                 stripeProductId:createdProductId.data.id,
                 businessName: displayName,
-                businessId:auth.currentUser.uid,
+                businessId:uid,
                 content: content,
                 price:price,
                 createdAt: serverTimestamp(),
@@ -97,6 +96,7 @@ function SubscriptionForm({ editableSub }) {
             docref.update({id:docref.id})
 
             toast.success('Subscription created successfully!')
+            setFormMode(false)
         }
         
         // Tip: give all fields a default value here
@@ -104,6 +104,8 @@ function SubscriptionForm({ editableSub }) {
     }
 
     return (
+        <div>
+            <button onClick={()=>setFormMode(false)}>back</button>
         <form onSubmit={handleSubmit(submitSubscription)}>
             
             <Image src={photoURL} alt=""/>
@@ -115,6 +117,14 @@ function SubscriptionForm({ editableSub }) {
             <textarea placeholder="content" name="content" {...register('content',{ required: { value: true, message: 'content is required'}})}></textarea>
             {errors.content && <p className="text-danger">{errors.content.message}</p>}
 
+            <select name="interval" {...register('interval',{ required: { value: true, message: 'interval is required'}})}>
+                <option value="weekly">weekly</option>
+                <option value="monthly">monthly</option>
+                <option value="yearly">yearly</option>
+            </select>
+            
+            {errors.content && <p className="text-danger">{errors.content.message}</p>}
+
             <input name="price" type="number" {...register('price',{required:{ value: true, message: 'price is required'}, min: 0 })}/>
             <label>Price</label>
 
@@ -122,5 +132,6 @@ function SubscriptionForm({ editableSub }) {
             {editableSub ? "Save Changes" : "Create Subscription"}
             </button>
         </form>
+        </div>
     );
 }

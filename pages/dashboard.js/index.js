@@ -1,6 +1,6 @@
 import {React,useState,useEffect, useContext} from 'react';
 import BusinessCheck from '../../components/BusinessCheck';
-import { firestore} from '../../lib/firebase';
+import { auth, firestore} from '../../lib/firebase';
 import { AuthContext } from '../../lib/context';
 import {
   IconButton,Box,CloseButton,Flex,HStack,VStack,Icon,useColorModeValue,Link,Drawer,
@@ -14,6 +14,7 @@ import ActiveSales from '../../components/Dashboard/ActiveSales';
 import AllSales from '../../components/Dashboard/AllSales';
 import AllSubscriptions from '../../components/Dashboard/AllSubscriptions';
 import StoreDetails from '../../components/Dashboard/StoreDetails';
+import { useRouter } from 'next/router';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
@@ -160,6 +161,7 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
   };
   
 const MobileNav = ({ onOpen,displayName}) => {
+    const router = useRouter();
     return (
       <Flex
         ml={{ base: 0, md: 60 }}
@@ -202,13 +204,12 @@ const MobileNav = ({ onOpen,displayName}) => {
                 _focus={{ boxShadow: 'none' }}>
                 <HStack>
                   <VStack
-                    display={{ base: 'none', md: 'flex' }}
                     alignItems="flex-start"
                     spacing="1px"
                     ml="2">
                     <Text fontSize="sm">{displayName}</Text>
                     <Text fontSize="xs" color="gray.600">
-                      Admin
+                      {(new Date()).toLocaleDateString(undefined,{ weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     </Text>
                   </VStack>
                   <Box display={{ base: 'none', md: 'flex' }}>
@@ -219,11 +220,10 @@ const MobileNav = ({ onOpen,displayName}) => {
               <MenuList
                 bg={useColorModeValue('white', 'gray.900')}
                 borderColor={useColorModeValue('gray.200', 'gray.700')}>
-                <MenuItem>Profile</MenuItem>
                 <MenuItem>Settings</MenuItem>
-                <MenuItem>Billing</MenuItem>
+                <MenuItem onClick={()=>router.push(`/`)}>Back to Website</MenuItem>
                 <MenuDivider />
-                <MenuItem>Sign out</MenuItem>
+                <MenuItem onClick={() => {auth.signOut();router.push(`/`)}}>Sign out</MenuItem>
               </MenuList>
             </Menu>
           </Flex>

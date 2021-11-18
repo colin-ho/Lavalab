@@ -37,7 +37,7 @@ export default function Home({displayName, subscriptions,redemptions}){
             </Flex>
         </Flex>
         {subscriptions.length!==0? redemptions.map((redemption)=>{
-            return <RedemptionItem id = {subscriptions.filter((subscription)=>subscription.title === redemption.subscriptionName)[0].id} key = {redemption.redeemedAt} redemption={redemption}/>
+            return <RedemptionItem id = {subscriptions.filter((subscription)=>subscription.id === redemption.subscriptionId)[0].id} key = {redemption.redeemedAt} redemption={redemption}/>
         }) : null}
     </Box>)
 }
@@ -57,7 +57,7 @@ function RedemptionItem({redemption,id}){
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
     return(
         <div >
-            {redemption.redeemedBy} redeemed {redemption.subscriptionName} at {redemptionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })} to collect by {collectionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })} with these requests: {redemption.requests}
+            {redemption.redeemedBy} redeemed {redemption.subscriptionName} at {redemptionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })} to collect by {collectionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })} with these requests: {redemption.requests} collection code is {redemption.code}
             {collected ? <p>Collected</p>: <button onClick={confirmCollection}>Confirm Collection </button>}
         </div>
     )
