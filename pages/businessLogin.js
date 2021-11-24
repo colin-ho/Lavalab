@@ -1,19 +1,23 @@
 import { auth, firestore, googleAuthProvider } from '../lib/firebase';
 import { AuthContext } from '../lib/context';
 import { useEffect, useState, useContext } from 'react';
-import ImageUploader from '../components/ImageUploader';
 import { useRouter } from 'next/router';
-import { Address } from '../components/Address';
-import Geocode from "react-geocode";
-import { Select } from "@chakra-ui/react"
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import BusinessNameForm from '../components/BusinessNameForm';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {FormErrorMessage,Flex,Box,FormControl,FormLabel,Input,Checkbox,Stack,Link,Button,Heading,Text,useColorModeValue,
+} from '@chakra-ui/react';
 
-const geofire = require('geofire-common');
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
-Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+
 
 export default function BusinessLogin(props) {
   const { userType, user } = useContext(AuthContext);
   const [businessName, setBusinessName] = useState("");
+  const [isSignIn,setIsSignIn] = useState(true);
 
   useEffect(() => {
     // turn off realtime subscription
@@ -25,31 +29,46 @@ export default function BusinessLogin(props) {
         setBusinessName(doc.data()?.businessName);
       });
     } else {
-      setBusinessName(" ");
+      setBusinessName(null);
     }
 
     return unsubscribe;
   }, [user]);
-  // 1. user signed out <SignInButton />
-  // 2. user signed in, but missing username <UsernameForm />
-  // 3. user signed in, has username <SignOutButton />
+
   return (
-    <main style={{marginTop:50}} >
-        {user ? userType ==='customer' ? <UserIsCustomer/> :  businessName!==" " ? <SignOutButton /> : <BusinessNameForm/>:<SignInButton />}
-    </main>
+        user ? userType ==='customer' ? <UserIsCustomer/> :  businessName ? <SignOutButton /> : <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />)
   );
 }
 
 function UserIsCustomer(){
     return (
-        <div>User is already a customer</div>
+        <div>User is already a customer
+          <SignOutButton />
+        </div>
     );
 }
 
+const signInSchema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+});
+
+const signUpSchema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).max(32).required(),
+  confirmPassword: yup.string()
+    .oneOf([yup.ref('password')], 'Passwords do not match')
+    .required('Password confirmation is required.')
+});
+
 // Sign in with Google button
-function SignInButton() {
+function SignInForm({setIsSignIn}) {
+  const [errorMessage,setErrorMessage] = useState(null);
+  const { register, handleSubmit, formState: { errors }} = useForm({
+    resolver: yupResolver(signInSchema),
+  });
     
-  const onSubmit = async () => {
+  const onGoogleSubmit = async () => {
     await auth.signInWithPopup(googleAuthProvider);
     const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
     const { exists } = await userDoc.get();
@@ -64,10 +83,71 @@ function SignInButton() {
 
   };
 
+  const onEmailSubmit = async ({email,password})=>{
+    try{
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+    catch(err){
+      console.log(err)
+      setErrorMessage("Incorrect username or password")
+    }
+  }
+
   return (
-      <button className="btn-google" onClick={onSubmit}>
-        <img src={'/google.png'} width="30px" /> Sign in with Google
-      </button>
+    <Flex
+      minH={'calc(100vh - 60px)'}
+      justify={'center'}
+      bg={'gray.50'}>
+      <Stack spacing={8} mx={'auto'} w = {'lg'} py={12} px={6}>
+        <Stack align={'center'}>
+          <Heading fontSize={{ base: "2xl",sm:"3xl", md: "4xl"}}>Sign in to your account</Heading>
+          <Text fontSize={'lg'} color={'gray.600'}>
+            to start managing subscriptions ✌️
+          </Text>
+        </Stack>
+        <Box
+          rounded={'lg'}
+          bg={'white'}
+          boxShadow={'lg'}
+          p={8}>
+          <Stack spacing={4}>
+            <form onSubmit={handleSubmit(onEmailSubmit)}>
+              <Stack spacing={5}>
+                <FormControl id="email" isInvalid={errors.email?.message}>
+                  <FormLabel>Email</FormLabel>
+                  <Input type="email" {...register("email")} />
+                  <FormErrorMessage>{errors.email?.message.charAt(0).toUpperCase() + errors.email?.message.slice(1)}</FormErrorMessage>
+                </FormControl>
+                <FormControl id="password" isInvalid={errors.password?.message}>
+                  <FormLabel>Password</FormLabel>
+                  <Input {...register("password")} type="password" />
+                  <FormErrorMessage>{errors.password?.message.charAt(0).toUpperCase() + errors.password?.message.slice(1)}</FormErrorMessage>
+                </FormControl>
+              </Stack>
+              <Stack spacing={5} mt={5}>
+                <Stack
+                  direction={'column'}
+                  align={'end'}>
+                  <Link color={'blue.400'} onClick={()=>setIsSignIn(false)}>Create an account</Link>
+                </Stack>
+                {errorMessage ? <Text fontSize={'sm'}color={'red.500'}>{errorMessage}</Text> :null}
+                <Button
+                  bg={'blue.400'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }} type="submit">
+                  Sign in
+                </Button>
+              </Stack>
+            </form>
+            <button className="btn-google" onClick={onGoogleSubmit}>
+              <img src={'/google.png'} width="30px" /> Sign in with Google
+            </button>
+          </Stack>
+        </Box>
+      </Stack>
+    </Flex>
   );
 }
 
@@ -81,62 +161,93 @@ function SignOutButton() {
   );
 }
 
-// Username form
-function BusinessNameForm() {
-  const [businessName, setBusinessName] = useState('');
-  const [address, setAddress] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [description, setDescription] = useState('');
-  const [businessType, setBusinessType] = useState('');
+function SignUpForm({setIsSignIn}) {
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    resolver: yupResolver(signUpSchema),
+  });
+  const [errorMessage,setErrorMessage] = useState(null)
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    const {lat,lng} = (await Geocode.fromAddress(address)).results[0].geometry.location;
-    const geohash = geofire.geohashForLocation([lat, lng]);
-    // Create refs for both documents
-    const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
-    const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
-    // Commit both docs together as a batch write.
-    const batch = firestore.batch();
-    batch.update(userDoc,{displayName:businessName})
-    batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: imageUrl, address: address,geohash: geohash,description:description,lat:lat,lng:lng },{ merge: true });
-    await batch.commit();
-  };
-
-  const onChange = (e) => {
-    // Force form value typed in form to match correct format
-    const val = e.target.value;
-    const name = e.target.name;
-
-    if(name==='businessName'){
-      setBusinessName(val)
+  const handleSignup = async ({ email, password})=> {
+    try{
+      await createUserWithEmailAndPassword(auth, email, password)
+      setErrorMessage(null)
     }
-    if(name==='description'){
-      setDescription(val)
+    catch(err){
+      console.log(err)
+      setErrorMessage(err.message)
     }
-    if(name==='businessType'){
-      setBusinessType(val)
-  }
+      
+    if(auth.currentUser){
+      const userDoc = firestore.doc(`users/${auth.currentUser.uid}`);
+      const { exists } = await userDoc.get();
+      if(!exists){
+        // Commit both docs together as a batch write.
+        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business'});
+        setIsSignIn(true);
+      }
+    }
+    
   };
 
   return (
-      <section>
-        <h3>Business Form</h3>
-        <Address address={address} setAddress={setAddress}/>
-        <form onSubmit={onSubmit}>
-          <input name="businessName" placeholder="Name" value={businessName} onChange={onChange} />
-          <Select name = "businessType" onChange={onChange} placeholder="Business Type">
-            <option value="cafe">cafe</option>
-            <option value="breakfast">breakfast</option>
-            <option value="italian">italian</option>
-          </Select>
-          <input name="description" placeholder="Description" value={description} onChange={onChange} />
-          <ImageUploader setPhotoUrl={setImageUrl}/>
-          <button type="submit" className="btn-green">
-            Submit
-          </button>
-        </form>
-      </section>
+    <Flex
+      minH={'calc(100vh - 60px)'}
+      justify={'center'}
+      bg={'gray.50'}>
+      <Stack spacing={8} mx={'auto'} w = {'lg'}  py={12} px={6}>
+        <Stack align={'center'}>
+          <Heading fontSize={{ base: "2xl",sm:"3xl", md: "4xl"}}>Create a business account</Heading>
+          <Text fontSize={'lg'} color={'gray.600'}>
+            to start selling subscriptions ✌️
+          </Text>
+        </Stack>
+        <Box
+          rounded={'lg'}
+          bg={'white'}
+          boxShadow={'lg'}
+          p={8}>
+            <form onSubmit={handleSubmit(handleSignup)}>
+            <Stack spacing={5}>
+              <FormControl id="email" isInvalid={errors.email?.message}>
+                <FormLabel>Email</FormLabel>
+                <Input type="email" {...register("email")} />
+                <FormErrorMessage>{errors.email?.message.charAt(0).toUpperCase() + errors.email?.message.slice(1)}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl id="password" isInvalid={errors.password?.message}>
+                <FormLabel>Password</FormLabel>
+                <Input {...register("password")} type="password" />
+                <FormErrorMessage>{errors.password?.message.charAt(0).toUpperCase() + errors.password?.message.slice(1)}</FormErrorMessage>
+              </FormControl>
+              
+              <FormControl id="confirmPassword" isInvalid={errors.confirmPassword?.message}>
+                <FormLabel>Confirm Password</FormLabel>
+                <Input {...register("confirmPassword")} type="password" />
+                <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>
+              </FormControl>
+              <Stack spacing={5} mt={5}>
+                <Stack
+                  direction={'column'}
+                  align={'end'}>
+                  <Link color={'blue.400'} onClick={()=>setIsSignIn(true)}>Already have an account?</Link>
+                </Stack>
+                {errorMessage ? <Text fontSize={'sm'}color={'red.500'}>{errorMessage}</Text> :null}
+                <Button
+                  bg={'blue.400'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }} type="submit">
+                  Sign up
+                </Button>
+              </Stack>
+              </Stack>
+            </form>
+        </Box>
+      </Stack>
+    </Flex>
   );
 }
+
+
+

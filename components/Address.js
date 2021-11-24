@@ -1,6 +1,6 @@
 import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 
-export const Address = ({ address,setAddress }) => {
+export default function Address  ({ address,setAddress }) {
   const {
     placePredictions,
     getPlacePredictions,
