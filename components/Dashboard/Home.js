@@ -1,7 +1,8 @@
 import React,{useState,useContext} from 'react'
 import { firestore } from '../../lib/firebase';
 import { AuthContext } from '../../lib/context';
-import { Box,Text,Flex ,Spacer} from "@chakra-ui/react"
+import { Box,Text,Flex ,Spacer,Heading} from "@chakra-ui/react"
+import { BsArrowRight } from 'react-icons/bs';
 
 export default function Home({displayName, subscriptions,redemptions}){
     let customerCount = 0;
@@ -13,9 +14,9 @@ export default function Home({displayName, subscriptions,redemptions}){
         if(!r.collected)waitingCount++;
     })
     return(
-    <Box marginLeft="50px" marginTop="20px" marginRight="50px">
-        <Text fontWeight = "bold" fontSize="3xl">Welcome Back</Text>
-        <Text fontSize="lg">{displayName} is currently open and accepting subscriptions</Text>
+    <Box>
+        <Heading  size="lg" mb="10px"> Welcome Back</Heading>
+        <Text>{displayName} is currently open and accepting subscriptions <BsArrowRight/></Text>
         <Flex marginTop = "20px" h="200px"direction="row">
             <Flex p="20px" direction="column" borderRadius="20px" w="32%" bg="#f4f6fa">
                 <Text as="b">Active Sales</Text>

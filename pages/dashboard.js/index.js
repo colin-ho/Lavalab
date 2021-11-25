@@ -90,9 +90,9 @@ export default function Dashboard() {
                 </Drawer>
                 {/* mobilenav */}
                 <MobileNav onOpen={onOpen} displayName={displayName}/>
-                <Box ml={{ base: 0, md: 60 }} p="4">
+                <Box ml={{ base: 0, md: 60 }} p="10">
                 {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions}/> : 
-                pageState==='Active Sales' ? <ActiveSales/> :
+                pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions}/> :
                 pageState ==='All Sales' ? <AllSales/> :
                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
                 <StoreDetails/>}
