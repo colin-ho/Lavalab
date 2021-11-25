@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
             const batch = firestore.batch();
             batch.update(subRef, { customerCount: increment(1) });
-            batch.set(customerRef, { uid:metadata.customerId,name:metadata.name });
+            batch.set(customerRef, { uid:metadata.customerId,name:metadata.name,redeeming:false,code:'' });
             batch.set(customerSub, { subscriptionId:metadata.subscriptionId,boughtAt: serverTimestamp(),stripeSubscriptionId:event.data.object.subscription,redemptionCount:0,redeemedAt:[] });
             await batch.commit();
           } catch (err) {
