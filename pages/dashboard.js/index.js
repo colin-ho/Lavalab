@@ -92,7 +92,7 @@ export default function Dashboard() {
                 <MobileNav onOpen={onOpen} displayName={displayName}/>
                 <Box ml={{ base: 0, md: 60 }} p="10">
                 {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions}/> : 
-                pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions}/> :
+                pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions.filter(redemption=>!redemption.collected)}/> :
                 pageState ==='All Sales' ? <AllSales/> :
                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
                 <StoreDetails/>}

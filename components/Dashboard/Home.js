@@ -16,7 +16,7 @@ export default function Home({displayName, subscriptions,redemptions}){
     return(
     <Box>
         <Heading  size="lg" mb="10px"> Welcome Back</Heading>
-        <Text>{displayName} is currently open and accepting subscriptions <BsArrowRight/></Text>
+        <Text>{displayName} is currently open and accepting subscriptions</Text>
         <Flex marginTop = "20px" h="200px"direction="row">
             <Flex p="20px" direction="column" borderRadius="20px" w="32%" bg="#f4f6fa">
                 <Text as="b">Active Sales</Text>
