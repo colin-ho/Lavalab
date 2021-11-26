@@ -4,7 +4,7 @@ import { auth, firestore} from '../../lib/firebase';
 import { AuthContext } from '../../lib/context';
 import {
   IconButton,Box,CloseButton,Flex,HStack,VStack,Icon,useColorModeValue,Link,Drawer,
-  DrawerContent,Text,useDisclosure,Menu,MenuButton,MenuDivider,MenuItem,MenuList,
+  DrawerContent,Text,useDisclosure,Menu,MenuButton,MenuDivider,MenuItem,MenuList, Image,
 } from '@chakra-ui/react';
 import {
   FiHome,FiTrendingUp,FiCompass,FiStar,FiSettings,FiMenu,FiBell,FiChevronDown,
@@ -115,9 +115,7 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
         display={{base:display.base,md:display.md}}
         >
         <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            PunchCard
-          </Text>
+          <Image src={"../../punch-card-logo 1.svg"} alt=""/>
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
         </Flex>
         {LinkItems.map((link) => (

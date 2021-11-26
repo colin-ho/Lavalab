@@ -134,6 +134,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                             <ButtonGroup spacing="6">
                                 <Button colorScheme="blue" type="submit" onClick={()=>setDraftSave(false)} variant="outline">Publish</Button>
                                 <Button type="submit" onClick={()=>setDraftSave(true)} variant="ghost">Save as draft</Button>
+                                <Text w = "50%" fontSize="xs">Once you publish your subscription, you will not be able to edit it. Instead, you can archive the subscription, which would remove it from our app.</Text>
                             </ButtonGroup>
                             <ButtonGroup>
                                 <Button variant = "outline" onClick={()=>setFormMode(false)}>Back</Button>
@@ -165,8 +166,6 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                         </Flex>
                     </Box>
                 </Flex>
-            
-        
         </Flex>
     );
 }

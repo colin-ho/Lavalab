@@ -2,36 +2,39 @@ import { Box, Circle, Flex, Grid, Heading, Spacer, Text } from '@chakra-ui/layou
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
-import { BsArrowRight } from 'react-icons/bs';
 import { IconButton } from '@chakra-ui/button';
 import { firestore } from '../../lib/firebase';
 
 export default function ActiveSales({ displayName,subscriptions,redemptions}) {
-    let newOrderCount = 0;
-    let inProgressCount = 0;
-    let lateCount = 0;
-    redemptions.map((r)=>{
-        if(!r.confirmed )newOrderCount++;
-        else inProgressCount++;
-        if(r.collectBy.toDate() < new Date()) lateCount++; 
-    })
+    const [newOrderCount,setNewOrderCount] = useState(0);
+    const [inProgressCount,setInProgressCount] = useState(0);
+    const [lateCount,setLateCount] = useState(0);
+    
     useEffect(() => {
+        setLateCount(0);
+        setInProgressCount(0);
+        setNewOrderCount(0);
+        redemptions.map((r)=>{
+            if(!r.confirmed ) setNewOrderCount(newOrderCount=>newOrderCount+1);
+            else setInProgressCount(inProgressCount=>inProgressCount+1);
+            if(r.collectBy.toDate() < new Date()) setLateCount(lateCount=>lateCount+1);
+        })
         let interval = setInterval(() => {
-            let temp = 0;
+            setLateCount(0);
             redemptions.map((r)=>{
-                if(r.collectBy.toDate() < new Date()) temp++;
+                if(r.collectBy.toDate() < new Date()) setLateCount(lateCount=>lateCount+1);
             })
-            lateCount = temp;
           }, 10000);
         return () => clearInterval(interval);
-      }, [redemptions,inProgressCount,newOrderCount,lateCount]);
+      }, [redemptions]);
+
     
     return (
         <Flex direction = "column" align="flex-start">
             <Heading  size="lg" mb="10px"> Active Sales Overview</Heading>
             <Text>{displayName} is currently open and accepting subscriptions </Text>
 
-            <Flex marginTop = "20px" h="150px" w="100%"direction="row">
+            <Flex marginTop = "30px" h="150px" w="100%"direction="row">
                 <Flex p="20px" direction="column" borderRadius="20px" w="32%" bg="#f4f6fa">
                     <Text as="b">New Orders</Text>
                     <Text flex="1">Needs confirmation</Text>
@@ -55,7 +58,7 @@ export default function ActiveSales({ displayName,subscriptions,redemptions}) {
             <Flex direction="column" w="100%">
                 {redemptions.length !== 0 ? redemptions.map((redemption)=>{
                     return <OrderItem key={redemption.code} redemption={redemption} subscription={subscriptions.filter(subscription=>subscription.id == redemption.subscriptionId)[0]}/>
-                }) : null}
+                }) : <Text>Waiting for new orders ...</Text>}
             </Flex>
         </Flex>
     )
@@ -64,31 +67,42 @@ export default function ActiveSales({ displayName,subscriptions,redemptions}) {
 
 function OrderItem({ redemption,subscription }) {
 
+    const now = new Date();
     const redemptionTime = typeof redemption?.redeemedAt === 'number' ? new Date(redemption.redeemedAt) : redemption.redeemedAt.toDate();
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
+    const received = Math.floor((now - redemptionTime) / (1000 * 60));
+    const due = (collectionTime - now) / (1000 * 60);
     const confirm = async ()=>{
         const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
         await ref.update({confirmed:true});
     }
 
     const collected = async ()=>{
-        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
-        await ref.update({collected:true});
+        const redRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
+        const customerRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('customers').doc(redemption.redeemedById);
+        const batch = firestore.batch();
+        batch.update(redRef,{collected:true});
+        batch.update(customerRef,{redeeming:false,code:''});
+        await batch.commit();
     }
     //
     return (
-        <Box overflow="hidden" bg="brand.100" w="100%" p={6} pb="50px" borderRadius="lg" position="relative"  mb="20px">
+        <Box overflow="hidden" bg={due<0 ? "#FFEFE2" : !redemption.confirmed ? "#f4f6fa": "#E6F5F9" } w="100%" p={6} pb="50px" borderRadius="lg" position="relative"  mb="20px">
             <Text as="b">{redemption.redeemedBy}</Text>
             <Grid gap={6}  templateColumns="repeat(3, 1fr)" >
                 <Box>
-                    <Text >{redemptionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</Text>
-                    <Text >{collectionTime.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</Text>
+                    <Text >{"Received "+received + " min ago"}</Text>
+                    <Text >{"Due "}{due<0 ? "now" : "in " + Math.ceil(due) + " min"}</Text>
                 </Box>
                 <Box>
                     <Text >{subscription.title}</Text>
                     <Text>{"1x "+subscription.content}</Text>
                 </Box>
+                <Box>
                 <Text as="u">{!redemption.confirmed ? "Needs Confirmation" : "In Progress" }</Text>
+                    <Text>{redemption.requests ? "Requests: " + redemption.requests : " "}</Text>
+                </Box>
+                
             </Grid>
             <Circle position="absolute" right="-3" top="-3" cursor= "pointer" size="60px" bg="rgba(0, 0, 0, 0.05)">
                 <Menu >
