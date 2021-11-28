@@ -35,7 +35,7 @@ export default function AllSubscriptions({subscriptions}) {
                 <Text >Redemption Limit</Text>  
             </Grid>
             <Flex direction="column" w="100%">
-                {live.length!==0 ? live.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text>You have no live subscriptions</Text>}
+                {live.length!==0 ? live.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no live subscriptions</Text>}
             </Flex>
 
             <Heading  size="lg" mb="30px" mt="10px"> Drafts</Heading>
@@ -46,7 +46,7 @@ export default function AllSubscriptions({subscriptions}) {
                 <Text >Redemption Limit</Text>  
             </Grid>
             <Flex direction="column" w="100%">
-                {drafts.length!==0 ? drafts.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text>You have no drafts</Text>}
+                {drafts.length!==0 ? drafts.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no drafts</Text>}
             </Flex>
 
             <Heading  size="lg" mb="30px" mt="10px"> Archive</Heading>
@@ -57,7 +57,7 @@ export default function AllSubscriptions({subscriptions}) {
                 <Text >Redemption Limit</Text>  
             </Grid>
             <Flex direction="column" w="100%">
-                {archived.length!==0 ? archived.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text>You have no archived subscriptions</Text>}
+                {archived.length!==0 ? archived.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no archived subscriptions</Text>}
             </Flex>
         </Flex>
     )

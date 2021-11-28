@@ -1,5 +1,5 @@
 import {Box,Link as ChakraLink,Flex,Text,IconButton,Button,Stack,Collapse,Icon,Popover,
-    PopoverTrigger,PopoverContent,useColorModeValue,useBreakpointValue,useDisclosure,} from '@chakra-ui/react';
+    PopoverTrigger,PopoverContent,useColorModeValue,Image,useDisclosure,} from '@chakra-ui/react';
 import {HamburgerIcon,CloseIcon,ChevronDownIcon,ChevronRightIcon,} from '@chakra-ui/icons';
 import Link from 'next/link';
 import { useContext } from 'react';
@@ -35,13 +35,7 @@ export default function NewNavbar() {
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
                 <Link href="/">
-                    <Text
-                    textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-                    fontFamily={'heading'}
-                    color={useColorModeValue('gray.800', 'white')}
-                    cursor={'pointer'}>
-                    PunchCard
-                    </Text>
+                    <Image cursor="pointer" w = "130px" src={"../../punch-card-logo 1.svg"} alt=""/>
                 </Link>
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
@@ -90,7 +84,7 @@ export default function NewNavbar() {
           <Box key={navItem.label}>
             <Popover trigger={'hover'} placement={'bottom-start'}>
               <PopoverTrigger>
-                <ChakraLink as={Link }
+                <ChakraLink
                   p={2}
                   href={navItem.href}
                   fontSize={'sm'}
@@ -103,7 +97,7 @@ export default function NewNavbar() {
                   {navItem.label}
                 </ChakraLink>
               </PopoverTrigger>
-  
+            
               {navItem.children && (
                 <PopoverContent
                   border={0}
@@ -129,7 +123,6 @@ export default function NewNavbar() {
   const DesktopSubNav = ({ label, href, subLabel }) => {
     return (
       <ChakraLink
-        as={Link}
         href={href}
         role={'group'}
         display={'block'}
@@ -182,7 +175,6 @@ export default function NewNavbar() {
       <Stack spacing={4} onClick={children && onToggle}>
         <Flex
           py={2}
-          as={Link}
           href={href}
           justify={'space-between'}
           align={'center'}
@@ -217,7 +209,7 @@ export default function NewNavbar() {
             align={'start'}>
             {children &&
               children.map((child) => (
-                <ChakraLink as={Link} key={child.label} py={2} href={child.href}>
+                <ChakraLink key={child.label} py={2} href={child.href}>
                   {child.label}
                 </ChakraLink>
               ))}

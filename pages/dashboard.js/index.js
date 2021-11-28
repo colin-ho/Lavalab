@@ -114,7 +114,7 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
         h="full"
         display={{base:display.base,md:display.md}}
         >
-        <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+        <Flex mt="20px" mb="30px" alignItems="center" mx="8" justifyContent="space-between">
           <Image src={"../../punch-card-logo 1.svg"} alt=""/>
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
         </Flex>
