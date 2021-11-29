@@ -37,11 +37,13 @@ export default async function handler(req, res) {
     if (event.type === 'checkout.session.completed') {
         try {
             const metadata = event.data.object.metadata;
-            const subRef = firestore.collection('businesses').doc(metadata.businessId).collection('subscriptions').doc(metadata.subscriptionId);
+            const businessRef = firestore.collection('businesses').doc(metadata.businessId);
+            const subRef = businessRef.collection('subscriptions').doc(metadata.subscriptionId);
             const customerRef = subRef.collection('customers').doc(metadata.customerId);
             const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
 
             const batch = firestore.batch();
+            batch.update(businessRef,{totalCustomers:increment(1)})
             batch.update(subRef, { customerCount: increment(1) });
             batch.set(customerRef, { uid:metadata.customerId,name:metadata.name,redeeming:false,code:'' });
             batch.set(customerSub, { subscriptionId:metadata.subscriptionId,boughtAt: serverTimestamp(),stripeSubscriptionId:event.data.object.subscription,redemptionCount:0,redeemedAt:[],favorite:false });

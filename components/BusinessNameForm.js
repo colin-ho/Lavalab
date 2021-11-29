@@ -46,7 +46,7 @@ export default function BusinessNameForm() {
         // Commit both docs together as a batch write.
         const batch = firestore.batch();
         batch.update(userDoc,{displayName:businessName})
-        batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: photoURL, address: address,geohash: geohash,description:description,lat:lat,lng:lng },{ merge: true });
+        batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: photoURL, address: address,geohash: geohash,description:description,lat:lat,lng:lng,totalCustomers:0 },{ merge: true });
         await batch.commit();
     };
 
