@@ -15,7 +15,7 @@ import { auth, firestore, serverTimestamp } from '../lib/firebase';
 import ImageUploader from './ImageUploader';
 
 export default function SubscriptionForm({ editableSub,setFormMode }) {
-    const{displayName} = useContext(AuthContext);
+    const{displayName,businessType} = useContext(AuthContext);
     const subscription = !editableSub ? {title:'',price:'',content:'',interval:'week',limit:'',dayConstrain:false} : {title:editableSub.title,price:editableSub.price,content:editableSub.content,interval:editableSub.interval,limit:editableSub.limit,dayConstrain:editableSub.dayConstrain};
     const { register, watch,handleSubmit, formState: { errors } } = useForm({ defaultValues:subscription, mode: 'onSubmit' });
     const initialPhoto = editableSub ? editableSub.photoURL : "https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2F6p1j3C5k3tgZg0BfJo2s4k2OO9O2%2F1637781076553.jpeg?alt=media&token=284d2ee6-5998-461d-a716-ee0d6b8f49af";
@@ -40,6 +40,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
             stripePriceId:'',
             stripeProductId:'',
             businessName: displayName,
+            businessType:businessType,
             businessId:uid,
             content: content,
             price:price,

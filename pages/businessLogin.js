@@ -182,7 +182,7 @@ function SignUpForm({setIsSignIn}) {
       const { exists } = await userDoc.get();
       if(!exists){
         // Commit both docs together as a batch write.
-        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business'});
+        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',businessType:''});
         setIsSignIn(true);
       }
     }
