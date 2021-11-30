@@ -82,7 +82,7 @@ function OrderItem({ redemption,subscription }) {
         const customerRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('customers').doc(redemption.redeemedById);
         const batch = firestore.batch();
         batch.update(redRef,{collected:true});
-        batch.update(customerRef,{redeeming:false,code:''});
+        batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
         await batch.commit();
     }
     //
