@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     if (event.type === 'checkout.session.completed') {
         try {
             const metadata = event.data.object.metadata;
+            console.log(metadata)
             const businessRef = firestore.collection('businesses').doc(metadata.businessId);
             const subRef = businessRef.collection('subscriptions').doc(metadata.subscriptionId);
             const customerRef = subRef.collection('customers').doc(metadata.customerId);
