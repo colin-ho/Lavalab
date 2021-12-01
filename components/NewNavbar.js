@@ -50,14 +50,14 @@ export default function NewNavbar() {
             {(displayName && user) ? 
             <Link href="/dashboard">
                 <Button fontSize={'sm'} fontWeight={600}
-                color={'white'} bg={'pink.400'} _hover={{bg: 'pink.300'}}>
+                color={'white'} bg={'black'} _hover={{bg: 'black'}}>
                 Dashboard
                 </Button>
             </Link > : 
             <Link  href="/businessLogin">
                 <Button 
-                fontSize={'sm'} fontWeight={600} color={'white'} bg={'pink.400'}
-               _hover={{bg: 'pink.300'}}>
+                fontSize={'sm'} fontWeight={600} color={'white'} bg={'black'}
+               _hover={{bg: 'black'}}>
                 Sign In
                 </Button>
             </Link >

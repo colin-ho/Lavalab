@@ -11,16 +11,16 @@ import {
 } from 'react-icons/fi';
 import Home from '../../components/Dashboard/Home';
 import ActiveSales from '../../components/Dashboard/ActiveSales';
-import AllSales from '../../components/Dashboard/AllSales';
 import AllSubscriptions from '../../components/Dashboard/AllSubscriptions';
 import StoreDetails from '../../components/Dashboard/StoreDetails';
 import { useRouter } from 'next/router';
+import Customers from '../../components/Dashboard/Customers';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
     { name: 'Active Sales', icon: FiTrendingUp },
-    { name: 'All Sales', icon: FiCompass },
     { name: 'Subscriptions', icon: FiStar },
+    { name: 'Customers', icon: FiCompass },
     { name: 'Store Details', icon: FiSettings },
 ];
 
@@ -31,6 +31,8 @@ export default function Dashboard() {
     const [subscriptions,setSubscriptions] = useState([]);
     const [redemptions, setRedemptions] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [customers,setCustomers] =useState([])
+    const [total,setTotal] = useState(0);
 
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
@@ -51,9 +53,22 @@ export default function Dashboard() {
             
             // Use the setState callback 
             setSubscriptions(temp);  
-        }
+        };
+        const handleCustomerChanges=(snapshot)=>{
+          let temp = []
+          snapshot.forEach((doc) => {
+            firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(doc.id).collection('customers').onSnapshot((snapshot)=>{
+                snapshot.forEach((doc)=>{
+                  if (temp.includes(doc.id) === false) temp.push(doc.id);
+                })
+              })
+          });
+          
+          // Use the setState callback 
+          setCustomers(temp);  
+      }
         let unsubscribe1;
-        let unsubscribe2;
+        let unsubscribe2,unsubscribe3;
         if(user){
             const subscriptionsQuery = firestore.collection('businesses').doc(user.uid).collection('subscriptions');
             var d = new Date();
@@ -64,8 +79,14 @@ export default function Dashboard() {
                 err => console.log(err));
             unsubscribe2 = subscriptionsQuery.onSnapshot(handleSubscriptionChanges, 
                 err => console.log(err));
+            unsubscribe3 = subscriptionsQuery.onSnapshot(handleCustomerChanges,err=>console.log(err));
+
+            (async()=>{
+              const temp = (await firestore.collection('businesses').doc(user.uid).get()).get('totalCustomers')
+              setTotal(temp);
+            })()
         }
-        return unsubscribe1,unsubscribe2
+        return unsubscribe1,unsubscribe2,unsubscribe3;
     }, [user]);
 
     return (
@@ -93,8 +114,8 @@ export default function Dashboard() {
                 <Box ml={{ base: 0, md: 60 }} p="10">
                 {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions}/> : 
                 pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions.filter(redemption=>!redemption.collected)}/> :
-                pageState ==='All Sales' ? <AllSales/> :
                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
+                pageState ==='Customers' ? <Customers total={total} customers={customers} subscriptions={subscriptions}/> :
                 <StoreDetails/>}
                 </Box>
             </Box>

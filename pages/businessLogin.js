@@ -8,8 +8,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import BusinessNameForm from '../components/BusinessNameForm';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import {FormErrorMessage,Flex,Box,FormControl,FormLabel,Input,Checkbox,Stack,Link,Button,Heading,Text,useColorModeValue,
+import {FormErrorMessage,Flex,Box,FormControl,FormLabel,Image,Input,VStack,Stack,Link,Button,Heading,Text,useColorModeValue,
 } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/layout';
 
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
 
@@ -18,6 +19,7 @@ export default function BusinessLogin(props) {
   const { userType, user } = useContext(AuthContext);
   const [businessName, setBusinessName] = useState("");
   const [isSignIn,setIsSignIn] = useState(true);
+  const[loading,setLoading] = useState(true);
 
   useEffect(() => {
     // turn off realtime subscription
@@ -35,15 +37,23 @@ export default function BusinessLogin(props) {
     return unsubscribe;
   }, [user]);
 
+  useEffect(
+    () => {
+      let timer1 = setTimeout(() => setLoading(false), 1 * 1000);
+      return () => {
+        clearTimeout(timer1);
+      };
+    },[]);
+
   return (
-        user ? userType ==='customer' ? <UserIsCustomer/> :  businessName ? <SignOutButton /> : <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />)
+        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  businessName ? <SignOutButton businessName={businessName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />) :null
   );
 }
 
 function UserIsCustomer(){
     return (
         <div>User is already a customer
-          <SignOutButton />
+          <Box p={4}  style={{boxShadow:"0px 5px 30px rgba(0, 0, 0, 0.07)"}} w="100%" textAlign="center"borderRadius="5px" cursor="pointer" onClick={() => auth.signOut()}>Sign Out</Box >  
         </div>
     );
 }
@@ -132,18 +142,21 @@ function SignInForm({setIsSignIn}) {
                 </Stack>
                 {errorMessage ? <Text fontSize={'sm'}color={'red.500'}>{errorMessage}</Text> :null}
                 <Button
-                  bg={'blue.400'}
+                  bg={'black'}
                   color={'white'}
                   _hover={{
-                    bg: 'blue.500',
+                    bg: 'black',
                   }} type="submit">
                   Sign in
                 </Button>
               </Stack>
             </form>
-            <button className="btn-google" onClick={onGoogleSubmit}>
-              <img src={'/google.png'} width="30px" /> Sign in with Google
-            </button>
+            <Button variant="ghost" onClick={onGoogleSubmit}>
+              <HStack>
+                <Image src={'/google.png'} alt="" width="30px" /> 
+                <Text>Sign in with Google</Text>
+              </HStack>
+            </Button>
           </Stack>
         </Box>
       </Stack>
@@ -152,11 +165,35 @@ function SignInForm({setIsSignIn}) {
 }
 
 // Sign out button
-function SignOutButton() {
+function SignOutButton({businessName}) {
   const router = useRouter();
-  return (<div>
-    <button onClick={()=>router.push(`/dashboard`)}>Go to Dashboard</button>
-    <button onClick={() => auth.signOut()}>Sign Out</button>
+  return (
+  <div>
+    <Flex
+      minH={'calc(100vh - 60px)'}
+      justify={'center'}
+      bg={'gray.50'}>
+      <Stack spacing={8} mx={'auto'} w = {'lg'}  py={12} px={6}>
+        <Stack align={'center'}>
+          <Heading textAlign="center" fontSize={{ base: "2xl",sm:"3xl", md: "4xl"}}>Welcome back {businessName}</Heading>
+          <Text fontSize={'lg'} color={'gray.600'}>
+            Head over to your dashboard to get started ✌️
+          </Text>
+        </Stack>
+        <Box
+          rounded={'lg'}
+          bg={'white'}
+          boxShadow={'lg'}
+          p={8}
+          >
+            <VStack spacing={6} >
+            <Box p={4} style={{boxShadow:"0px 5px 30px rgba(0, 0, 0, 0.07)"}}  w="100%" textAlign="center" borderRadius="5px" cursor="pointer" backgroundColor="black" color="white" onClick={()=>router.push(`/dashboard`)}>Go to Dashboard</Box >
+            <Box p={4}  style={{boxShadow:"0px 5px 30px rgba(0, 0, 0, 0.07)"}} w="100%" textAlign="center"borderRadius="5px" cursor="pointer" onClick={() => auth.signOut()}>Sign Out</Box >  
+            </VStack>
+        </Box>
+      </Stack>
+    </Flex>
+    
     </div>
   );
 }
@@ -233,10 +270,10 @@ function SignUpForm({setIsSignIn}) {
                 </Stack>
                 {errorMessage ? <Text fontSize={'sm'}color={'red.500'}>{errorMessage}</Text> :null}
                 <Button
-                  bg={'blue.400'}
+                  bg={'black'}
                   color={'white'}
                   _hover={{
-                    bg: 'blue.500',
+                    bg: 'black',
                   }} type="submit">
                   Sign up
                 </Button>
