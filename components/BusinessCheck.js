@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 export default function BusinessCheck(props) {
   const { userType,user } = useContext(AuthContext);
 
-  return (userType==='business'&&user) ? props.children : props.fallback || <Fallback/>;
+  return (userType&&user ? userType==='business'&&user ? props.children : <Fallback/>:null);
 }
 
 function Fallback(){

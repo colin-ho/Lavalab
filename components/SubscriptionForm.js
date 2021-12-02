@@ -16,7 +16,7 @@ import ImageUploader from './ImageUploader';
 
 export default function SubscriptionForm({ editableSub,setFormMode }) {
     const{displayName,businessType} = useContext(AuthContext);
-    const subscription = !editableSub ? {title:'',price:'',content:'',interval:'week',limit:'',dayConstrain:false} : {title:editableSub.title,price:editableSub.price,content:editableSub.content,interval:editableSub.interval,limit:editableSub.limit,dayConstrain:editableSub.dayConstrain};
+    const subscription = !editableSub ? {title:'',price:'',content:'',interval:'week',limit:'',dayConstrain:false,description:''} : {title:editableSub.title,price:editableSub.price,content:editableSub.content,interval:editableSub.interval,limit:editableSub.limit,dayConstrain:editableSub.dayConstrain,description:editableSub.description};
     const { register, watch,handleSubmit, formState: { errors } } = useForm({ defaultValues:subscription, mode: 'onSubmit' });
     const initialPhoto = editableSub ? editableSub.photoURL : "https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2F6p1j3C5k3tgZg0BfJo2s4k2OO9O2%2F1637781076553.jpeg?alt=media&token=284d2ee6-5998-461d-a716-ee0d6b8f49af";
     const watchAllFields = watch(); 
@@ -24,7 +24,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
     const [photoError,setPhotoError] = useState(false);
     const [draftSave,setDraftSave] = useState(false);
 
-    const submitSubscription = async ({title,content,price,interval,limit,dayConstrain})=>{
+    const submitSubscription = async ({title,content,price,interval,limit,dayConstrain,description})=>{
         if(!photoURL){
             setPhotoError(true);
             return;
@@ -41,6 +41,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
             stripeProductId:'',
             businessName: displayName,
             businessType:businessType,
+            description:description,
             businessId:uid,
             content: content,
             price:price,
@@ -83,11 +84,10 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
             <Flex direction={{base:"column",pxl:"row"}} >
                 {console.log(errors)}
                 <Flex direction="column" w={{base:"100%",pxl:"65%"}} justify="space-around" pr={{base:"30px",pxl:"60px"}}>
-                    <Heading  size="lg" mb="20px">
-                        Create a New Subscription
-                    </Heading>
+                    <Heading  size="lg" mb="10px"> Subscriptions</Heading>
+                    <Text>Create new subscriptions or manage existing ones</Text>
                     <form onSubmit={handleSubmit(submitSubscription)}>
-                        <Stack spacing="5">
+                        <Stack boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" p="6" spacing="5">
                             <FormControl id="title" isInvalid={errors.title?.message}>
                                 <FormLabel>Subscription Name:</FormLabel>
                                 <Input placeholder="Morning Brew Subscription" type="text" {...register('title',{ required: { value: true, message: 'Subscription name is required'},
@@ -115,6 +115,12 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                                 <Input type="text" placeholder="Hot Cappucino" {...register('content',{ required: { value: true, message: 'Product is required'},
                                 minLength:{ value: 1, message: 'Product name is too short'}})} />
                                 <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+                            </FormControl>
+                            <FormControl id="description" isInvalid={errors.description?.message}>
+                                <FormLabel>Description:</FormLabel>
+                                <Input type="text" placeholder="Delicious hot coffee everyday" {...register('description',{ required: { value: true, message: 'Description is required'},
+                                minLength:{ value: 1, message: 'Description is too long'},minLength:{ value: 32, message: 'Description is too long'}})} />
+                                <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
                             </FormControl>
                             <FormControl id="limit" isInvalid={errors.limit?.message}>
                                 <FormLabel># of total redemptions allowed:</FormLabel>

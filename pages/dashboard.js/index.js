@@ -1,4 +1,4 @@
-import {React,useState,useEffect, useContext} from 'react';
+import {React,useState,useEffect, useContext, useCallback} from 'react';
 import BusinessCheck from '../../components/BusinessCheck';
 import { auth, firestore} from '../../lib/firebase';
 import { AuthContext } from '../../lib/context';
@@ -9,6 +9,8 @@ import {
 import {
   FiHome,FiTrendingUp,FiCompass,FiStar,FiSettings,FiMenu,FiBell,FiChevronDown,
 } from 'react-icons/fi';
+import { AiOutlineShop } from "react-icons/ai";
+import {IoPeopleOutline} from "react-icons/io5";
 import Home from '../../components/Dashboard/Home';
 import ActiveSales from '../../components/Dashboard/ActiveSales';
 import AllSubscriptions from '../../components/Dashboard/AllSubscriptions';
@@ -20,8 +22,8 @@ const LinkItems = [
     { name: 'Home', icon: FiHome },
     { name: 'Active Sales', icon: FiTrendingUp },
     { name: 'Subscriptions', icon: FiStar },
-    { name: 'Customers', icon: FiCompass },
-    { name: 'Store Details', icon: FiSettings },
+    { name: 'Customers', icon: IoPeopleOutline },
+    { name: 'Store Details', icon: AiOutlineShop },
 ];
 
 export default function Dashboard() {
@@ -31,9 +33,73 @@ export default function Dashboard() {
     const [subscriptions,setSubscriptions] = useState([]);
     const [redemptions, setRedemptions] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [customers,setCustomers] =useState([])
-    const [total,setTotal] = useState(0);
+    const [customerData,setCustomerData] =useState([])
+    const [customerIds,setCustomerIds] = useState([])
+    const [total,setTotal] = useState(0)
 
+    
+
+  useEffect(() => {
+    const getNestedStuff =
+      async(doc,ids)=>{
+          const [data,subQuery] = await Promise.all([(firestore.collection('customers').doc(doc.id).get()),(firestore.collection('customers').doc(doc.id).collection('subscribedTo').where('subscriptionId','in',ids).get())])
+          let subs=[]
+          subQuery.forEach((sub)=>{
+              subs.push(sub.data())
+          })
+          let all = {name:data.data().displayName,email:data.data().email,subs:subs};
+          console.log(all)
+          return all;
+      }
+
+  const getstuff = (
+      async(snapshot,ids)=>{
+          let temp=[];
+          snapshot.forEach(async(doc) => {
+              
+              temp.push(getNestedStuff(doc,ids))
+          });
+          return await Promise.all(temp);
+      })
+      
+    let unsubscribe;
+    if(customerIds.length>0){
+      let ids =subscriptions.map((sub)=>sub.id);
+      unsubscribe = firestore.collection('customers').where('uid','in',customerIds).onSnapshot(async (snapshot)=>{
+        setCustomerData(await getstuff(snapshot,ids))
+      })
+    }
+    
+    return unsubscribe
+  }, [customerIds,subscriptions])
+
+    useEffect(() => {
+
+      let unsubscribe;
+      if(subscriptions.length>0 && user){
+        let ids =subscriptions.map((sub)=>sub.id);
+        let customers = []
+        unsubscribe = firestore.collectionGroup('subscriptions').where('id','in',ids).onSnapshot(async(snapshot)=>{
+          console.log('changing')
+          let temp = []
+          snapshot.forEach((sub)=>{
+            if (temp.includes(sub.id) === false) temp.push(firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(sub.id).collection('customers').get());
+          })
+          let data = (await Promise.all(temp));
+          
+          data.forEach((snap)=>{
+            snap.forEach((doc)=>{
+              if (customers.includes(doc.id) === false) customers.push(doc.id)
+            })
+          })
+          setCustomerIds(customers);
+        })
+        
+      }
+      return unsubscribe;
+    }, [subscriptions,user])
+
+    
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
         const handleRedemptionChanges = (snapshot) => {
@@ -54,21 +120,9 @@ export default function Dashboard() {
             // Use the setState callback 
             setSubscriptions(temp);  
         };
-        const handleCustomerChanges=(snapshot)=>{
-          let temp = []
-          snapshot.forEach((doc) => {
-            firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(doc.id).collection('customers').onSnapshot((snapshot)=>{
-                snapshot.forEach((doc)=>{
-                  if (temp.includes(doc.id) === false) temp.push(doc.id);
-                })
-              })
-          });
-          
-          // Use the setState callback 
-          setCustomers(temp);  
-      }
+        
         let unsubscribe1;
-        let unsubscribe2,unsubscribe3;
+        let unsubscribe2;
         if(user){
             const subscriptionsQuery = firestore.collection('businesses').doc(user.uid).collection('subscriptions');
             var d = new Date();
@@ -79,14 +133,13 @@ export default function Dashboard() {
                 err => console.log(err));
             unsubscribe2 = subscriptionsQuery.onSnapshot(handleSubscriptionChanges, 
                 err => console.log(err));
-            unsubscribe3 = subscriptionsQuery.onSnapshot(handleCustomerChanges,err=>console.log(err));
-
             (async()=>{
               const temp = (await firestore.collection('businesses').doc(user.uid).get()).get('totalCustomers')
               setTotal(temp);
             })()
         }
-        return unsubscribe1,unsubscribe2,unsubscribe3;
+        
+        return unsubscribe1,unsubscribe2;
     }, [user]);
 
     return (
@@ -115,7 +168,7 @@ export default function Dashboard() {
                 {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions}/> : 
                 pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions.filter(redemption=>!redemption.collected)}/> :
                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
-                pageState ==='Customers' ? <Customers total={total} customers={customers} subscriptions={subscriptions}/> :
+                pageState ==='Customers' ? <Customers customerData={customerData} total={total}/> :
                 <StoreDetails/>}
                 </Box>
             </Box>
@@ -135,7 +188,7 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
         h="full"
         display={{base:display.base,md:display.md}}
         >
-        <Flex mt="20px" mb="30px" alignItems="center" mx="8" justifyContent="space-between">
+        <Flex mt="20px" mb="60px" alignItems="center" mx="8" justifyContent="space-between">
           <Image src={"../../punch-card-logo 1.svg"} alt=""/>
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
         </Flex>
@@ -159,14 +212,14 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
           role="group"
           cursor="pointer"
           _hover={{
-            bg: 'cyan.400',
+            bg: 'black',
             color: 'white',
           }}
           >
           {icon && (
             <Icon
               mr="4"
-              fontSize="16"
+              fontSize="20"
               _groupHover={{
                 color: 'white',
               }}

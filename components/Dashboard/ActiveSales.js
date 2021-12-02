@@ -1,9 +1,10 @@
-import { Box, Circle, Flex, Grid, Heading, Spacer, Text } from '@chakra-ui/layout';
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Box, Circle, Flex, Grid, Heading, Spacer, Text, VStack } from '@chakra-ui/layout';
+import { Menu, MenuButton, MenuItem, MenuList, Slide } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
-import { IconButton } from '@chakra-ui/button';
+import { Button, IconButton } from '@chakra-ui/button';
 import { firestore } from '../../lib/firebase';
+import { useDisclosure } from '@chakra-ui/hooks';
 
 export default function ActiveSales({ displayName,subscriptions,redemptions}) {
     const [newOrderCount,setNewOrderCount] = useState(0);
@@ -35,22 +36,22 @@ export default function ActiveSales({ displayName,subscriptions,redemptions}) {
             <Text>{displayName} is currently open and accepting subscriptions </Text>
 
             <Flex marginTop = "30px" h="150px" w="100%"direction="row">
-                <Flex p="20px" direction="column" borderRadius="20px" w="32%" bg="#f4f6fa">
-                    <Text as="b">New Orders</Text>
-                    <Text flex="1">Needs confirmation</Text>
+                <Flex p="20px" alignItems="flex-start" direction="column" borderRadius="20px" w="32%" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)"bg={'#fff'}>
+                    <Text borderRadius="5px"fontWeight="500" bg={"brand.400"} px="2" >Received Orders</Text>
+                    <Text mt="5px" as="b"flex="1">Needs confirmation</Text>
                     <Text  fontSize="3xl">{newOrderCount}</Text>
                 </Flex>
                 <Spacer/>
-                <Flex p="20px"direction="column"borderRadius="20px"w="32%"bg="#E6F5F9">
-                    <Text as="b">In Progress</Text>
-                    <Text>Awaiting fulfilment</Text>
-                    <Text mt="20px" fontSize="3xl"flex="1">{inProgressCount}</Text>
+                <Flex p="20px" alignItems="flex-start"direction="column"borderRadius="20px"w="32%" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)"bg={'#fff'}>
+                    <Text borderRadius="5px" fontWeight="500" bg={"brand.300"} px="2">In Progress</Text>
+                    <Text mt="5px"as="b" flex="1">Awaiting fulfilment</Text>
+                    <Text fontSize="3xl">{inProgressCount}</Text>
                 </Flex>
                 <Spacer/>
-                <Flex p="20px"direction="column"borderRadius="20px"w="32%" bg="#FFEFE2">
-                    <Text as="b">Late</Text>
-                    <Text>Past due</Text>
-                    <Text mt="20px" fontSize="3xl"flex="1">{lateCount}</Text>
+                <Flex p="20px" alignItems="flex-start"direction="column"borderRadius="20px"w="32%" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)"bg={'#fff'}>
+                    <Text borderRadius="5px" fontWeight="500" bg={"brand.200"} px="2" >Late</Text>
+                    <Text mt="5px"as="b" flex="1">Past due</Text>
+                    <Text  fontSize="3xl">{lateCount}</Text>
                 </Flex>
             </Flex>
 
@@ -87,24 +88,34 @@ function OrderItem({ redemption,subscription }) {
     }
     //
     return (
-        <Box overflow="hidden" bg={due<0 ? "#FFEFE2" : !redemption.confirmed ? "#f4f6fa": "#E6F5F9" } w="100%" p={6} pb="50px" borderRadius="lg" position="relative"  mb="20px">
-            <Text as="b">{redemption.redeemedBy}</Text>
-            <Grid gap={6}  templateColumns="repeat(3, 1fr)" >
-                <Box>
+        <Box overflow="hidden"  boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)"bg={'#fff'} w="100%" p={6} pb="30px"borderRadius="20px" position="relative"  mb="20px">
+            <Text borderRadius="5px"as="span" fontWeight="500" bg={due<0 ? "brand.200": !redemption.confirmed ? "brand.400" : "brand.300" } px="2" py="1">{due<0 ? "Late": !redemption.confirmed ? "Received" : "In Progress" }</Text>
+            <Grid gap={6} mt="10px" templateColumns="repeat(4, 1fr)" >
+                <VStack spacing={1} alignItems="start">
+                    <Text as="b">{redemption.redeemedBy}</Text>
+                    <Text >{"Release "}{due<0 ? "now" : "in " + Math.ceil(due) + " min"}</Text>
                     <Text >{"Received "+received + " min ago"}</Text>
-                    <Text >{"Due "}{due<0 ? "now" : "in " + Math.ceil(due) + " min"}</Text>
-                </Box>
-                <Box>
+                </VStack>
+                <VStack spacing={1} alignItems="start">
+                    <Text as="b">Overview</Text>
                     <Text >{subscription.title}</Text>
                     <Text>{"1x "+subscription.content}</Text>
-                </Box>
-                <Box>
-                <Text as="u">{!redemption.confirmed ? "Needs Confirmation" : "In Progress" }</Text>
-                    <Text>{redemption.requests ? "Requests: " + redemption.requests : " "}</Text>
-                </Box>
+                </VStack>
+                <VStack spacing={1} alignItems="start">
+                    <Text as="b">Customer Message</Text>
+                    <Text>{redemption.requests ? "\"" + redemption.requests +"\"": " "}</Text>
+                </VStack>
+                <VStack spacing={1} alignItems="start">
+                <Text as="b" >Redemption Code: {redemption.code}</Text>
+                    <Button fontSize={'md'}  fontWeight={500} onClick={!redemption.confirmed ? confirm : collected }
+                color={'white'} bg={'black'} _hover={{bg: 'black',color:'white'}}>
+                {!redemption.confirmed ? "Confirm order" : "Mark as complete" }</Button>
+                
+                </VStack>
                 
             </Grid>
-            <Circle position="absolute" right="-3" top="-3" cursor= "pointer" size="60px" bg="rgba(0, 0, 0, 0.05)">
+            {/*
+            <Circle position="absolute" right="-3" top="-3" cursor= "pointer" size="60px" bg="white">
                 <Menu >
                     <MenuButton
                         as={IconButton}
@@ -114,13 +125,13 @@ function OrderItem({ redemption,subscription }) {
                         w="60px"
                         h="60px"
                     />
-                    <MenuList mt="-20px">
+                    <MenuList mt="-30px" mr="30px">
                         <MenuItem onClick={!redemption.confirmed ? confirm : collected }>
                         {!redemption.confirmed ? "Confirm" : "Collected" }
                         </MenuItem>
                     </MenuList>
                 </Menu>
-            </Circle>
+            </Circle>*/}
         </Box>
       
     );
