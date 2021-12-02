@@ -1,7 +1,7 @@
 import {React,useState,useEffect, useContext, useCallback} from 'react';
-import BusinessCheck from '../../components/BusinessCheck';
-import { auth, firestore} from '../../lib/firebase';
-import { AuthContext } from '../../lib/context';
+import BusinessCheck from '../components/BusinessCheck';
+import { auth, firestore} from '../lib/firebase';
+import { AuthContext } from '../lib/context';
 import {
   IconButton,Box,CloseButton,Flex,HStack,VStack,Icon,useColorModeValue,Link,Drawer,
   DrawerContent,Text,useDisclosure,Menu,MenuButton,MenuDivider,MenuItem,MenuList, Image,
@@ -11,12 +11,12 @@ import {
 } from 'react-icons/fi';
 import { AiOutlineShop,AiOutlineTags } from "react-icons/ai";
 import {IoPeopleOutline} from "react-icons/io5";
-import Home from '../../components/Home';
-import ActiveSales from '../../components/ActiveSales';
-import AllSubscriptions from '../../components/AllSubscriptions';
-import StoreDetails from '../../components/StoreDetails';
+import Home from '../components/Home';
+import ActiveSales from '../components/ActiveSales';
+import AllSubscriptions from '../components/AllSubscriptions';
+import StoreDetails from '../components/StoreDetails';
 import { useRouter } from 'next/router';
-import Customers from '../../components/Customers';
+import Customers from '../components/Customers';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
