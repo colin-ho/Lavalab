@@ -4,8 +4,8 @@ import { PhoneIcon, SearchIcon } from '@chakra-ui/icons';
 import { Box, Flex, Grid, GridItem, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
 import { Modal, ModalBody, ModalCloseButton,InputGroup,InputLeftElement, ModalContent,Input, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../lib/context';
-import { firestore } from '../../lib/firebase';
+import { AuthContext } from '../lib/context';
+import { firestore } from '../lib/firebase';
 
 const stringSimilarity = require("string-similarity");
 export default function Customers({customerData,total}) {

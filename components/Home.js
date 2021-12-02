@@ -1,6 +1,6 @@
 import React,{useState,useContext, useEffect} from 'react'
-import { firestore } from '../../lib/firebase';
-import { AuthContext } from '../../lib/context';
+import { firestore } from '../lib/firebase';
+import { AuthContext } from '../lib/context';
 import { Box, Flex, Grid, GridItem, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
 import { BsArrowRight } from 'react-icons/bs';
 import { AiOutlineTags } from 'react-icons/ai';

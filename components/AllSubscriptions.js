@@ -1,11 +1,11 @@
 import { IconButton } from '@chakra-ui/button';
 import { Badge, Box, Circle, Flex, Grid, Heading, HStack, ListItem, Spacer, Stack, Text, UnorderedList, VStack } from '@chakra-ui/layout';
 import React,{useState,useEffect} from 'react'
-import SubscriptionForm from '../SubscriptionForm';
+import SubscriptionForm from './SubscriptionForm'
 import {BiDotsHorizontalRounded} from "react-icons/bi";
 import {AiOutlinePlus} from "react-icons/ai";
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { firestore } from '../../lib/firebase';
+import { firestore } from '../lib/firebase';
 
 export default function AllSubscriptions({subscriptions}) {
     const[formMode,setFormMode] = useState(false);

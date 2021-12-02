@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuList, Slide } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { Button, IconButton } from '@chakra-ui/button';
-import { firestore } from '../../lib/firebase';
+import { firestore } from '../lib/firebase';
 import { useDisclosure } from '@chakra-ui/hooks';
 
 export default function ActiveSales({ displayName,subscriptions,redemptions}) {

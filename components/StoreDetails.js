@@ -4,7 +4,7 @@ import { PhoneIcon, SearchIcon } from '@chakra-ui/icons';
 import { Box, Flex, Grid, GridItem, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
 import { Modal, ModalBody, ModalCloseButton,InputGroup,InputLeftElement, ModalContent,Input, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
-import { firestore } from '../../lib/firebase';
+import { firestore } from '../lib/firebase';
 
 
 export default function StoreDetails() {

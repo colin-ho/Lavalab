@@ -11,12 +11,12 @@ import {
 } from 'react-icons/fi';
 import { AiOutlineShop,AiOutlineTags } from "react-icons/ai";
 import {IoPeopleOutline} from "react-icons/io5";
-import Home from '../../components/Dashboard/Home';
-import ActiveSales from '../../components/Dashboard/ActiveSales';
-import AllSubscriptions from '../../components/Dashboard/AllSubscriptions';
-import StoreDetails from '../../components/Dashboard/StoreDetails';
+import Home from '../../components/Home';
+import ActiveSales from '../../components/ActiveSales';
+import AllSubscriptions from '../../components/AllSubscriptions';
+import StoreDetails from '../../components/StoreDetails';
 import { useRouter } from 'next/router';
-import Customers from '../../components/Dashboard/Customers';
+import Customers from '../../components/Customers';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
