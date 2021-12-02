@@ -275,7 +275,7 @@ const MobileNav = ({ onOpen,displayName}) => {
                     alignItems="flex-start"
                     spacing="1px"
                     ml="2">
-                    <Text fontSize="sm">{displayName}</Text>
+                    <Text fontWeight="600" fontSize="sm">{displayName}</Text>
                     <Text fontSize="xs" color="gray.600">
                       {(new Date()).toLocaleDateString(undefined,{ weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     </Text>
@@ -288,7 +288,6 @@ const MobileNav = ({ onOpen,displayName}) => {
               <MenuList
                 bg={useColorModeValue('white', 'gray.900')}
                 borderColor={useColorModeValue('gray.200', 'gray.700')}>
-                <MenuItem>Settings</MenuItem>
                 <MenuItem onClick={()=>router.push(`/`)}>Back to Website</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={() => {auth.signOut();router.push(`/`)}}>Sign out</MenuItem>

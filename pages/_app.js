@@ -1,4 +1,4 @@
-import '../styles/globals.css'
+
 import { Toaster } from 'react-hot-toast';
 import { AuthContext } from '../lib/context';
 import { useData } from '../lib/hooks';

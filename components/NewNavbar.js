@@ -35,10 +35,10 @@ export default function NewNavbar() {
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
                 <Link href="/">
-                    <Image cursor="pointer" w = "130px" src={"../../punch-card-logo 1.svg"} alt=""/>
+                    <Image cursor="pointer" w = "150px" src={"../../punch-card-logo 1.svg"} alt=""/>
                 </Link>
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-              <DesktopNav />
+              {/*<DesktopNav />*/}
             </Flex>
           </Flex>
   

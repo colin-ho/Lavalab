@@ -20,7 +20,7 @@ export default function AllSubscriptions({subscriptions}) {
             <Heading  size="lg" mb="10px"> Subscriptions</Heading>
             <Text>Create new subscriptions or manage existing ones</Text>
 
-            <Box cursor="pointer" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" position="relative" alignSelf="flex-end" overflow="hidden" onClick={()=> {setEditableSub(null);setFormMode(true)}} bg="white" w="250px" p={6} my="30px" borderRadius="lg">
+            <Box cursor="pointer" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" position="relative" alignSelf="flex-start" overflow="hidden" onClick={()=> {setEditableSub(null);setFormMode(true)}} bg="white" w="250px" p={6} my="30px" borderRadius="lg">
                 <HStack>
                 <Text >Create New</Text>
                 <AiOutlinePlus/>

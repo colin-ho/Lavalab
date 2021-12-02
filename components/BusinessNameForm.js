@@ -124,12 +124,12 @@ export default function BusinessNameForm() {
                 </Heading>
 
                 <Box alignSelf="center" w="sm" mt="20px" borderWidth="1px" borderRadius="lg" overflow="hidden">
-                    <Image w = "sm" h="3xs" objectFit="cover" src={photoURL ? photoURL : "https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2F6p1j3C5k3tgZg0BfJo2s4k2OO9O2%2F1637781076553.jpeg?alt=media&token=284d2ee6-5998-461d-a716-ee0d6b8f49af"} alt="Upload an image"/>
+                    <Image w = "sm" h="3xs" objectFit="cover" src={photoURL ? photoURL : 'https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2FUATxA2cmfsWO8USvKGoIvnEFZrd2%2F1638431282434.jpeg?alt=media&token=f1f758d9-0619-430a-be81-19f02c856452'} alt="Upload an image"/>
 
                     <Flex direction="column" align="flex-start" p="6">
                         <Button borderRadius="50px">{watchAllFields.businessType}</Button>
-                        <Heading mt="10px" size="lg">{watchAllFields.businessName}</Heading>
-                        <Text fontSize="sm">{watchAllFields.description}</Text>
+                        <Heading mt="10px" size="lg">{watchAllFields.businessName ? watchAllFields.businessName : "Morning Brew"}</Heading>
+                        <Text fontSize="sm">{watchAllFields.description ? watchAllFields.description: "Serving your favorite hot coffee..."}</Text>
                     </Flex>
                 </Box>
             </Flex>

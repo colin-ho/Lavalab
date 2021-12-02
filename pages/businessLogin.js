@@ -1,4 +1,4 @@
-import { auth, firestore, googleAuthProvider } from '../lib/firebase';
+import { auth, firestore, googleAuthProvider, serverTimestamp } from '../lib/firebase';
 import { AuthContext } from '../lib/context';
 import { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
@@ -16,26 +16,9 @@ import { HStack } from '@chakra-ui/layout';
 
 
 export default function BusinessLogin(props) {
-  const { userType, user } = useContext(AuthContext);
-  const [businessName, setBusinessName] = useState("");
+  const { userType, user,displayName } = useContext(AuthContext);
   const [isSignIn,setIsSignIn] = useState(true);
   const[loading,setLoading] = useState(true);
-
-  useEffect(() => {
-    // turn off realtime subscription
-    let unsubscribe;
-
-    if (user) {
-      const ref = firestore.collection('businesses').doc(user.uid);
-      unsubscribe = ref.onSnapshot((doc) => {
-        setBusinessName(doc.data()?.businessName);
-      });
-    } else {
-      setBusinessName(null);
-    }
-
-    return unsubscribe;
-  }, [user]);
 
   useEffect(
     () => {
@@ -43,10 +26,10 @@ export default function BusinessLogin(props) {
       return () => {
         clearTimeout(timer1);
       };
-    },[]);
+    },[loading]);
 
   return (
-        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  businessName ? <SignOutButton businessName={businessName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />) :null
+        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? <SignOutButton businessName={displayName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setLoading={setLoading} setIsSignIn={setIsSignIn} /> : <SignUpForm setLoading={setLoading} setIsSignIn={setIsSignIn} />) :null
   );
 }
 
@@ -72,13 +55,14 @@ const signUpSchema = yup.object().shape({
 });
 
 // Sign in with Google button
-function SignInForm({setIsSignIn}) {
+function SignInForm({setIsSignIn,setLoading}) {
   const [errorMessage,setErrorMessage] = useState(null);
   const { register, handleSubmit, formState: { errors }} = useForm({
     resolver: yupResolver(signInSchema),
   });
     
   const onGoogleSubmit = async () => {
+    setLoading(true)
     await auth.signInWithPopup(googleAuthProvider);
     const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
     const { exists } = await userDoc.get();
@@ -86,7 +70,7 @@ function SignInForm({setIsSignIn}) {
       const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
       // Commit both docs together as a batch write.
       const batch = firestore.batch();
-      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business'});
+      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',joined:serverTimestamp() });
       batch.set(businessDoc, { uid: auth.currentUser.uid });
       await batch.commit();
     }
@@ -95,6 +79,7 @@ function SignInForm({setIsSignIn}) {
 
   const onEmailSubmit = async ({email,password})=>{
     try{
+      setLoading(true)
       await signInWithEmailAndPassword(auth, email, password);
     }
     catch(err){
@@ -107,7 +92,7 @@ function SignInForm({setIsSignIn}) {
     <Flex
       minH={'calc(100vh - 60px)'}
       justify={'center'}
-      bg={'gray.50'}>
+      >
       <Stack spacing={8} mx={'auto'} w = {'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={{ base: "2xl",sm:"3xl", md: "4xl"}}>Sign in to your account</Heading>
@@ -141,7 +126,7 @@ function SignInForm({setIsSignIn}) {
                   <Link color={'blue.400'} onClick={()=>setIsSignIn(false)}>Create an account</Link>
                 </Stack>
                 {errorMessage ? <Text fontSize={'sm'}color={'red.500'}>{errorMessage}</Text> :null}
-                <Button
+                <Button boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)"
                   bg={'black'}
                   color={'white'}
                   _hover={{
@@ -198,7 +183,7 @@ function SignOutButton({businessName}) {
   );
 }
 
-function SignUpForm({setIsSignIn}) {
+function SignUpForm({setIsSignIn,setLoading}) {
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(signUpSchema),
   });
@@ -206,6 +191,7 @@ function SignUpForm({setIsSignIn}) {
 
   const handleSignup = async ({ email, password})=> {
     try{
+      setLoading(true)
       await createUserWithEmailAndPassword(auth, email, password)
       setErrorMessage(null)
     }
@@ -219,7 +205,7 @@ function SignUpForm({setIsSignIn}) {
       const { exists } = await userDoc.get();
       if(!exists){
         // Commit both docs together as a batch write.
-        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',businessType:''});
+        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',businessType:'',joined:serverTimestamp()});
         setIsSignIn(true);
       }
     }
