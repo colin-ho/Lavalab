@@ -107,7 +107,7 @@ function OrderItem({ redemption,subscription }) {
                 </VStack>
                 <VStack spacing={1} alignItems="start">
                 <Text as="b" >Redemption Code: {redemption.code}</Text>
-                    <Button fontSize={'md'}  fontWeight={500} onClick={!redemption.confirmed ? confirm : collected }
+                    <Button fontSize={'md'} variant="ghost" fontWeight={500} onClick={!redemption.confirmed ? confirm : collected }
                 color={'white'} bg={'black'} _hover={{bg: 'black',color:'white'}}>
                 {!redemption.confirmed ? "Confirm order" : "Mark as complete" }</Button>
                 

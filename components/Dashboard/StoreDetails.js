@@ -12,7 +12,7 @@ export default function StoreDetails() {
     return (
         <Flex direction = "column" align="flex-start">
             <Heading  size="lg" mb="10px"> Store details</Heading>
-            <Text>Edit store hours and tags</Text>
+            <Text>Coming soon...</Text>
             
         </Flex> 
     )

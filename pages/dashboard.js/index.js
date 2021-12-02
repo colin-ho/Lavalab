@@ -9,7 +9,7 @@ import {
 import {
   FiHome,FiTrendingUp,FiCompass,FiStar,FiSettings,FiMenu,FiBell,FiChevronDown,
 } from 'react-icons/fi';
-import { AiOutlineShop } from "react-icons/ai";
+import { AiOutlineShop,AiOutlineTags } from "react-icons/ai";
 import {IoPeopleOutline} from "react-icons/io5";
 import Home from '../../components/Dashboard/Home';
 import ActiveSales from '../../components/Dashboard/ActiveSales';
@@ -21,7 +21,7 @@ import Customers from '../../components/Dashboard/Customers';
 const LinkItems = [
     { name: 'Home', icon: FiHome },
     { name: 'Active Sales', icon: FiTrendingUp },
-    { name: 'Subscriptions', icon: FiStar },
+    { name: 'Subscriptions', icon: AiOutlineTags },
     { name: 'Customers', icon: IoPeopleOutline },
     { name: 'Store Details', icon: AiOutlineShop },
 ];
@@ -262,12 +262,6 @@ const MobileNav = ({ onOpen,displayName}) => {
         </Text>
   
         <HStack spacing={{ base: '0', md: '6' }}>
-          <IconButton
-            size="lg"
-            variant="ghost"
-            aria-label="open menu"
-            icon={<FiBell />}
-          />
           <Flex alignItems={'center'}>
             <Menu>
               <MenuButton

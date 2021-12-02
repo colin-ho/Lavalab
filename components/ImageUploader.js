@@ -45,7 +45,7 @@ export default function ImageUploader({setPhotoUrl}) {
   };
 
   return (
-    <Button as="label" cursor="pointer" isLoading={uploading}>
+    <Button as="label" color={'white'} bg={'black'} _hover={{bg: 'black'}} cursor="pointer" isLoading={uploading}>
       {!uploading ? "Upload an Image":null}
         {!uploading && (
           <input type="file" onChange={uploadFile} accept="image/x-png,image/gif,image/jpeg" />

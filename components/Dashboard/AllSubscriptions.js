@@ -27,17 +27,17 @@ export default function AllSubscriptions({subscriptions}) {
                 </HStack>
             </Box>
 
-            <Heading  size="md" fontWeight = "500" mb="30px"> Live Subscriptions</Heading>
+            <Heading  size="md"  mb="30px"> Live Subscriptions</Heading>
             <Flex direction="column" w="100%">
                 {live.length!==0 ? live.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no live subscriptions</Text>}
             </Flex>
 
-            <Heading  size="md" fontWeight = "500"mb="30px" mt="10px"> Drafts</Heading>
+            <Heading  size="md" mb="30px" mt="10px"> Drafts</Heading>
             <Flex direction="column" w="100%">
                 {drafts.length!==0 ? drafts.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no drafts</Text>}
             </Flex>
 
-            <Heading  size="md" fontWeight = "500"mb="30px" mt="10px"> Archive</Heading>
+            <Heading  size="md"mb="30px" mt="10px"> Archive</Heading>
             <Flex direction="column" w="100%">
                 {archived.length!==0 ? archived.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no archived subscriptions</Text>}
             </Flex>
@@ -89,7 +89,7 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
                         w="60px"
                         h="60px"
                     />
-                    <MenuList mt="-20px">
+                    <MenuList mt="-30px" mr="20px">
                         <MenuItem onClick={subscription.published ? subscription.archived ? unarchive :archive:edit}>
                         {subscription.published ? subscription.archived ? "Unarchive" : "Archive":"Edit"}
                         </MenuItem>

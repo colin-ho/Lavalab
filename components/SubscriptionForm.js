@@ -10,6 +10,7 @@ import kebabCase from 'lodash.kebabcase';
 import React,{useContext, useState} from 'react'
 import { useForm } from "react-hook-form";
 import toast from 'react-hot-toast';
+import { AiOutlineLeft } from 'react-icons/ai';
 import { AuthContext } from '../lib/context';
 import { auth, firestore, serverTimestamp } from '../lib/firebase';
 import ImageUploader from './ImageUploader';
@@ -85,23 +86,28 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                 {console.log(errors)}
                 <Flex direction="column" w={{base:"100%",pxl:"65%"}} justify="space-around" pr={{base:"30px",pxl:"60px"}}>
                     <Heading  size="lg" mb="10px"> Subscriptions</Heading>
-                    <Text>Create new subscriptions or manage existing ones</Text>
+                    <HStack>
+                        <AiOutlineLeft cursor="pointer" onClick={()=>setFormMode(false)}/> 
+                        <Text>Create new subscriptions or manage existing ones</Text>
+                    </HStack>
                     <form onSubmit={handleSubmit(submitSubscription)}>
-                        <Stack boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" p="6" spacing="5">
+                        
+                        <Stack mt="20px" borderRadius="2xl" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" p="6" spacing="5">
+                        <Heading  size="md" >Editor</Heading>
                             <FormControl id="title" isInvalid={errors.title?.message}>
-                                <FormLabel>Subscription Name:</FormLabel>
+                                <FormLabel>Title</FormLabel>
                                 <Input placeholder="Morning Brew Subscription" type="text" {...register('title',{ required: { value: true, message: 'Subscription name is required'},
                                 minLength:{ value: 5, message: 'Name is too short'},maxLength:{ value: 32, message: 'Name is too long'}})} />
                                 <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                             </FormControl>
                             <HStack spacing="10">
                                 <FormControl h="100px" id="price" isInvalid={errors.price?.message}>
-                                    <FormLabel >Price:</FormLabel>
+                                    <FormLabel >Subscription Price</FormLabel>
                                     <Input type="number" placeholder="19.99"{...register('price',{ required: { value: true, message: 'Price is required'},min:{ value: 1, message: 'Price is too low'}})}/>
                                     <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
                                 </FormControl>
                                 <FormControl h="100px" id="interval" isInvalid={errors.interval?.message}>
-                                    <FormLabel>Renewal Frequency:</FormLabel>
+                                    <FormLabel>Renewal Cycle</FormLabel>
                                     <Select {...register('interval',{ required: { value: true, message: 'Renewal frequency is required'}})}>
                                         <option value="week">Weekly</option>
                                         <option value="month">Monthly</option>
@@ -111,19 +117,19 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                                 </FormControl>
                             </HStack>
                             <FormControl id="content" isInvalid={errors.content?.message}>
-                                <FormLabel>Product or service offered:</FormLabel>
+                                <FormLabel>Product name</FormLabel>
                                 <Input type="text" placeholder="Hot Cappucino" {...register('content',{ required: { value: true, message: 'Product is required'},
                                 minLength:{ value: 1, message: 'Product name is too short'}})} />
                                 <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
                             </FormControl>
                             <FormControl id="description" isInvalid={errors.description?.message}>
-                                <FormLabel>Description:</FormLabel>
+                                <FormLabel>Description</FormLabel>
                                 <Input type="text" placeholder="Delicious hot coffee everyday" {...register('description',{ required: { value: true, message: 'Description is required'},
-                                minLength:{ value: 1, message: 'Description is too long'},minLength:{ value: 32, message: 'Description is too long'}})} />
+                                minLength:{ value: 1, message: 'Description is too short'},maxLength:{ value: 80, message: 'Description is too long'}})} />
                                 <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
                             </FormControl>
                             <FormControl id="limit" isInvalid={errors.limit?.message}>
-                                <FormLabel># of total redemptions allowed:</FormLabel>
+                                <FormLabel>Quantity redeemable</FormLabel>
                                 <Input type="number" placeholder="10" {...register('limit',{ required: { value: true, message: 'Limit is required'},
                                 min:{ value: 1, message: 'Number is too low'},max:{ 
                                     value: watchAllFields.dayConstrain ? watchAllFields.interval ==="Weekly" ? 
@@ -139,38 +145,37 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                             {photoError ? <Text fontSize={'sm'} color={'red.500'}>Please upload an image</Text> : null}
 
                             <ButtonGroup spacing="6">
-                                <Button colorScheme="blue" type="submit" onClick={()=>setDraftSave(false)} variant="outline">Publish</Button>
-                                <Button type="submit" onClick={()=>setDraftSave(true)} variant="ghost">Save as draft</Button>
+                                <Button colorScheme="black" type="submit" onClick={()=>setDraftSave(false)} variant="outline">Publish</Button>
+                                <Button colorScheme="black" type="submit" onClick={()=>setDraftSave(true)} variant="ghost">Save as draft</Button>
                                 <Text w = "50%" fontSize="xs">Once you publish your subscription, you will not be able to edit it. Instead, you can archive the subscription, which would remove it from our app.</Text>
-                            </ButtonGroup>
-                            <ButtonGroup>
-                                <Button variant = "outline" onClick={()=>setFormMode(false)}>Back</Button>
                             </ButtonGroup>
                         </Stack>
                     </form>
                 </Flex>
                 <Flex direction="column" pt={{base:"30px",pxl:"0px"}}>
-                    <Heading alignSelf="left" size="lg" mb="20px">
-                        Preview
-                    </Heading>
-
-                    <Box alignSelf="center" w="sm" mt="20px" borderWidth="1px" borderRadius="lg" overflow="hidden">
-                        <Image w = "sm" h="3xs" objectFit="cover" src={photoURL} alt="Upload an image"/>
-
-                        <Flex direction="column" p="6">
-                            <Flex direction="row" justify="space-between" mb="20px">
-                                <Text w="200px" as="b">{displayName}</Text>
-                                <VStack spacing="0" alignItems="flex-end">
-                                    <Text>${watchAllFields.price ? (Math.round(watchAllFields.price * 100) / 100).toFixed(2) : 19.99}</Text>
-                                    <Text>Renews {watchAllFields.interval ? watchAllFields.interval.charAt(0).toUpperCase() +  watchAllFields.interval.slice(1) + "ly": "Weekly"}</Text>
-                                </VStack>
-                            </Flex>
-                            <Text>{watchAllFields.title ? watchAllFields.title: "Morning Brew Subscription"}</Text>
-                            <UnorderedList ml="30px">
-                                <ListItem>{watchAllFields.dayConstrain ? "1 " : watchAllFields.limit ? watchAllFields.limit+"x " : "10x "}{watchAllFields.content ? watchAllFields.content : "Hot Cappucino"} {watchAllFields.dayConstrain ? " per Day" : ""}</ListItem>
-                            </UnorderedList>
-                            <Button mt="30px">Purchase Subscription</Button>
+                    <Box  boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" alignSelf="center" w="sm" p="6" mt="90px" borderRadius="xl"  >
+                    <Heading  size="md" mb="10px">Preview</Heading>
+                        <Box mt="20px" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" borderRadius="xl" overflow="hidden">
+                        <Image w = "sm" h="150px" objectFit="cover" src={photoURL} alt="Upload an image"/>
+                        <Flex direction="column" p="4" mb="20px">
+                            <Text fontWeight="600">{watchAllFields.title ? watchAllFields.title: "Morning Brew Subscription"}{" from "+displayName}</Text>
+                            <Text >{watchAllFields.limit ? watchAllFields.limit : "7"} {watchAllFields.content ? watchAllFields.content+"'s" : "Coffee's"} for {watchAllFields.price ? "$"+watchAllFields.price : "$21"}{watchAllFields.interval ? "/"+watchAllFields.interval :"/Week"}</Text>
                         </Flex>
+                        </Box>
+                        <Box boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" alignSelf="center" h="auto" mt="20px" borderRadius="xl"  >
+                            <Flex direction="column" p="4" >
+                            <Text fontWeight="600">{"What's included"}</Text>
+                            <Text >{watchAllFields.description ? watchAllFields.description : "Our classic iced americano brewed to perfection" }</Text>
+                            </Flex>
+                        </Box>
+                        <Box boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" alignSelf="center" h="auto" mt="20px" borderRadius="xl"  >
+                            <Flex direction="column" p="4" >
+                            <Text fontWeight="600">Terms and restrictions</Text>
+                            {watchAllFields.dayConstrain ? <Text >Limited to 1 redemption per day</Text>:null}
+                            <Text>Cannot be combined with other offers, promotions, sales, or coupons</Text>
+                            </Flex>
+                        </Box>
+                        <Button mt="20px" w="full" color={'white'} bg={'black'} _hover={{bg: 'black'}} onClick={()=>setFormMode(false)}>Purchase</Button>
                     </Box>
                 </Flex>
         </Flex>
