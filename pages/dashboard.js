@@ -76,25 +76,27 @@ export default function Dashboard() {
     useEffect(() => {
 
       let unsubscribe;
-      if(subscriptions.length>0 && user){
+      if(subscriptions.length>0 && user ){
+        console.log(subscriptions)
         let ids =subscriptions.map((sub)=>sub.id);
-        let customers = []
-        unsubscribe = firestore.collectionGroup('subscriptions').where('id','in',ids).onSnapshot(async(snapshot)=>{
-          console.log('changing')
-          let temp = []
-          snapshot.forEach((sub)=>{
-            if (temp.includes(sub.id) === false) temp.push(firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(sub.id).collection('customers').get());
-          })
-          let data = (await Promise.all(temp));
-          
-          data.forEach((snap)=>{
-            snap.forEach((doc)=>{
-              if (customers.includes(doc.id) === false) customers.push(doc.id)
+        if(!ids.includes(undefined)){
+          let customers = []
+          unsubscribe = firestore.collectionGroup('subscriptions').where('id','in',ids).onSnapshot(async(snapshot)=>{
+  
+            let temp = []
+            snapshot.forEach((sub)=>{
+              if (temp.includes(sub.id) === false) temp.push(firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(sub.id).collection('customers').get());
             })
+            let data = (await Promise.all(temp));
+            
+            data.forEach((snap)=>{
+              snap.forEach((doc)=>{
+                if (customers.includes(doc.id) === false) customers.push(doc.id)
+              })
+            })
+            setCustomerIds(customers);
           })
-          setCustomerIds(customers);
-        })
-        
+        }
       }
       return unsubscribe;
     }, [subscriptions,user])

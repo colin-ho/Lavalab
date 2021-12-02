@@ -23,7 +23,7 @@ export default function Customers({customerData,total}) {
                     <Text>Current customers</Text>
                 </HStack>
                 <HStack flex="1" p={8} borderRadius="xl" spacing={12} boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-                    <Text fontSize='32'as={'b'}>{total? total:null}</Text>
+                    <Text fontSize='32'as={'b'}>{total? total:0}</Text>
                     <Text>All time Subscribers</Text>
                 </HStack>
             </HStack>

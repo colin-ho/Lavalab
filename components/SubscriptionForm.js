@@ -19,7 +19,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
     const{displayName,businessType} = useContext(AuthContext);
     const subscription = !editableSub ? {title:'',price:'',content:'',interval:'week',limit:'',dayConstrain:false,description:''} : {title:editableSub.title,price:editableSub.price,content:editableSub.content,interval:editableSub.interval,limit:editableSub.limit,dayConstrain:editableSub.dayConstrain,description:editableSub.description};
     const { register, watch,handleSubmit, formState: { errors } } = useForm({ defaultValues:subscription, mode: 'onSubmit' });
-    const initialPhoto = editableSub ? editableSub.photoURL : "https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2F6p1j3C5k3tgZg0BfJo2s4k2OO9O2%2F1637781076553.jpeg?alt=media&token=284d2ee6-5998-461d-a716-ee0d6b8f49af";
+    const initialPhoto = editableSub ? editableSub.photoURL : 'https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2FUATxA2cmfsWO8USvKGoIvnEFZrd2%2F1638431282434.jpeg?alt=media&token=f1f758d9-0619-430a-be81-19f02c856452';
     const watchAllFields = watch(); 
     const [photoURL,setPhotoURL] = useState(initialPhoto);
     const [photoError,setPhotoError] = useState(false);
@@ -72,18 +72,18 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
             const ref = firestore.collection('businesses').doc(uid).collection('subscriptions').doc(editableSub.id);
             await ref.update(data);
             toast.success(draftSave ? 'Subscription draft updated successfully!' : 'Subscription published successfully!')
+            setFormMode(false);
         } else{
             const ref = await firestore.collection('businesses').doc(uid).collection('subscriptions').add(data);
-            ref.update({id:ref.id})
+            await ref.update({id:ref.id})
             toast.success(draftSave ? 'Subscription draft created successfully!' : 'Subscription published successfully!')
+            setFormMode(false);
         }
-        setFormMode(false);
-        }
+    }
         
 
     return (
             <Flex direction={{base:"column",pxl:"row"}} >
-                {console.log(errors)}
                 <Flex direction="column" w={{base:"100%",pxl:"65%"}} justify="space-around" pr={{base:"30px",pxl:"60px"}}>
                     <Heading  size="lg" mb="10px"> Subscriptions</Heading>
                     <HStack>
@@ -159,7 +159,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                         <Image w = "sm" h="150px" objectFit="cover" src={photoURL} alt="Upload an image"/>
                         <Flex direction="column" p="4" mb="20px">
                             <Text fontWeight="600">{watchAllFields.title ? watchAllFields.title: "Morning Brew Subscription"}{" from "+displayName}</Text>
-                            <Text >{watchAllFields.limit ? watchAllFields.limit : "7"} {watchAllFields.content ? watchAllFields.content+"'s" : "Coffee's"} for {watchAllFields.price ? "$"+watchAllFields.price : "$21"}{watchAllFields.interval ? "/"+watchAllFields.interval :"/Week"}</Text>
+                            <Text >{watchAllFields.limit ? watchAllFields.limit : "7"} {watchAllFields.content ? watchAllFields.content : "Coffee"} for {watchAllFields.price ? "$"+watchAllFields.price : "$21"}{watchAllFields.interval ? "/"+watchAllFields.interval :"/Week"}</Text>
                         </Flex>
                         </Box>
                         <Box boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" alignSelf="center" h="auto" mt="20px" borderRadius="xl"  >

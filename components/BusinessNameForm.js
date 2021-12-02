@@ -45,7 +45,7 @@ export default function BusinessNameForm() {
         const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
         // Commit both docs together as a batch write.
         const batch = firestore.batch();
-        batch.update(userDoc,{displayName:businessName})
+        batch.update(userDoc,{displayName:businessName,businessType:businessType})
         batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: photoURL, address: address,geohash: geohash,description:description,lat:lat,lng:lng,totalCustomers:0 },{ merge: true });
         await batch.commit();
     };
@@ -88,11 +88,14 @@ export default function BusinessNameForm() {
                             ):null}
                         </Flex>
                         <FormControl id="businessType" isInvalid={errors.businessType?.message}>
-                            <FormLabel>BusinessType:</FormLabel>
+                            <FormLabel>Business Type:</FormLabel>
                             <Select {...register('businessType',{ required: { value: true, message: 'Business type is required'}})}>
                                 <option value="Cafe">Cafe</option>
                                 <option value="Breakfast">Breakfast</option>
+                                <option value="Boba">Boba</option>
+                                <option value="Burgers">Burgers</option>
                                 <option value="Italian">Italian</option>
+                                <option value="Japanese">Japanese</option>
                                 <option value="Mexican">Mexican</option>
                                 <option value="Chinese">Chinese</option>
                                 <option value="Juice">Juice</option>
@@ -102,7 +105,7 @@ export default function BusinessNameForm() {
                         <FormControl id="description" isInvalid={errors.description?.message}>
                             <FormLabel>Description:</FormLabel>
                             <Textarea placeholder="Serving your favorite hot coffee..." {...register('description',{ required: { value: true, message: 'Description is required'},
-                            minLength:{ value: 1, message: 'Description is too short'},maxLength:{ value: 64, message: 'Description is too long'}})} />
+                            minLength:{ value: 1, message: 'Description is too short'},maxLength:{ value: 100, message: 'Description is too long'}})} />
                             <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
                         </FormControl>
                         <ImageUploader setPhotoUrl={setPhotoURL}/>
