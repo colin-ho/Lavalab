@@ -175,7 +175,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                             <Text>Cannot be combined with other offers, promotions, sales, or coupons</Text>
                             </Flex>
                         </Box>
-                        <Button mt="20px" w="full" color={'white'} bg={'black'} _hover={{bg: 'black'}} onClick={()=>setFormMode(false)}>Purchase</Button>
+                        <Button mt="20px" w="full" color={'white'} bg={'black'} _hover={{bg: 'black'}}>Purchase</Button>
                     </Box>
                 </Flex>
         </Flex>
