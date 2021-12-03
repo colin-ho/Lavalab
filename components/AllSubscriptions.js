@@ -62,11 +62,14 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
     }
     //
     return (
+
+        <>
+        {subscription ? 
         <Box overflow="hidden" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" borderRadius="xl" position="relative"  mb="20px">
         <Grid gap={6}  templateColumns="repeat(4, 1fr)" bg="white" w="100%" p={6} pb="30px" borderRadius="lg">
             <VStack align="start"> 
                 <Text as="b">{subscription.title}</Text>
-                <Text >Created {subscription.updatedAt.toDate().toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+                {subscription.published ? <Text >Created {subscription.updatedAt.toDate().toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>:null}
             </VStack>
             <VStack align="start">
                 <Text fontWeight="500">Overview</Text>
@@ -96,8 +99,8 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
                     </MenuList>
                 </Menu>
             </Circle>
-        </Box>
-      
+        </Box>:null}
+      </>
     );
 }
 

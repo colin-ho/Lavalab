@@ -90,15 +90,26 @@ export default function BusinessNameForm() {
                         <FormControl id="businessType" isInvalid={errors.businessType?.message}>
                             <FormLabel>Business Type:</FormLabel>
                             <Select {...register('businessType',{ required: { value: true, message: 'Business type is required'}})}>
-                                <option value="Cafe">Cafe</option>
-                                <option value="Breakfast">Breakfast</option>
-                                <option value="Boba">Boba</option>
-                                <option value="Burgers">Burgers</option>
-                                <option value="Italian">Italian</option>
-                                <option value="Japanese">Japanese</option>
-                                <option value="Mexican">Mexican</option>
-                                <option value="Chinese">Chinese</option>
-                                <option value="Juice">Juice</option>
+                            <option value="American">American</option>
+                            <option value="Boba">Boba</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Burgers">Burgers</option>
+                            <option value="Cafe">Cafe</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Deserts">Deserts</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Healthy">Healthy</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Korean">Korean</option>
+                            <option value="Juice">Juice</option>
+                            <option value="Mediterranean">Mediterranean</option>
+                            <option value="Mexican">Mexican</option>
+                            <option value="Poke">Poke</option>
+                            <option value="South American">South American</option>
+                            <option value="Thai">Thai</option>
+                            <option value="Vietnamese">Vietnamese</option>
+                            <option value="Mexican">Mexican</option>
                             </Select>
                             <FormErrorMessage>{errors.businessType?.message}</FormErrorMessage>
                         </FormControl>

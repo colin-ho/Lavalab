@@ -42,6 +42,7 @@ export default function Dashboard() {
   useEffect(() => {
     const getNestedStuff =
       async(doc,ids)=>{
+          
           const [data,subQuery] = await Promise.all([(firestore.collection('customers').doc(doc.id).get()),(firestore.collection('customers').doc(doc.id).collection('subscribedTo').where('subscriptionId','in',ids).get())])
           let subs=[]
           subQuery.forEach((sub)=>{
@@ -65,9 +66,11 @@ export default function Dashboard() {
     let unsubscribe;
     if(customerIds.length>0){
       let ids =subscriptions.map((sub)=>sub.id);
-      unsubscribe = firestore.collection('customers').where('uid','in',customerIds).onSnapshot(async (snapshot)=>{
-        setCustomerData(await getstuff(snapshot,ids))
-      })
+      if(!ids.includes(undefined)){
+        unsubscribe = firestore.collection('customers').where('uid','in',customerIds).onSnapshot(async (snapshot)=>{
+          setCustomerData(await getstuff(snapshot,ids))
+        })
+      }
     }
     
     return unsubscribe

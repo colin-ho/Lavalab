@@ -26,7 +26,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
     const [draftSave,setDraftSave] = useState(false);
 
     const submitSubscription = async ({title,content,price,interval,limit,dayConstrain,description})=>{
-        if(!photoURL){
+        if(photoURL=='https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2FUATxA2cmfsWO8USvKGoIvnEFZrd2%2F1638431282434.jpeg?alt=media&token=f1f758d9-0619-430a-be81-19f02c856452'){
             setPhotoError(true);
             return;
         } else{
