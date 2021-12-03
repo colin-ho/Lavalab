@@ -29,7 +29,9 @@ export default function BusinessLogin(props) {
     },[loading]);
 
   return (
-        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? <SignOutButton businessName={displayName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setLoading={setLoading} setIsSignIn={setIsSignIn} /> : <SignUpForm setLoading={setLoading} setIsSignIn={setIsSignIn} />) :null
+        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? <SignOutButton businessName={displayName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setLoading={setLoading} setIsSignIn={setIsSignIn} /> : <SignUpForm setLoading={setLoading} setIsSignIn={setIsSignIn} />) :<Flex minH={'calc(100vh - 60px)'}
+        justify={'center'}
+        bg={'gray.50'}></Flex>
   );
 }
 
@@ -92,6 +94,7 @@ function SignInForm({setIsSignIn,setLoading}) {
     <Flex
       minH={'calc(100vh - 60px)'}
       justify={'center'}
+      bg={'gray.50'}
       >
       <Stack spacing={8} mx={'auto'} w = {'lg'} py={12} px={6}>
         <Stack align={'center'}>
