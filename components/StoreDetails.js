@@ -186,7 +186,7 @@ export default function StoreDetails({business}) {
                         <Text>Add Tags:</Text>
                         <InputGroup w="50%">
                         <Input value = {tag} onChange={(e)=>setTag(e.target.value)} onKeyPress ={(e)=>{if(e.key === "Enter") addTag()}} list="browsers"/>
-                        <InputRightElement cursor="pointer" onClick={addTag} children={<AiOutlinePlus />} />
+                        <InputRightElement cursor="pointer" onClick={addTag} ><AiOutlinePlus /></InputRightElement>
                         <datalist id="browsers">
                             <option value="American">American</option>
                             <option value="Boba">Boba</option>
@@ -262,9 +262,7 @@ export default function StoreDetails({business}) {
                         <FormControl isInvalid={addressError}>
                             <InputGroup >
                                 <InputLeftElement
-                                pointerEvents='none'
-                                children={<BsPinMap color='gray.300' />}
-                                />
+                                pointerEvents='none'><BsPinMap color='gray.300' /></InputLeftElement>
                                 <Input placeholder='Address' isDisabled={!editDetails} value={address} onChange={(evt) => {setAddressError(false);setShowSuggestions(evt.target.value!=='' ? true : false);setAddress(evt.target.value);getPlacePredictions({ input: evt.target.value })}}/>
                             </InputGroup>
                             <FormErrorMessage>Address is Required</FormErrorMessage>
@@ -283,9 +281,7 @@ export default function StoreDetails({business}) {
                         <FormControl isInvalid={errors.phone?.message}>
                             <InputGroup>
                                 <InputLeftElement
-                                pointerEvents='none'
-                                children={<AiOutlinePhone color='gray.300' />}
-                                />
+                                pointerEvents='none'><AiOutlinePhone color='gray.300' /></InputLeftElement>
                                 <Input placeholder='Phone' name="phone" type="number" isDisabled={!editDetails} 
                                 {...register('phone',{ required: {value:true,message:"Phone number is required"},
                                 minLength:{ value: 10, message: 'Phone number is too short'},maxLength:{ value: 10, message: 'Phone number is too long'}})}
@@ -296,9 +292,7 @@ export default function StoreDetails({business}) {
                         <FormControl isInvalid={errors.email?.message}>
                             <InputGroup>
                                 <InputLeftElement
-                                pointerEvents='none'
-                                children={<AiOutlineMail color='gray.300' />}
-                                />
+                                pointerEvents='none'><AiOutlineMail color='gray.300' /></InputLeftElement>
                                 <Input placeholder='Email' name="email" type="email" isDisabled={!editDetails}
                                 {...register('email',{required: {value:true,message:"Email is required"},pattern: {value:/^\S+@\S+$/i,message:"Please enter an appropriate email"}})}
                                 />
@@ -308,9 +302,7 @@ export default function StoreDetails({business}) {
                         <FormControl isInvalid={errors.website?.message}>
                             <InputGroup>
                                 <InputLeftElement
-                                pointerEvents='none'
-                                children={<AiOutlineLink color='gray.300' />}
-                                />
+                                pointerEvents='none'><AiOutlineLink color='gray.300' /></InputLeftElement>
                                 <Input placeholder='Website' name="website" type="url" isDisabled={!editDetails} 
                                 {...register('website',{ required: false})}/>
                             </InputGroup>
