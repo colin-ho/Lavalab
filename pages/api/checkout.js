@@ -22,7 +22,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function CreateStripeSession(req, res) {
     await runMiddleware(req, res, cors)
-    const { item,customerId,subscriptionId,name,title } = req.body;
+    const { item,customerId,subscriptionId,name,title ,price} = req.body;
 
     const stripeCustomer = await GetOrCreateCustomer(customerId);
     const redirectURL = process.env.NODE_ENV === 'development'
@@ -48,6 +48,7 @@ export default async function CreateStripeSession(req, res) {
         subscriptionId:subscriptionId,
         businessId:item.businessId,
         title:title,
+        price:price,
       }
     });
   

@@ -42,12 +42,13 @@ export default async function handler(req, res) {
             const subRef = businessRef.collection('subscriptions').doc(metadata.subscriptionId);
             const customerRef = subRef.collection('customers').doc(metadata.customerId);
             const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
-
+            const newHistory = firestore().collection('customers').doc(metadata.customerId).collection('history').doc()
             const batch = firestore.batch();
             batch.update(businessRef,{totalCustomers:increment(1)})
             batch.update(subRef, { customerCount: increment(1) });
             batch.set(customerRef, { uid:metadata.customerId,name:metadata.name,redeeming:false,code:'',currentRef:'' });
             batch.set(customerSub, { subscriptionTitle:metadata.title,subscriptionId:metadata.subscriptionId,boughtAt: serverTimestamp(),stripeSubscriptionId:event.data.object.subscription,redemptionCount:0,redeemedAt:[]});
+            batch.set(newHistory,{subscriptionTitle:metadata.title,subscriptionId:metadata.subscriptionId,boughtAt: serverTimestamp(),price:metadata.price})
             await batch.commit();
           } catch (err) {
             console.log(`❌ Error message: ${err.message}`);

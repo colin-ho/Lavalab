@@ -15,23 +15,13 @@ import { HStack } from '@chakra-ui/layout';
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
 
 
-export default function BusinessLogin(props) {
-  const { userType, user,displayName } = useContext(AuthContext);
+export default function BusinessLogin() {
+  const { userType, user,displayName,loaded } = useContext(AuthContext);
   const [isSignIn,setIsSignIn] = useState(true);
-  const[loading,setLoading] = useState(true);
-
-  useEffect(
-    () => {
-      let timer1 = setTimeout(() => setLoading(false), 1 * 1000);
-      return () => {
-        clearTimeout(timer1);
-      };
-    },[loading]);
 
   return (
-        !loading ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? <SignOutButton businessName={displayName}/> : <BusinessNameForm/>: (isSignIn ? <SignInForm setLoading={setLoading} setIsSignIn={setIsSignIn} /> : <SignUpForm setLoading={setLoading} setIsSignIn={setIsSignIn} />) :<Flex minH={'calc(100vh - 60px)'}
-        justify={'center'}
-        bg={'gray.50'}></Flex>
+    
+        loaded ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? displayName==" " ? <Flex minH={'calc(100vh - 60px)'}justify={'center'} bg={'gray.50'}></Flex> : <SignOutButton businessName={displayName}/> :  <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />) : <Flex minH={'calc(100vh - 60px)'}justify={'center'} bg={'gray.50'}></Flex>
   );
 }
 
@@ -57,14 +47,13 @@ const signUpSchema = yup.object().shape({
 });
 
 // Sign in with Google button
-function SignInForm({setIsSignIn,setLoading}) {
+function SignInForm({setIsSignIn}) {
   const [errorMessage,setErrorMessage] = useState(null);
   const { register, handleSubmit, formState: { errors }} = useForm({
     resolver: yupResolver(signInSchema),
   });
     
   const onGoogleSubmit = async () => {
-    setLoading(true)
     await auth.signInWithPopup(googleAuthProvider);
     const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
     const { exists } = await userDoc.get();
@@ -81,7 +70,6 @@ function SignInForm({setIsSignIn,setLoading}) {
 
   const onEmailSubmit = async ({email,password})=>{
     try{
-      setLoading(true)
       await signInWithEmailAndPassword(auth, email, password);
     }
     catch(err){
@@ -186,7 +174,7 @@ function SignOutButton({businessName}) {
   );
 }
 
-function SignUpForm({setIsSignIn,setLoading}) {
+function SignUpForm({setIsSignIn}) {
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(signUpSchema),
   });
@@ -194,7 +182,6 @@ function SignUpForm({setIsSignIn,setLoading}) {
 
   const handleSignup = async ({ email, password})=> {
     try{
-      setLoading(true)
       await createUserWithEmailAndPassword(auth, email, password)
       setErrorMessage(null)
     }

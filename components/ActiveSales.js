@@ -6,7 +6,7 @@ import { Button, IconButton } from '@chakra-ui/button';
 import { firestore } from '../lib/firebase';
 import { useDisclosure } from '@chakra-ui/hooks';
 
-export default function ActiveSales({ displayName,subscriptions,redemptions}) {
+export default function ActiveSales({ displayName,subscriptions,redemptions,paused,delay}) {
     const [newOrderCount,setNewOrderCount] = useState(0);
     const [inProgressCount,setInProgressCount] = useState(0);
     const [lateCount,setLateCount] = useState(0);
@@ -33,7 +33,8 @@ export default function ActiveSales({ displayName,subscriptions,redemptions}) {
     return (
         <Flex direction = "column" align="flex-start">
             <Heading  size="lg" mb="10px"> Active Sales Overview</Heading>
-            <Text>{displayName} is currently open and accepting subscriptions </Text>
+            <Text>{displayName} is currently<b> {paused ? ' pausing all redemptions': ' open and accepting redemptions'}
+        {!paused&&(parseInt(delay)>0) ? ` with ${delay} min delay` :null }</b></Text>
 
             <Flex marginTop = "30px" h="150px" w="100%"direction="row">
                 <Flex p="20px" alignItems="flex-start" direction="column" borderRadius="20px" w="32%" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)"bg={'#fff'}>

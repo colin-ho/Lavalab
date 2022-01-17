@@ -3,7 +3,7 @@ import React,{ useState } from "react";
 import { auth, firestore } from "../lib/firebase";
 import ImageUploader from "./ImageUploader";
 import Geocode from "react-geocode";
-import { Box, Flex, Heading, HStack, ListItem, Stack, Text, UnorderedList, VStack } from "@chakra-ui/layout";
+import { Box, Flex, Heading, Stack, Text,HStack} from "@chakra-ui/layout";
 import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Button, ButtonGroup } from "@chakra-ui/button";
@@ -22,9 +22,9 @@ export default function BusinessNameForm() {
     const watchAllFields = watch(); 
     const [address,setAddress] = useState('');
     const [addressError,setAddressError] = useState(false);
-    const [showSuggestions,setShowSuggestions] = useState(true);
+    const [showSuggestions,setShowSuggestions] = useState(false);
 
-    const createShop = async ({businessName,description,businessType}) => {
+    const createShop = async ({businessName,description,businessType,email,phone,website}) => {
         if(!photoURL){
             setPhotoError(true);
             return;
@@ -46,7 +46,18 @@ export default function BusinessNameForm() {
         // Commit both docs together as a batch write.
         const batch = firestore.batch();
         batch.update(userDoc,{displayName:businessName,businessType:businessType})
-        batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, businessName: businessName, photoURL: photoURL, address: address,geohash: geohash,description:description,lat:lat,lng:lng,totalCustomers:0 },{ merge: true });
+        batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, 
+            businessName: businessName, photoURL: photoURL, address: address,
+            geohash: geohash,description:description,lat:lat,lng:lng,
+            totalCustomers:0,tags:[],phone:phone,email:email,website:website,delay:"0",paused:false,
+        closures:[],times:{'mon':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'tue':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'wed':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'thu':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'fri':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'sat':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
+        'sun':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},}
+        },{ merge: true });
         await batch.commit();
     };
 
@@ -64,20 +75,20 @@ export default function BusinessNameForm() {
                     Set up your shop
                 </Heading>
                 <form onSubmit={handleSubmit(createShop)}>
-                    <Stack spacing="5">
+                    <Stack spacing="4">
                         <FormControl id="businessName" isInvalid={errors.businessName?.message}>
-                            <FormLabel>Business Name:</FormLabel>
+                            <FormLabel>Business Name: *</FormLabel>
                             <Input placeholder="Morning Brew" type="text" {...register('businessName',{ required: { value: true, message: 'Business name is required'},
                             minLength:{ value: 1, message: 'Name is too short'},maxLength:{ value: 32, message: 'Name is too long'}})} />
                             <FormErrorMessage>{errors.businessName?.message}</FormErrorMessage>
                         </FormControl>
                         <FormControl id="address" isInvalid={addressError}>
-                            <FormLabel>Address:</FormLabel>
-                            <Input type="text" value={address} onChange={(evt) => {setAddressError(false);setShowSuggestions(true);setAddress(evt.target.value);getPlacePredictions({ input: evt.target.value })}} />
+                            <FormLabel>Address: *</FormLabel>
+                            <Input type="text" value={address} onChange={(evt) => {setAddressError(false);setShowSuggestions(evt.target.value!=='' ? true : false);setAddress(evt.target.value);getPlacePredictions({ input: evt.target.value })}} />
                             <FormErrorMessage>Address is Required</FormErrorMessage>
                         </FormControl>
-                        <Flex direction="column">
                             {placePredictions && showSuggestions ? (
+                                <Flex direction="column">
                                 <>{placePredictions.map((item)=>{ 
                                     return(
                                     <Button mb="10px" key = {item.description} onClick={() => {setShowSuggestions(false);setAddress(item.description)}}>
@@ -85,10 +96,28 @@ export default function BusinessNameForm() {
                                     </Button>
                                     )
                                 })}</>
+                                </Flex>
                             ):null}
-                        </Flex>
+                        <FormControl id="email" isInvalid={errors.email?.message}>
+                            <FormLabel>Email: *</FormLabel>
+                            <Input placeholder="Email" type="email" {...register('email',{ required: { value: true, message: 'Email is required'},
+                            pattern: {value:/^\S+@\S+$/i,message:"Please enter an appropriate email"}})} />
+                            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+                        </FormControl>
+                        <HStack spacing="4" align="flex-start">
+                            <FormControl id="phone" isInvalid={errors.phone?.message}>
+                                <FormLabel>Phone number: *</FormLabel>
+                                <Input placeholder="Phone" type="number" {...register('phone',{ required: {value:true,message:"Phone number is required"},
+                                    minLength:{ value: 10, message: 'Phone number is too short'},maxLength:{ value: 10, message: 'Phone number is too long'}})} />
+                                <FormErrorMessage>{errors.phone?.message}</FormErrorMessage>
+                            </FormControl>
+                            <FormControl id="website" >
+                                <FormLabel>Website:</FormLabel>
+                                <Input placeholder="Website" type="website" {...register('website',{ required: false})} />
+                            </FormControl>
+                        </HStack>
                         <FormControl id="businessType" isInvalid={errors.businessType?.message}>
-                            <FormLabel>Business Type:</FormLabel>
+                            <FormLabel>Business Type: *</FormLabel>
                             <Select {...register('businessType',{ required: { value: true, message: 'Business type is required'}})}>
                             <option value="American">American</option>
                             <option value="Boba">Boba</option>
@@ -114,7 +143,7 @@ export default function BusinessNameForm() {
                             <FormErrorMessage>{errors.businessType?.message}</FormErrorMessage>
                         </FormControl>
                         <FormControl id="description" isInvalid={errors.description?.message}>
-                            <FormLabel>Description:</FormLabel>
+                            <FormLabel>Description: *</FormLabel>
                             <Textarea placeholder="Serving your favorite hot coffee..." {...register('description',{ required: { value: true, message: 'Description is required'},
                             minLength:{ value: 1, message: 'Description is too short'},maxLength:{ value: 100, message: 'Description is too long'}})} />
                             <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
@@ -135,10 +164,10 @@ export default function BusinessNameForm() {
                 </Heading>
 
                 <Box alignSelf="center" w="sm" mt="20px" borderWidth="1px" borderRadius="lg" overflow="hidden">
-                    <Image w = "sm" h="3xs" objectFit="cover" src={photoURL ? photoURL : 'https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2FUATxA2cmfsWO8USvKGoIvnEFZrd2%2F1638431282434.jpeg?alt=media&token=f1f758d9-0619-430a-be81-19f02c856452'} alt="Upload an image"/>
+                    <Image w = "sm" h="3xs" objectFit="cover" src={photoURL ? photoURL : 'https://firebasestorage.googleapis.com/v0/b/lavalab-23235.appspot.com/o/uploads%2F8PhXWUO9DTgEqWo7K9i71Y2UKPs2%2F1639988894935.png?alt=media&token=ecbc4b90-2fbd-407c-8d00-3e1004d58dba'} alt="Upload an image"/>
 
                     <Flex direction="column" align="flex-start" p="6">
-                        <Button borderRadius="50px">{watchAllFields.businessType}</Button>
+                        <Button borderRadius="50px">{watchAllFields.businessType ? watchAllFields.businessType : "American" }</Button>
                         <Heading mt="10px" size="lg">{watchAllFields.businessName ? watchAllFields.businessName : "Morning Brew"}</Heading>
                         <Text fontSize="sm">{watchAllFields.description ? watchAllFields.description: "Serving your favorite hot coffee..."}</Text>
                     </Flex>

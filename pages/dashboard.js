@@ -36,7 +36,7 @@ export default function Dashboard() {
     const [customerData,setCustomerData] =useState([])
     const [customerIds,setCustomerIds] = useState([])
     const [total,setTotal] = useState(0)
-
+    const [business,setBusiness]=useState(null);
     
 
   useEffect(() => {
@@ -126,8 +126,7 @@ export default function Dashboard() {
             setSubscriptions(temp);  
         };
         
-        let unsubscribe1;
-        let unsubscribe2;
+        let unsubscribe1,unsubscribe2,unsubscribe3;
         if(user){
             const subscriptionsQuery = firestore.collection('businesses').doc(user.uid).collection('subscriptions');
             var d = new Date();
@@ -138,22 +137,24 @@ export default function Dashboard() {
                 err => console.log(err));
             unsubscribe2 = subscriptionsQuery.onSnapshot(handleSubscriptionChanges, 
                 err => console.log(err));
-            (async()=>{
-              const temp = (await firestore.collection('businesses').doc(user.uid).get()).get('totalCustomers')
-              setTotal(temp);
-            })()
+            unsubscribe3 = firestore.collection('businesses').doc(user.uid).onSnapshot((snapshot)=>{
+                  setBusiness(snapshot.data());
+                  setTotal(snapshot.data().totalCustomers);
+              })
         }
         
-        return unsubscribe1,unsubscribe2;
+        return unsubscribe1,unsubscribe2,unsubscribe3;
     }, [user]);
 
     return (
         <BusinessCheck>
+          {business ? 
             <Box minH="100vh">
                 <SidebarContent
                 onClose={() => onClose}
                 display={{ base: 'none', md: 'block' }}
                 setPageState={setPageState}
+                pageState={pageState}
                 />
                 <Drawer
                 autoFocus={false}
@@ -164,24 +165,24 @@ export default function Dashboard() {
                 onOverlayClick={onClose}
                 size="full">
                 <DrawerContent>
-                    <SidebarContent onClose={onClose} display={{ base: 'block', md: 'none' }} setPageState={setPageState} />
+                    <SidebarContent onClose={onClose} display={{ base: 'block', md: 'none' }} setPageState={setPageState} pageState={pageState} />
                 </DrawerContent>
                 </Drawer>
                 {/* mobilenav */}
                 <MobileNav onOpen={onOpen} displayName={displayName}/>
                 <Box ml={{ base: 0, md: 60 }} p="10">
-                {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions}/> : 
-                pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions.filter(redemption=>!redemption.collected)}/> :
+                {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions}redemptions={redemptions} paused={business.paused} delay={business.delay}/> : 
+                pageState==='Active Sales' ? <ActiveSales displayName={displayName}  subscriptions={subscriptions}redemptions={redemptions.filter(redemption=>!redemption.collected)} paused={business.paused} delay={business.delay}/> :
                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
                 pageState ==='Customers' ? <Customers customerData={customerData} total={total}/> :
-                <StoreDetails/>}
+                <StoreDetails business={business}/>}
                 </Box>
-            </Box>
+            </Box> : null}
         </BusinessCheck>
     )
 }
   
-const SidebarContent = ({ onClose, setPageState,display }) => {
+const SidebarContent = ({ onClose, setPageState,display,pageState }) => {
     return (
       <Box
         transition="3s ease"
@@ -198,7 +199,7 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
           <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
         </Flex>
         {LinkItems.map((link) => (
-          <NavItem key={link.name} setPageState={setPageState} page={link.name} icon={link.icon}>
+          <NavItem key={link.name} setPageState={setPageState} pageState={pageState} page={link.name} icon={link.icon} onClose={onClose}>
             {link.name}
           </NavItem>
         ))}
@@ -206,16 +207,22 @@ const SidebarContent = ({ onClose, setPageState,display }) => {
     );
   };
   
-  const NavItem = ({ icon, children,setPageState,page}) => {
+  const NavItem = ({ icon, children,setPageState,page,pageState,onClose}) => {
     return (
-      <Link onClick = {()=>setPageState(page)} style={{ textDecoration: 'none' }}>
+      <Link onClick = {()=>{
+        setPageState(page);
+        onClose();
+        }} style={{ textDecoration: 'none' }}>
         <Flex
           align="center"
           p="4"
           mx="4"
+          mb="2"
           borderRadius="lg"
           role="group"
           cursor="pointer"
+          background={pageState===page ? 'black' : 'none'}
+          color={pageState===page ? 'white' : 'none'}
           _hover={{
             bg: 'black',
             color: 'white',
