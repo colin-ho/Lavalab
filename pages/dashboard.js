@@ -7,7 +7,7 @@ import {
   DrawerContent,Text,useDisclosure,Menu,MenuButton,MenuDivider,MenuItem,MenuList, Image,
 } from '@chakra-ui/react';
 import {
-  FiHome,FiTrendingUp,FiCompass,FiStar,FiSettings,FiMenu,FiBell,FiChevronDown,
+  FiHome,FiTrendingUp,FiMenu,FiBell,FiChevronDown,
 } from 'react-icons/fi';
 import { AiOutlineShop,AiOutlineTags } from "react-icons/ai";
 import {IoPeopleOutline} from "react-icons/io5";
