@@ -36,7 +36,7 @@ function reducer(state, action) {
     }}
 }
 
-export default function StoreDetails({business}) {
+export default function StoreDetails({business,open}) {
     const {displayName,user} = useContext(AuthContext);
     const [businessRef, setBusinessRef] = useState(null);
     const [tag,setTag] = useState("");
@@ -228,8 +228,8 @@ export default function StoreDetails({business}) {
                 </VStack>
                 <VStack alignItems="start" flex="1" spacing= "4" p={4} borderRadius="xl"  boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
                     <Text as={'b'} fontSize="18px">Current Status</Text>
-                    <Text >{business&&business.paused ? "Redemptions are currently paused" : "Currently open and accepting redemptions"}
-                    <b>{business&&(parseInt(business.delay)>0)&&!business.paused ? ` with ${business.delay} min delay` :null}</b></Text>
+                    <Text >{business&&!open ? "The store is currently closed" : "Currently open and accepting redemptions"}
+                    <b>{business&&(parseInt(business.delay)>0)&&open ? ` with ${business.delay} min delay` :null}</b></Text>
                     <Button p="7"w="full" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)" fontSize={'md'} fontWeight={500} color={'white'} bg={'black'} 
                     _hover={{bg: 'black',color:'white'}} _active={{bg: 'black',color:'white'}} _focus={{
                         boxShadow:
@@ -645,11 +645,7 @@ export default function StoreDetails({business}) {
                     <HStack  align="center" w="full"justify="space-between">
                         <Text>From</Text>
                         <FormControl w="70%" isInvalid={errors2.from?.message}>
-                        <Input p="2" w="70%" type="date" {...register2('from',{required: {value:true,message:"Start date is required"},validate:{
-                            greaterThanNow: date=> (new Date(date))>(new Date()) || "Start date must be after today",
-                            lessThanTo: date=> (new Date(date))<=(new Date(watch('to'))) || "Start date must be before end date",
-                            }
-                        })} />
+                        <Input p="2" w="70%" type="date" {...register2('from',{required: {value:true,message:"Start date is required"}})} />
                         <FormErrorMessage>{errors2.from?.message}</FormErrorMessage>
                         </FormControl>
                     </HStack >
@@ -657,8 +653,7 @@ export default function StoreDetails({business}) {
                         <Text>To</Text>
                         <FormControl w="70%" isInvalid={errors2.to?.message}>
                         <Input p="2" w="70%" type="date" {...register2('to',{required: {value:true,message:"End date is required"},validate:{
-                            greaterThanNow: date=> (new Date(date))>(new Date()) || "End date must be after today",
-                            lessThanTo: date=> (new Date(date))>=(new Date(watch('from'))) || "End date must be after start date",
+                            moreThanFroms: date=> (new Date(date))>=(new Date(watch('from'))) || "End date must be after start date",
                             }
                         })}/>
                         <FormErrorMessage>{errors2.to?.message}</FormErrorMessage>
