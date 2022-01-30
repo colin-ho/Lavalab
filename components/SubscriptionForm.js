@@ -33,11 +33,9 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
             setPhotoError(false);
         }
         const uid = auth.currentUser.uid;
-        const slug = encodeURI(kebabCase(title));
         const data = {
             title:title,
             photoURL:photoURL,
-            slug:slug,
             stripePriceId:'',
             stripeProductId:'',
             businessName: displayName,
@@ -118,7 +116,7 @@ export default function SubscriptionForm({ editableSub,setFormMode }) {
                             </HStack>
                             <FormControl id="content" isInvalid={errors.content?.message}>
                                 <FormLabel>Product name</FormLabel>
-                                <Input type="text" placeholder="Hot Cappucino" {...register('content',{ required: { value: true, message: 'Product is required'},
+                                <Input type="text" placeholder="Coffee" {...register('content',{ required: { value: true, message: 'Product is required'},
                                 minLength:{ value: 1, message: 'Product name is too short'}})} />
                                 <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
                             </FormControl>

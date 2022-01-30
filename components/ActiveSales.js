@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuList, Slide } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { Button, IconButton } from '@chakra-ui/button';
-import { firestore } from '../lib/firebase';
+import { arrayRemove, firestore } from '../lib/firebase';
 import { useDisclosure } from '@chakra-ui/hooks';
 
 export default function ActiveSales({ displayName,subscriptions,redemptions,open,delay}) {
@@ -82,9 +82,11 @@ function OrderItem({ redemption,subscription }) {
     const collected = async ()=>{
         const redRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
         const customerRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('customers').doc(redemption.redeemedById);
+        const customerDataRef = firestore.collection('customers').doc(redemption.redeemedById)
         const batch = firestore.batch();
         batch.update(redRef,{collected:true});
         batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
+        batch.update(customerDataRef,{redeeming:arrayRemove(redRef)})
         await batch.commit();
     }
     //

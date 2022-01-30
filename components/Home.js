@@ -92,7 +92,7 @@ export default function Home({displayName, subscriptions,redemptions,open,delay}
                 .append('g')
                 .attr('class', 'x-axis')
                 .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom().scale(xScale).tickSize(5).ticks(5).tickFormat(d3.timeFormat("%B %d %I:%M %p")))
+                .call(d3.axisBottom().scale(xScale).tickSize(5).ticks(5).tickFormat(d3.timeFormat("%B %d")))
                 
             svg
                 .append('g')

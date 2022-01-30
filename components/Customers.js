@@ -50,7 +50,7 @@ function CustomerItem({customer}){
     return(
         <Grid templateColumns='repeat(4, 1fr)' mb="20px" w="100%" p={4} gap={8} borderRadius="xl"boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
             <GridItem colSpan="1">
-                <VStack  alignItems="start">
+                <VStack  alignItems="start">{console.log(customer.subs)}
                     <Text as={'b'} fontSize="20px">{customer.name}</Text>
                     <Text>Joined {customer.subs.map((sub)=>sub.boughtAt.toDate()).sort((a, b) => (a > b) ? 1 : -1)[0].toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>
                 </VStack>
@@ -69,7 +69,7 @@ function CustomerItem({customer}){
                         return (
                             <VStack alignItems="start" key={sub.subscriptionId}>
                                 <Text >{sub.subscriptionTitle}</Text>
-                                <Text color="#959897">Redeemed {sub.redeemedAt.length} times</Text>
+                                <Text color="#959897">Redeemed {sub.redemptionCount} times</Text>
                             </VStack>
                         )
                     })}
@@ -97,7 +97,7 @@ function BasicUsage({customer,isOpen,onClose}) {
                         return (
                             <VStack alignItems="start" key={sub.subscriptionId}>
                                 <Text fontWeight="500">{sub.subscriptionTitle}</Text>
-                                <Text color="#959897">Redeemed {sub.redeemedAt.length} times</Text>
+                                <Text color="#959897">Redeemed {sub.redemptionCount} times</Text>
                             </VStack>
                         )
                     })}
