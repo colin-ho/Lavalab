@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuList, Slide } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { Button, IconButton } from '@chakra-ui/button';
-import { arrayRemove, firestore } from '../lib/firebase';
+import { arrayRemove, arrayUnion, firestore } from '../lib/firebase';
 import { useDisclosure } from '@chakra-ui/hooks';
 
 export default function ActiveSales({ displayName,subscriptions,redemptions,open,delay}) {
@@ -68,7 +68,7 @@ export default function ActiveSales({ displayName,subscriptions,redemptions,open
 
 
 function OrderItem({ redemption,subscription }) {
-
+    const customerDataRef = firestore.collection('customers').doc(redemption.redeemedById)
     const now = new Date();
     const redemptionTime = typeof redemption?.redeemedAt === 'number' ? new Date(redemption.redeemedAt) : redemption.redeemedAt.toDate();
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
@@ -76,7 +76,10 @@ function OrderItem({ redemption,subscription }) {
     const due = (collectionTime - now) / (1000 * 60);
     const confirm = async ()=>{
         const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
-        await ref.update({confirmed:true});
+        const batch = firestore.batch();
+        batch.update(ref,{confirmed:true})
+        batch.update(customerDataRef,{confirmed:arrayRemove(ref),ready:arrayUnion(ref)})
+        await batch.commit();
     }
 
     const collected = async ()=>{
@@ -86,7 +89,7 @@ function OrderItem({ redemption,subscription }) {
         const batch = firestore.batch();
         batch.update(redRef,{collected:true});
         batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
-        batch.update(customerDataRef,{redeeming:arrayRemove(redRef)})
+        batch.update(customerDataRef,{ready:arrayRemove(redRef)})
         await batch.commit();
     }
     //
