@@ -78,7 +78,7 @@ function OrderItem({ redemption,subscription }) {
         const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.id);
         const batch = firestore.batch();
         batch.update(ref,{confirmed:true})
-        batch.update(customerDataRef,{confirmed:arrayRemove(redemption.id+','+subscription.id),ready:arrayUnion(redemption.id+','+subscription.id)})
+        batch.update(customerDataRef,{confirmed:arrayRemove(ref),ready:arrayUnion(ref)})
         await batch.commit();
     }
 
@@ -89,7 +89,7 @@ function OrderItem({ redemption,subscription }) {
         const batch = firestore.batch();
         batch.update(redRef,{collected:true});
         batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
-        batch.update(customerDataRef,{ready:arrayRemove(redemption.id+','+subscription.id)})
+        batch.update(customerDataRef,{ready:arrayRemove(redRef)})
         await batch.commit();
     }
     //
