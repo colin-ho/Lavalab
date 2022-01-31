@@ -75,21 +75,21 @@ function OrderItem({ redemption,subscription }) {
     const received = Math.floor((now - redemptionTime) / (1000 * 60));
     const due = (collectionTime - now) / (1000 * 60);
     const confirm = async ()=>{
-        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
+        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.id);
         const batch = firestore.batch();
         batch.update(ref,{confirmed:true})
-        batch.update(customerDataRef,{confirmed:arrayRemove(ref),ready:arrayUnion(ref)})
+        batch.update(customerDataRef,{confirmed:arrayRemove(redemption.id+','+subscription.id),ready:arrayUnion(redemption.id+','+subscription.id)})
         await batch.commit();
     }
 
     const collected = async ()=>{
-        const redRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.number);
+        const redRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.id);
         const customerRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('customers').doc(redemption.redeemedById);
         const customerDataRef = firestore.collection('customers').doc(redemption.redeemedById)
         const batch = firestore.batch();
         batch.update(redRef,{collected:true});
         batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
-        batch.update(customerDataRef,{ready:arrayRemove(redRef)})
+        batch.update(customerDataRef,{ready:arrayRemove(redemption.id+','+subscription.id)})
         await batch.commit();
     }
     //
