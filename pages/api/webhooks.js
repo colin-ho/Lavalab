@@ -46,8 +46,8 @@ export default async function handler(req, res) {
                 batch.update(businessRef, { totalCustomers: increment(1) })
                 batch.update(subRef, { customerCount: increment(1) });
                 batch.set(customerRef, { uid: metadata.customerId, name: metadata.name, redeeming: false, code: '', currentRef: '' });
-                batch.set(customerSub, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, boughtAt:serverTimestamp(),stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0 });
-                batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business })
+                batch.set(customerSub, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0 });
+                batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
                 await batch.commit();
             } catch (err) {
                 console.log(`❌ Error message: ${err.message}`);
