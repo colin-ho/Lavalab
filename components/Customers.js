@@ -69,7 +69,7 @@ function CustomerItem({customer}){
                         return (
                             <VStack alignItems="start" key={sub.subscriptionId}>
                                 <Text >{sub.subscriptionTitle}</Text>
-                                <Text color="#959897">Redeemed {sub.redemptionCount} times</Text>
+                                <Text color="#959897">Redeemed {customer.redemptionCount} times</Text>
                             </VStack>
                         )
                     })}
