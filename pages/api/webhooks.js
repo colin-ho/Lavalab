@@ -85,7 +85,7 @@ export default async function handler(req, res) {
                     // Retrieve the payment intent used to pay the subscription
                     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
           
-                    const subscription = await stripe.subscriptions.update(
+                    await stripe.subscriptions.update(
                       subscription_id,
                       {
                         default_payment_method: payment_intent.payment_method,
