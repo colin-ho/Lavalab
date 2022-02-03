@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         }
 
         // Successfully constructed event
-        console.log('✅ Success:', event.id);
+        console.log('✅ Success:', event.id,event.type);
 
         // 2. Handle event type (add business logic here)
         if (event.type === 'checkout.session.completed') {
@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         }
         else if (event.type==="invoice.payment_succeeded"){
             try{
+                console.log(event.data.object)
                 const subscription =  event.data.object.subscription;
                 const {start,end} = event.data.object.lines.data[0].period;
                 const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
