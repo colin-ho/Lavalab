@@ -60,6 +60,8 @@ export default async function handler(req, res) {
                 const subscription =  event.data.object.subscription;
                 const {start,end} = event.data.object.lines.data[0].period;
                 const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
+                console.log(subscription)
+                console.log(sub.docs)
                 sub.docs.forEach((doc)=>doc.ref.set({start:new Date(start*1000),end:new Date(end*1000),status:'active'},{merge:true}));
             }
             catch(err){
