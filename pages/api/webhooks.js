@@ -79,8 +79,8 @@ export default async function handler(req, res) {
                     batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
                     await batch.commit();
 
-                    const subscription_id = dataObject['subscription']
-                    const payment_intent_id = dataObject['payment_intent']
+                    const subscription_id =  event.data.object.subscription
+                    const payment_intent_id = event.data.object.payment_intent
           
                     // Retrieve the payment intent used to pay the subscription
                     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
