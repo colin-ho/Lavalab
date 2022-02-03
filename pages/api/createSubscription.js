@@ -16,7 +16,7 @@ export default async function CreateCustomer(req, res) {
         });
     
         res.json({
-          subscriptionId: subscription.id,
+          stripeSubscriptionId: subscription.id,
           clientSecret: subscription.latest_invoice.payment_intent.client_secret,
         });
       } catch (error) {
