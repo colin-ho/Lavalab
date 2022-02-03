@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         }
         else if (event.type==="invoice.payment_succeeded"){
             try{
-                if(dataObject['billing_reason'] == 'subscription_create') {
+                if(event.data.object.billing_reason == 'subscription_create') {
                     // The subscription automatically activates after successful payment
                     // Set the payment method used to pay the first invoice
                     // as the default payment method for that subscription
