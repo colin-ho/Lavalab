@@ -55,12 +55,12 @@ export default async function handler(req, res) {
                 return;
             }
         }
-        else if (event.type==="invoice.paid"){
+        else if (event.type==="invoice.payment_succeeded"){
             try{
                 const subscription =  event.data.object.subscription;
                 const {start,end} = event.data.object.lines.data[0].period;
                 const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
-                sub.docs.forEach((doc)=>doc.ref.set({start:new Date(start*1000),end:new Date(end*1000)},{merge:true}));
+                sub.docs.forEach((doc)=>doc.ref.set({start:new Date(start*1000),end:new Date(end*1000),status:'active'},{merge:true}));
             }
             catch(err){
                 console.log(`❌ Error message: ${err.message}`);
