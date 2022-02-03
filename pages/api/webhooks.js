@@ -57,13 +57,52 @@ export default async function handler(req, res) {
         }
         else if (event.type==="invoice.payment_succeeded"){
             try{
-                console.log(event.data.object)
-                const subscription =  event.data.object.subscription;
-                const {start,end} = event.data.object.lines.data[0].period;
-                const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
-                console.log(subscription)
-                console.log(sub.docs)
-                sub.docs.forEach((doc)=>doc.ref.set({start:new Date(start*1000),end:new Date(end*1000),status:'active'},{merge:true}));
+                if(dataObject['billing_reason'] == 'subscription_create') {
+                    // The subscription automatically activates after successful payment
+                    // Set the payment method used to pay the first invoice
+                    // as the default payment method for that subscription
+                    
+                    const metadata = event.data.object.metadata;
+                    const {start,end} = event.data.object.lines.data[0].period;
+
+                    const businessRef = firestore.collection('businesses').doc(metadata.businessId);
+                    const subRef = businessRef.collection('subscriptions').doc(metadata.subscriptionId);
+                    const customerRef = subRef.collection('customers').doc(metadata.customerId);
+                    const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
+                    const newHistory = firestore.collection('customers').doc(metadata.customerId).collection('history').doc()
+                    const batch = firestore.batch();
+                    batch.update(businessRef, { totalCustomers: increment(1) })
+                    batch.update(subRef, { customerCount: increment(1) });
+                    batch.set(customerRef, { uid: metadata.customerId, name: metadata.name, redeeming: false, code: '', currentRef: '' });
+                    batch.set(customerSub, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
+                        start:new Date(start*1000),end:new Date(end*1000),status:'active'});
+                    batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
+                    await batch.commit();
+
+                    const subscription_id = dataObject['subscription']
+                    const payment_intent_id = dataObject['payment_intent']
+          
+                    // Retrieve the payment intent used to pay the subscription
+                    const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
+          
+                    const subscription = await stripe.subscriptions.update(
+                      subscription_id,
+                      {
+                        default_payment_method: payment_intent.payment_method,
+                      },
+                    );
+
+          
+                    console.log("Default payment method set for subscription:" + payment_intent.payment_method);
+                }
+                else{
+                    const subscription =  event.data.object.subscription;
+                    const {start,end} = event.data.object.lines.data[0].period;
+                    const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
+    
+                    sub.docs.forEach((doc)=>doc.ref.update({start:new Date(start*1000),end:new Date(end*1000),status:'active'}));
+                }
+                
             }
             catch(err){
                 console.log(`❌ Error message: ${err.message}`);
