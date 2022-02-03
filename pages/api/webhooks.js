@@ -62,7 +62,7 @@ export default async function handler(req, res) {
                     // Set the payment method used to pay the first invoice
                     // as the default payment method for that subscription
                     
-                    const metadata = event.data.object.metadata;
+                    const metadata = event.data.object.lines.data[0].metadata;
                     const {start,end} = event.data.object.lines.data[0].period;
 
                     const businessRef = firestore.collection('businesses').doc(metadata.businessId);
