@@ -8,5 +8,5 @@ export default async function CreateCustomer(req, res) {
         {customer: customerId},
         {apiVersion: '2020-08-27'}
       );
-    res.json({ ephemeralKey: ephemeralKey });
+    res.json({ ephemeralKey: ephemeralKey.secret });
 }
