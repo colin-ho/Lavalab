@@ -68,29 +68,20 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
 
 
 function OrderItem({ redemption,subscription }:any) {
-    const customerDataRef = firestore.collection('customers').doc(redemption.redeemedById)
     const now:any = new Date();
     const redemptionTime = typeof redemption?.redeemedAt === 'number' ? new Date(redemption.redeemedAt) : redemption.redeemedAt.toDate();
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
     const received = Math.floor((now - redemptionTime) / (1000 * 60));
     const due = (collectionTime - now) / (1000 * 60);
+
     const confirm = async ()=>{
-        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.id);
-        const batch = firestore.batch();
-        batch.update(ref,{confirmed:true})
-        batch.update(customerDataRef,{confirmed:arrayRemove(ref),ready:arrayUnion(ref)})
-        await batch.commit();
+        const ref = firestore.collection('redemptions').doc(redemption.id);
+        ref.update({confirmed:true})
     }
 
     const collected = async ()=>{
-        const redRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('redemptions').doc(redemption.id);
-        const customerRef = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id).collection('customers').doc(redemption.redeemedById);
-        const customerDataRef = firestore.collection('customers').doc(redemption.redeemedById)
-        const batch = firestore.batch();
-        batch.update(redRef,{collected:true});
-        batch.update(customerRef,{redeeming:false,code:'',currentRef:''});
-        batch.update(customerDataRef,{ready:arrayRemove(redRef)})
-        await batch.commit();
+        const redRef = firestore.collection('redemptions').doc(redemption.id);
+        redRef.update({collected:true});
     }
     //
     return (
@@ -120,24 +111,6 @@ function OrderItem({ redemption,subscription }:any) {
                 </VStack>
                 
             </Grid>
-            {/*
-            <Circle position="absolute" right="-3" top="-3" cursor= "pointer" size="60px" bg="white">
-                <Menu >
-                    <MenuButton
-                        as={IconButton}
-                        icon={<BiDotsHorizontalRounded/>}
-                        variant="ghost"
-                        borderRadius="50px"
-                        w="60px"
-                        h="60px"
-                    />
-                    <MenuList mt="-30px" mr="30px">
-                        <MenuItem onClick={!redemption.confirmed ? confirm : collected }>
-                        {!redemption.confirmed ? "Confirm" : "Collected" }
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-            </Circle>*/}
         </Box>
       
     );

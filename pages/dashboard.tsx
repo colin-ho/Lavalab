@@ -173,7 +173,7 @@ export default function Dashboard() {
     return (
         <BusinessCheck>
             {business ?
-                <Box minH="100vh">
+                <Box minH="100vh">{console.log(redemptions)}
                     <SidebarContent
                         onClose={() => onClose}
                         display={{ base: 'none', md: 'block' }}

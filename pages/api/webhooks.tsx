@@ -94,9 +94,8 @@ export default async function handler(req: any, res: any) {
             try {
                 if (dataObject.billing_reason === 'subscription_cycle') {
                     const subscription = dataObject.subscription;
-                    const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId', '==', subscription).get();
-
-                    sub.docs.forEach((doc) => doc.ref.update({ status: 'incomplete' }));
+                    const sub = firestore.collection('subscribedTo').doc(subscription);
+                    sub.update({ status: 'incomplete' });
                 }
 
             }
