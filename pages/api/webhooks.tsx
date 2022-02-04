@@ -45,15 +45,14 @@ export default async function handler(req, res) {
                     const {start,end} = event.data.object.lines.data[0].period;
 
                     const businessRef = firestore.collection('businesses').doc(metadata.businessId);
-                    const subRef = businessRef.collection('subscriptions').doc(metadata.subscriptionId);
-                    const customerRef = subRef.collection('customers').doc(metadata.customerId);
-                    const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
+                    const subRef = firestore.collection('subscriptions').doc(metadata.subscriptionId);
+                    const customerSub = firestore.collection('subscribedTo').doc()
                     const newHistory = firestore.collection('customers').doc(metadata.customerId).collection('history').doc()
+                    
                     const batch = firestore.batch();
                     batch.update(businessRef, { totalPurchases: increment(1) })
-                    batch.update(subRef, { customerCount: increment(1) });
-                    batch.set(customerRef, { uid: metadata.customerId, name: metadata.name, subscriptionsBought:arrayUnion(metadata.subscriptionId)},{merge:true});
-                    batch.set(customerSub, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
+                    batch.update(subRef, { purchases: increment(1) });
+                    batch.set(customerSub, { uid:customerSub.id, boughtBy: metadata.name, businessId: metadata.businessId, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
                         start:new Date(start*1000),end:new Date(end*1000),status:'active'});
                     batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
                     await batch.commit();

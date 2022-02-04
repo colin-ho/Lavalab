@@ -48,7 +48,7 @@ export default function SubscriptionForm({ editableSub, setFormMode }: any) {
             dayConstrain: dayConstrain,
             updatedAt: serverTimestamp(),
             published: false,
-            customerCount: 0,
+            purchases: 0,
             redemptionCount: 0,
             archived: false,
         }
@@ -59,7 +59,7 @@ export default function SubscriptionForm({ editableSub, setFormMode }: any) {
                     businessId: uid,
                 });
                 const createdProductPrice = await axios.post('/api/createPrice', {
-                    id: createdProductId.data.id, amount: price*100, interval: interval
+                    id: createdProductId.data.id, amount: Math.round(price*100), interval: interval
                 });
                 data.stripeProductId = createdProductId.data.id;
                 data.stripePriceId = createdProductPrice.data.id;

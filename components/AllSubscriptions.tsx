@@ -7,7 +7,7 @@ import {AiOutlinePlus} from "react-icons/ai";
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { firestore } from '../lib/firebase';
 
-export default function AllSubscriptions({subscriptions}) {
+export default function AllSubscriptions({subscriptions}:any) {
     const[formMode,setFormMode] = useState(false);
     const[editableSub,setEditableSub] = useState(null);
     const live = subscriptions.filter(subscription=>subscription.published && !subscription.archived);
@@ -52,12 +52,12 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
     }
 
     const archive = async ()=>{
-        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id);
+        const ref = firestore.collection('subscriptions').doc(subscription.id);
         await ref.update({archived:true});
     }
 
     const unarchive = async ()=>{
-        const ref = firestore.collection('businesses').doc(subscription.businessId).collection('subscriptions').doc(subscription.id);
+        const ref = firestore.collection('subscriptions').doc(subscription.id);
         await ref.update({archived:false});
     }
     //
@@ -69,7 +69,7 @@ function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
         <Grid gap={6}  templateColumns="repeat(4, 1fr)" bg="white" w="100%" p={6} pb="30px" borderRadius="lg">
             <VStack align="start"> 
                 <Text as="b">{subscription.title}</Text>
-                {subscription.published ? <Text >Created {subscription.updatedAt.toDate().toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>:null}
+                {subscription.published ? <Text >Created {subscription.updatedAt?.toDate().toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>:null}
             </VStack>
             <VStack align="start">
                 <Text fontWeight="500">Overview</Text>
