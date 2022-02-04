@@ -3,11 +3,11 @@ import {Box,Link as ChakraLink,Flex,Text,IconButton,Button,Stack,Collapse,Icon,P
 import {HamburgerIcon,CloseIcon,ChevronDownIcon,ChevronRightIcon,} from '@chakra-ui/icons';
 import Link from 'next/link';
 import { useContext } from 'react';
-import { AuthContext } from '../lib/context';
+import { AuthContext, AuthContextInterface } from '../lib/context';
 
 export default function NewNavbar() {
     const { isOpen, onToggle } = useDisclosure();
-    const { user,displayName } = useContext(AuthContext)
+    const { user,business } = useContext<AuthContextInterface>(AuthContext)
     return (
       <Box>
         <Flex
@@ -47,7 +47,7 @@ export default function NewNavbar() {
             justify={'flex-end'}
             direction={'row'}
             spacing={6}>
-            {(displayName && user) ? 
+            {(business?.businessName && user) ? 
             <Link href="/dashboard">
                 <Button fontSize={'sm'} fontWeight={600}
                 color={'white'} bg={'black'} _hover={{bg: 'black'}}>
@@ -120,7 +120,7 @@ export default function NewNavbar() {
     );
   };
   
-  const DesktopSubNav = ({ label, href, subLabel }) => {
+  const DesktopSubNav = ({ label, href, subLabel }:any) => {
     return (
       <ChakraLink
         href={href}
@@ -167,7 +167,7 @@ export default function NewNavbar() {
     );
   };
   
-  const MobileNavItem = ({navItem}) => {
+  const MobileNavItem = ({navItem}:any) => {
     const { label, children, href } = navItem;
     const { isOpen, onToggle } = useDisclosure();
   
@@ -208,7 +208,7 @@ export default function NewNavbar() {
             borderColor={useColorModeValue('gray.200', 'gray.700')}
             align={'start'}>
             {children &&
-              children.map((child) => (
+              children.map((child:any) => (
                 <ChakraLink key={child.label} py={2} href={child.href}>
                   {child.label}
                 </ChakraLink>

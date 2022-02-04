@@ -18,7 +18,7 @@ export default function Home({ businessName, subscriptions, redemptions, open, d
         let temp1 = 0;
         let tempTotal = 0;
         subscriptions.map((sub:any) => {
-            tempTotal += sub.customerCount * sub.price;
+            tempTotal += sub.purchases * sub.price;
         })
         redemptions.map((r:any) => {
             if (!r.collected) temp1++;

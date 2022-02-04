@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { Flex, Heading, VStack } from "@chakra-ui/layout";
 import Link from 'next/link';
-export default function Home(props) {
+export default function Home(props:any) {
 
   return (
 
