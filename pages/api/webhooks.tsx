@@ -54,7 +54,7 @@ export default async function handler(req: any, res: any) {
                     batch.update(subRef, { purchases: increment(1) });
                     batch.set(subscribedTo, {
                         customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
-                        start: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
+                        start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     });
                     batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business, type: 'subscription' })
                     await batch.commit();
