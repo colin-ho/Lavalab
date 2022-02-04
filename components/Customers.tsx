@@ -8,7 +8,7 @@ import { AuthContext } from '../lib/context';
 import { firestore } from '../lib/firebase';
 
 const stringSimilarity = require("string-similarity");
-export default function Customers({customerData,total}) {
+export default function Customers({customerData,total}:any) {
     const [search,setSearch] = useState('')
 
     return (
@@ -34,10 +34,10 @@ export default function Customers({customerData,total}) {
             
             </>:null} 
             
-            {customerData ? search=='' ? customerData.map((customer)=>{
+            {customerData ? search=='' ? customerData.map((customer:any)=>{
                 return <CustomerItem key={customer.name} customer={customer} />
             }):
-            customerData.filter((customer)=>customer.name.toLowerCase().includes(search.toLowerCase()) || stringSimilarity.compareTwoStrings(customer.name.toLowerCase(), search.toLowerCase())>0.5).map((customer)=>{
+            customerData.filter((customer:any)=>customer.name.toLowerCase().includes(search.toLowerCase()) || stringSimilarity.compareTwoStrings(customer.name.toLowerCase(), search.toLowerCase())>0.5).map((customer:any)=>{
                 return <CustomerItem key={customer.name} customer={customer} />
             })
             : null} 
@@ -45,27 +45,27 @@ export default function Customers({customerData,total}) {
     )
 }
 
-function CustomerItem({customer}){
+function CustomerItem({customer}:any){
     const { isOpen, onOpen, onClose } = useDisclosure()
     return(
         <Grid templateColumns='repeat(4, 1fr)' mb="20px" w="100%" p={4} gap={8} borderRadius="xl"boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-            <GridItem colSpan="1">
+            <GridItem colSpan={1}>
                 <VStack  alignItems="start">{console.log(customer.subs)}
                     <Text as={'b'} fontSize="20px">{customer.name}</Text>
-                    <Text>Joined {customer.subs.map((sub)=>sub.boughtAt.toDate()).sort((a, b) => (a > b) ? 1 : -1)[0].toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+                    <Text>Joined {customer.subs.map((sub:any)=>sub.boughtAt.toDate()).sort((a:any, b:any) => (a > b) ? 1 : -1)[0].toLocaleDateString(undefined,{ year: 'numeric', month: 'long', day: 'numeric' })}</Text>
                 </VStack>
             </GridItem>
-            <GridItem colSpan="1">
+            <GridItem colSpan={1}>
                 <VStack  alignItems="start">
                     <Text fontWeight="500">Details</Text>
                     <Text>Email: {customer.email}</Text>
                 </VStack>
             </GridItem>
-            <GridItem colSpan="2">
+            <GridItem colSpan={2}>
             <VStack alignItems="start">
                 <Text fontWeight="500">Active Subscriptions {customer.subs.length>2 ? <Button ml="10px" size="xs" onClick={onOpen}>See All</Button>:null}</Text>
                 <HStack spacing={12}>
-                    {customer.subs.slice(0, 2).map((sub)=>{
+                    {customer.subs.slice(0, 2).map((sub:any)=>{
                         return (
                             <VStack alignItems="start" key={sub.subscriptionId}>
                                 <Text >{sub.subscriptionTitle}</Text>
@@ -83,17 +83,17 @@ function CustomerItem({customer}){
     )
 }
 
-function BasicUsage({customer,isOpen,onClose}) {
+function BasicUsage({customer,isOpen,onClose}:any) {
     
     return (
-        <Modal isCentered mt="100px" isOpen={isOpen} onClose={onClose}>
+        <Modal isCentered isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>{customer.name + "'s"} Subscriptions</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb="20px">
                 <VStack align="start" spacing="4">
-            {customer.subs.map((sub)=>{
+            {customer.subs.map((sub:any)=>{
                         return (
                             <VStack alignItems="start" key={sub.subscriptionId}>
                                 <Text fontWeight="500">{sub.subscriptionTitle}</Text>

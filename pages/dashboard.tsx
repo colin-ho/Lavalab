@@ -33,28 +33,28 @@ export default function Dashboard() {
     const [subscriptions, setSubscriptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [customerData, setCustomerData] = useState([])
+    const [customerData, setCustomerData] = useState<any>([])
     const [customerIds, setCustomerIds] = useState([])
     const [total, setTotal] = useState(0)
     const [open, setOpen] = useState(true);
 
     useEffect(() => {
         const getNestedStuff =
-            async (doc, ids) => {
+            async (doc:any, ids:any) => {
 
                 const [data, subQuery] = await Promise.all([(firestore.collection('customers').doc(doc.id).get()), (firestore.collection('customers').doc(doc.id).collection('subscribedTo').where('subscriptionId', 'in', ids).get())])
-                let subs = []
+                let subs:any = []
                 subQuery.forEach((sub) => {
                     subs.push(sub.data())
                 })
-                let all = { name: data.data().displayName, email: data.data().email, subs: subs };
+                let all = { name: data.data()?.displayName, email: data.data()?.email, subs: subs };
                 return all;
             }
 
         const getstuff = (
-            async (snapshot, ids) => {
-                let temp = [];
-                snapshot.forEach(async (doc) => {
+            async (snapshot:any, ids:any) => {
+                let temp:any = [];
+                snapshot.forEach(async (doc:any) => {
 
                     temp.push(getNestedStuff(doc, ids))
                 });
@@ -80,17 +80,17 @@ export default function Dashboard() {
         if (subscriptions.length > 0 && user) {
             let ids = subscriptions.map((sub) => sub.id);
             if (!ids.includes(undefined)) {
-                let customers = []
+                let customers:any = []
                 unsubscribe = firestore.collectionGroup('subscriptions').where('id', 'in', ids).onSnapshot(async (snapshot) => {
 
-                    let temp = []
+                    let temp:any = []
                     snapshot.forEach((sub) => {
                         if (temp.includes(sub.id) === false) temp.push(firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(sub.id).collection('customers').get());
                     })
                     let data = (await Promise.all(temp));
 
                     data.forEach((snap) => {
-                        snap.forEach((doc) => {
+                        snap.forEach((doc:any) => {
                             if (customers.includes(doc.id) === false) customers.push(doc.id)
                         })
                     })

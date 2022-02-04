@@ -17,6 +17,7 @@
     "@hookform/resolvers": "^2.8.3",
     "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.21.1",
+    "@types/d3": "^7.1.0",
     "@types/lodash.kebabcase": "^4.1.6",
     "@types/react-geocode": "^0.2.0",
     "axios": "^0.24.0",

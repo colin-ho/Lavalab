@@ -13,7 +13,7 @@ import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocomplet
 import { Textarea } from "@chakra-ui/textarea";
 
 const geofire = require('geofire-common');
-Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+process.env.NEXT_PUBLIC_GOOGLE_API_KEY&&Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
 
 export default function BusinessNameForm() {
     const [photoURL,setPhotoURL] = useState(null);

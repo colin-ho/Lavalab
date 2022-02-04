@@ -4,19 +4,19 @@ import {deleteObject } from "firebase/storage";
 import { Button } from '@chakra-ui/button';
 import Resizer from "react-image-file-resizer";
 
-const resizeFile = (file) => new Promise(resolve => {
+const resizeFile = (file:any) => new Promise(resolve => {
   Resizer.imageFileResizer(file, 600, 600, 'JPEG', 100, 0,
   uri => {
     resolve(uri);
   }, 'blob' );
 });
 // Uploads images to Firebase Storage
-export default function ImageUploader({setPhotoUrl}) {
+export default function ImageUploader({setPhotoUrl}:any) {
   const [uploading, setUploading] = useState(false);
-  const [lastRef,setLastRef] = useState(null);
+  const [lastRef,setLastRef] = useState<any>(null);
 
   // Creates a Firebase Upload Task
-  const uploadFile = async (e) => {
+  const uploadFile = async (e:any) => {
     // Get the file
     const extension = Array.from(e.target.files)[0].type.split('/')[1];
     const file = await resizeFile(Array.from(e.target.files)[0]);
@@ -25,7 +25,7 @@ export default function ImageUploader({setPhotoUrl}) {
     }
 
     // Makes reference to the storage bucket location
-    const ref = storage.ref(`uploads/${auth.currentUser.uid}/${Date.now()}.${extension}`);
+    const ref = storage.ref(`uploads/${auth.currentUser?.uid}/${Date.now()}.${extension}`);
     setLastRef(ref);
     setUploading(true);
     // Starts the upload

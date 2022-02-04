@@ -10,9 +10,9 @@ import { firestore } from '../lib/firebase';
 export default function AllSubscriptions({subscriptions}:any) {
     const[formMode,setFormMode] = useState(false);
     const[editableSub,setEditableSub] = useState(null);
-    const live = subscriptions.filter(subscription=>subscription.published && !subscription.archived);
-    const drafts = subscriptions.filter(subscription=>!subscription.published);
-    const archived =subscriptions.filter(subscription=>subscription.archived);
+    const live = subscriptions.filter((subscription:any)=>subscription.published && !subscription.archived);
+    const drafts = subscriptions.filter((subscription:any)=>!subscription.published);
+    const archived =subscriptions.filter((subscription:any)=>subscription.archived);
 
     return (
         formMode ? <SubscriptionForm setFormMode={setFormMode} editableSub={editableSub}/> : 
@@ -29,23 +29,23 @@ export default function AllSubscriptions({subscriptions}:any) {
 
             <Heading  size="md"  mb="30px"> Live Subscriptions</Heading>
             <Flex direction="column" w="100%">
-                {live.length!==0 ? live.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no live subscriptions</Text>}
+                {live.length!==0 ? live.map((subscription:any) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no live subscriptions</Text>}
             </Flex>
 
             <Heading  size="md" mb="30px" mt="10px"> Drafts</Heading>
             <Flex direction="column" w="100%">
-                {drafts.length!==0 ? drafts.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no drafts</Text>}
+                {drafts.length!==0 ? drafts.map((subscription:any) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no drafts</Text>}
             </Flex>
 
             <Heading  size="md"mb="30px" mt="10px"> Archive</Heading>
             <Flex direction="column" w="100%">
-                {archived.length!==0 ? archived.map((subscription) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no archived subscriptions</Text>}
+                {archived.length!==0 ? archived.map((subscription:any) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>) : <Text my="10px" alignSelf="center">You have no archived subscriptions</Text>}
             </Flex>
         </Flex>
     )
 }
 
-function SubscriptionItem({ subscription,setFormMode,setEditableSub }) {
+function SubscriptionItem({ subscription,setFormMode,setEditableSub }:any) {
     const edit = ()=>{
         setFormMode(true);
         setEditableSub(subscription);
