@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function CreateSubscription(req, res) {
+export default async function CreateSubscription(req:any, res:any) {
     const { stripeCustomerId,
         priceId,metadata } = req.body;
     try {
@@ -21,7 +21,7 @@ export default async function CreateSubscription(req, res) {
           stripeSubscriptionId: subscription.id,
           clientSecret: subscription.latest_invoice.payment_intent.client_secret,
         });
-      } catch (error) {
+      } catch (error:any) {
         res.status(400).send({ error: { message: error.message } });
       }
 }

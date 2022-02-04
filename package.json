@@ -19,6 +19,7 @@
     "@stripe/stripe-js": "^1.21.1",
     "@types/d3": "^7.1.0",
     "@types/lodash.kebabcase": "^4.1.6",
+    "@types/micro": "^7.3.6",
     "@types/react-geocode": "^0.2.0",
     "axios": "^0.24.0",
     "cors": "^2.8.5",

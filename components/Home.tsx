@@ -92,7 +92,7 @@ export default function Home({ businessName, subscriptions, redemptions, open, d
                     .append('g')
                     .attr('class', 'x-axis')
                     .attr('transform', `translate(0,${height})`)
-                    .call(d3.axisBottom().scale(xScale).tickSize(5).ticks(5).tickFormat(d3.timeFormat("%B %d")))
+                    .call(d3.axisBottom(xScale).tickSize(5).ticks(5).tickFormat(d3.timeFormat("%B %d") as (value: Date | { valueOf(): number; }, i: number) => string))
 
                 svg
                     .append('g')

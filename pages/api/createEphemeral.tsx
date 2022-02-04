@@ -2,7 +2,7 @@ import { firestore } from '../../lib/firebase';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function CreateCustomer(req, res) {
+export default async function CreateCustomer(req:any, res:any) {
     const { customerId} = req.body;
     const ephemeralKey = await stripe.ephemeralKeys.create(
         {customer: customerId},

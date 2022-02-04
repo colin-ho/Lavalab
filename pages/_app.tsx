@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { extendTheme } from "@chakra-ui/react"
 import NewNavbar from '../components/NewNavbar';
 
-export const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY&&loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 const theme = extendTheme({
   colors: {
@@ -33,6 +33,7 @@ function MyApp({ Component, pageProps }:any) {
   const userData = useData();
   const router = useRouter()
   return (
+      stripePromise?
     <ChakraProvider theme = {theme}>
       <AuthContext.Provider value={userData}>
         <Elements stripe={stripePromise}>
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps }:any) {
           <Toaster />
         </Elements>
       </AuthContext.Provider>
-    </ChakraProvider>
+    </ChakraProvider> : null
   );
 }
 
