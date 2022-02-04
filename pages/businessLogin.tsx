@@ -1,6 +1,6 @@
 import { auth, firestore, googleAuthProvider, serverTimestamp } from '../lib/firebase';
-import { AuthContext } from '../lib/context';
-import { useEffect, useState, useContext } from 'react';
+import { AuthContext, AuthContextInterface } from '../lib/context';
+import { useEffect, useState, useContext, Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from "react-hook-form";
@@ -16,12 +16,14 @@ import { HStack } from '@chakra-ui/layout';
 
 
 export default function BusinessLogin() {
-  const { userType, user,displayName,loaded } = useContext(AuthContext);
-  const [isSignIn,setIsSignIn] = useState(true);
+  const { user,business } = useContext<AuthContextInterface>(AuthContext);
+  const [isSignIn,setIsSignIn] = useState<boolean>(true);
 
   return (
     
-        loaded ? user ? userType ==='customer' ? <UserIsCustomer/> :  displayName ? displayName==" " ? <Flex minH={'calc(100vh - 60px)'}justify={'center'} bg={'gray.50'}></Flex> : <SignOutButton businessName={displayName}/> :  <BusinessNameForm/>: (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> : <SignUpForm setIsSignIn={setIsSignIn} />) : <Flex minH={'calc(100vh - 60px)'}justify={'center'} bg={'gray.50'}></Flex>
+         user ? !business ? <UserIsCustomer/> :  business.businessName ? <SignOutButton businessName={business.businessName}/> : 
+         <BusinessNameForm/> : (isSignIn ? <SignInForm setIsSignIn={setIsSignIn} /> 
+            : <SignUpForm setIsSignIn={setIsSignIn} />)
   );
 }
 
@@ -47,28 +49,23 @@ const signUpSchema = yup.object().shape({
 });
 
 // Sign in with Google button
-function SignInForm({setIsSignIn}) {
-  const [errorMessage,setErrorMessage] = useState(null);
+function SignInForm({setIsSignIn}:any) {
+  const [errorMessage,setErrorMessage] = useState<string>('');
   const { register, handleSubmit, formState: { errors }} = useForm({
     resolver: yupResolver(signInSchema),
   });
     
   const onGoogleSubmit = async () => {
     await auth.signInWithPopup(googleAuthProvider);
-    const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
-    const { exists } = await userDoc.get();
+    const businessDoc = firestore.collection('businesses').doc(auth.currentUser?.uid);
+    const { exists } = await businessDoc.get();
     if(!exists){
-      const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
-      // Commit both docs together as a batch write.
-      const batch = firestore.batch();
-      batch.set(userDoc, { uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',joined:serverTimestamp() });
-      batch.set(businessDoc, { uid: auth.currentUser.uid });
-      await batch.commit();
+        businessDoc.set({ uid:auth.currentUser?.uid, joined:serverTimestamp()});
     }
 
   };
 
-  const onEmailSubmit = async ({email,password})=>{
+  const onEmailSubmit = async ({email,password}:any)=>{
     try{
       await signInWithEmailAndPassword(auth, email, password);
     }
@@ -141,7 +138,7 @@ function SignInForm({setIsSignIn}) {
 }
 
 // Sign out button
-function SignOutButton({businessName}) {
+function SignOutButton({businessName}:any) {
   const router = useRouter();
   return (
   <div>
@@ -174,28 +171,28 @@ function SignOutButton({businessName}) {
   );
 }
 
-function SignUpForm({setIsSignIn}) {
+function SignUpForm({setIsSignIn}:any) {
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(signUpSchema),
   });
   const [errorMessage,setErrorMessage] = useState(null)
 
-  const handleSignup = async ({ email, password})=> {
+  const handleSignup = async ({ email, password}:any)=> {
     try{
       await createUserWithEmailAndPassword(auth, email, password)
       setErrorMessage(null)
     }
-    catch(err){
+    catch(err:any){
       console.log(err)
       setErrorMessage(err.message)
     }
       
     if(auth.currentUser){
-      const userDoc = firestore.doc(`users/${auth.currentUser.uid}`);
-      const { exists } = await userDoc.get();
+      const businessDoc = firestore.doc(`businesses/${auth.currentUser.uid}`);
+      const { exists } = await businessDoc.get();
       if(!exists){
         // Commit both docs together as a batch write.
-        userDoc.set({ uid:auth.currentUser.uid, photoURL: auth.currentUser.photoURL, displayName: '', userType:'business',businessType:'',joined:serverTimestamp()});
+        businessDoc.set({ uid:auth.currentUser.uid, joined:serverTimestamp()});
         setIsSignIn(true);
       }
     }

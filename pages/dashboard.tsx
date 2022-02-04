@@ -1,13 +1,13 @@
-import { React, useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, } from 'react';
 import BusinessCheck from '../components/BusinessCheck';
 import { auth, firestore } from '../lib/firebase';
-import { AuthContext } from '../lib/context';
+import { AuthContext, AuthContextInterface } from '../lib/context';
 import {
     IconButton, Box, CloseButton, Flex, HStack, VStack, Icon, useColorModeValue, Link, Drawer,
     DrawerContent, Text, useDisclosure, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Image,
 } from '@chakra-ui/react';
 import {
-    FiHome, FiTrendingUp, FiMenu, FiBell, FiChevronDown,
+    FiHome, FiTrendingUp, FiMenu, FiChevronDown,
 } from 'react-icons/fi';
 import { AiOutlineShop, AiOutlineTags } from "react-icons/ai";
 import { IoPeopleOutline } from "react-icons/io5";
@@ -28,15 +28,14 @@ const LinkItems = [
 
 export default function Dashboard() {
 
-    const [pageState, setPageState] = useState('Home');
-    const { user, displayName } = useContext(AuthContext);
-    const [subscriptions, setSubscriptions] = useState([]);
-    const [redemptions, setRedemptions] = useState([]);
+    const [pageState, setPageState] = useState<string>('Home');
+    const { user, business } = useContext<AuthContextInterface>(AuthContext);
+    const [subscriptions, setSubscriptions] = useState<firebase.default.firestore.DocumentData[]>([]);
+    const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [customerData, setCustomerData] = useState([])
     const [customerIds, setCustomerIds] = useState([])
     const [total, setTotal] = useState(0)
-    const [business, setBusiness] = useState(null);
     const [open, setOpen] = useState(true);
 
     useEffect(() => {
@@ -49,7 +48,6 @@ export default function Dashboard() {
                     subs.push(sub.data())
                 })
                 let all = { name: data.data().displayName, email: data.data().email, subs: subs };
-                console.log(all)
                 return all;
             }
 
@@ -80,7 +78,6 @@ export default function Dashboard() {
 
         let unsubscribe;
         if (subscriptions.length > 0 && user) {
-            console.log(subscriptions)
             let ids = subscriptions.map((sub) => sub.id);
             if (!ids.includes(undefined)) {
                 let customers = []
@@ -104,71 +101,74 @@ export default function Dashboard() {
         return unsubscribe;
     }, [subscriptions, user])
 
+    const handleRedemptionChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
+        let temp:firebase.default.firestore.DocumentData[] = []
+        snapshot.forEach((doc) => {
+            temp.push(doc.data())
+        });
+
+        // Use the setState callback 
+        setRedemptions(temp);
+    };
+    const handleSubscriptionChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
+        let temp:firebase.default.firestore.DocumentData[] = []
+        snapshot.forEach((doc) => {
+            temp.push(doc.data())
+        });
+
+        // Use the setState callback 
+        setSubscriptions(temp);
+    };
 
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
-        const handleRedemptionChanges = (snapshot) => {
-            let temp = []
-            snapshot.forEach((doc) => {
-                temp.push(doc.data())
-            });
 
-            // Use the setState callback 
-            setRedemptions(temp);
-        };
-        const handleSubscriptionChanges = (snapshot) => {
-            let temp = []
-            snapshot.forEach((doc) => {
-                temp.push(doc.data())
-            });
-
-            // Use the setState callback 
-            setSubscriptions(temp);
-        };
-
-        let unsubscribe1, unsubscribe2, unsubscribe3;
+        let subscriptionListener:()=>void, redemptionListener:()=>void;
         if (user) {
-            const subscriptionsQuery = firestore.collection('businesses').doc(user.uid).collection('subscriptions');
+            const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
             var d = new Date();
             d.setHours(0, 0, 0, 0);
-            const redemptionsQuery = firestore.collectionGroup('redemptions').where('businessId', '==', user.uid).where('redeemedAt', '>=', d).orderBy('redeemedAt', 'desc')
-            // Create the DB listener
-            unsubscribe1 = redemptionsQuery.onSnapshot(handleRedemptionChanges,
+            const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('redeemedAt', '>=', d).orderBy('redeemedAt', 'desc')
+            
+            subscriptionListener = redemptionsQuery.onSnapshot(handleRedemptionChanges,
                 err => console.log(err));
-            unsubscribe2 = subscriptionsQuery.onSnapshot(handleSubscriptionChanges,
+            redemptionListener = subscriptionsQuery.onSnapshot(handleSubscriptionChanges,
                 err => console.log(err));
-            unsubscribe3 = firestore.collection('businesses').doc(user.uid).onSnapshot((snapshot) => {
-                setBusiness(snapshot.data());
-                setTotal(snapshot.data().totalCustomers);
-
-                
-                let times = snapshot.data()?.times;
-                let hours = null;
-                const today = new Date()
-                snapshot.data().closures.forEach((closure)=>{
-                    if(today.getUTCDate()>= (new Date(closure.from)).getUTCDate() || today.getUTCDate()<= (new Date(closure.to)).getUTCDate()){
-                        hours = closure.hours;
-                    }
-                })
-                if(hours==null){
-                    const day = today.getDay();
-                    if (day === 0) hours = times.sun;
-                    else if (day === 1) hours = times.mon;
-                    else if (day === 2) hours = times.tue;
-                    else if (day === 3) hours = times.wed
-                    else if (day === 4) hours = times.thu;
-                    else if (day === 5) hours = times.fri;
-                    else if (day === 6) hours = times.sat;
-                }
-                const open = parseInt(hours.open.hr + hours.open.min);
-                const close = parseInt(hours.close.hr + hours.close.min);
-                const now = today.getHours() * 100 + today.getMinutes();
-                setOpen(now > open && now < close && !snapshot.data().paused);
-            })
         }
 
-        return unsubscribe1, unsubscribe2, unsubscribe3;
+        return ()=>{
+            subscriptionListener?.();
+            redemptionListener?.();
+        }
     }, [user]);
+
+    useEffect(() => {
+        if (business) {
+            setTotal(business.totalCustomers);
+            let times = business?.times;
+            let hours = null;
+            const today = new Date()
+            business.closures.forEach((closure: any) => {
+                if (today.getUTCDate() >= (new Date(closure.from)).getUTCDate() || today.getUTCDate() <= (new Date(closure.to)).getUTCDate()) {
+                    hours = closure.hours;
+                }
+            })
+            if (hours == null) {
+                const day = today.getDay();
+                if (day === 0) hours = times.sun;
+                else if (day === 1) hours = times.mon;
+                else if (day === 2) hours = times.tue;
+                else if (day === 3) hours = times.wed
+                else if (day === 4) hours = times.thu;
+                else if (day === 5) hours = times.fri;
+                else if (day === 6) hours = times.sat;
+            }
+            const open = parseInt(hours.open.hr + hours.open.min);
+            const close = parseInt(hours.close.hr + hours.close.min);
+            const now = today.getHours() * 100 + today.getMinutes();
+            setOpen(now > open && now < close && !business.paused);
+        }
+    }, [business])
 
     return (
         <BusinessCheck>
@@ -193,20 +193,20 @@ export default function Dashboard() {
                         </DrawerContent>
                     </Drawer>
                     {/* mobilenav */}
-                    <MobileNav onOpen={onOpen} displayName={displayName} />
+                    <MobileNav onOpen={onOpen} businessName={business.businessName} />
                     <Box ml={{ base: 0, md: 60 }} p="10">
-                        {pageState === 'Home' ? <Home displayName={displayName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
-                            pageState === 'Active Sales' ? <ActiveSales displayName={displayName} subscriptions={subscriptions} redemptions={redemptions.filter(redemption => !redemption.collected)} delay={business.delay} open={open} /> :
+                        {pageState === 'Home' ? <Home businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
+                            pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions.filter(redemption => !redemption.collected)} delay={business.delay} open={open} /> :
                                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} /> :
                                     pageState === 'Customers' ? <Customers customerData={customerData} total={total} /> :
-                                        <StoreDetails business={business} open={open} />}
+                                        <StoreDetails open={open} />}
                     </Box>
                 </Box> : null}
         </BusinessCheck>
     )
 }
 
-const SidebarContent = ({ onClose, setPageState, display, pageState }) => {
+const SidebarContent = ({ onClose, setPageState, display, pageState }:any) => {
     return (
         <Box
             transition="3s ease"
@@ -231,7 +231,7 @@ const SidebarContent = ({ onClose, setPageState, display, pageState }) => {
     );
 };
 
-const NavItem = ({ icon, children, setPageState, page, pageState, onClose }) => {
+const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:any) => {
     return (
         <Link onClick={() => {
             setPageState(page);
@@ -268,7 +268,7 @@ const NavItem = ({ icon, children, setPageState, page, pageState, onClose }) => 
     );
 };
 
-const MobileNav = ({ onOpen, displayName }) => {
+const MobileNav = ({ onOpen, businessName }:any) => {
     const router = useRouter();
     return (
         <Flex
@@ -309,7 +309,7 @@ const MobileNav = ({ onOpen, displayName }) => {
                                     alignItems="flex-start"
                                     spacing="1px"
                                     ml="2">
-                                    <Text fontWeight="600" fontSize="sm">{displayName}</Text>
+                                    <Text fontWeight="600" fontSize="sm">{businessName}</Text>
                                     <Text fontSize="xs" color="gray.600">
                                         {(new Date()).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </Text>

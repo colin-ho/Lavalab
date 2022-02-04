@@ -1,13 +1,11 @@
-
 import { Toaster } from 'react-hot-toast';
-import { AuthContext } from '../lib/context';
-import { useData } from '../lib/hooks';
+import { AuthContext, useData } from '../lib/context';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { ChakraProvider } from "@chakra-ui/react"
 import { useRouter } from 'next/router'
-import NewNavbar from '../components/NewNavbar';
 import { extendTheme } from "@chakra-ui/react"
+import NewNavbar from '../components/NewNavbar';
 
 export const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -31,7 +29,7 @@ const theme = extendTheme({
   }
 })
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }:any) {
   const userData = useData();
   const router = useRouter()
   return (

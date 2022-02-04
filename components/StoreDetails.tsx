@@ -1,11 +1,10 @@
 import { Button, IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { PhoneIcon, SearchIcon } from '@chakra-ui/icons';
-import { Box, Divider, Flex, Grid, GridItem, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/layout'
+import { Box, Divider, Flex,  Heading, HStack, Stack, Text, VStack } from '@chakra-ui/layout'
 import { Modal, ModalBody, ModalCloseButton, InputGroup, InputLeftElement, InputRightElement, ModalContent, Input, ModalFooter, ModalHeader, ModalOverlay, Menu, MenuButton, MenuList, MenuItem, Wrap, InputRightAddon, FormErrorMessage, FormControl, Radio, RadioGroup } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState, useReducer } from 'react'
-import { AuthContext } from '../lib/context';
-import { arrayRemove, arrayUnion, firestore } from '../lib/firebase';
+import { AuthContext, AuthContextInterface } from '../lib/context';
+import { arrayRemove, arrayUnion, } from '../lib/firebase';
 import { Select } from '@chakra-ui/select';
 import { BsPinMap } from 'react-icons/bs';
 import { AiOutlineLink, AiOutlineMail, AiOutlinePhone, AiOutlinePlus } from 'react-icons/ai';
@@ -16,7 +15,7 @@ import Geocode from "react-geocode";
 import { useForm } from 'react-hook-form';
 
 const geofire = require('geofire-common');
-Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+process.env.NEXT_PUBLIC_GOOGLE_API_KEY&&Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
 
 const initialState = {
     'mon': { 'open': { 'hr': 0, 'min': 0 }, 'close': { 'hr': 0, 'min': 0 } },
@@ -28,7 +27,7 @@ const initialState = {
     'sun': { 'open': { 'hr': 0, 'min': 0 }, 'close': { 'hr': 0, 'min': 0 } }
 };
 
-function reducer(state, action) {
+function reducer(state:any, action:any) {
     if (action.type === "All") return action.payload;
     return {
         ...state, [action.day]: {
@@ -40,15 +39,14 @@ function reducer(state, action) {
     }
 }
 
-export default function StoreDetails({ business, open }) {
-    const { displayName, user } = useContext(AuthContext);
-    const [businessRef, setBusinessRef] = useState(null);
+export default function StoreDetails({ open }:any) {
+    const { business,businessRef } = useContext<AuthContextInterface>(AuthContext);
     const [tag, setTag] = useState("");
     const [address, setAddress] = useState("");
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onSubmit' });
     const { register: register2, handleSubmit: handleSubmit2, watch, reset, formState: { errors: errors2 } } = useForm({ mode: 'onSubmit' });
-    const [editDetails, setEditDetails] = useState(false);
-    const [editHours, setEditHours] = useState(false);
+    const [editDetails, setEditDetails] = useState<string | boolean>(false);
+    const [editHours, setEditHours] = useState<string | boolean>(false);
     const [addressError, setAddressError] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [hours, dispatch] = useReducer(reducer, initialState);
@@ -63,7 +61,6 @@ export default function StoreDetails({ business, open }) {
             setValue('email', business.email);
             setValue('website', business.website);
             dispatch({ type: 'All', payload: business.times })
-            setBusinessRef(firestore.collection('businesses').doc(user.uid))
         }
     }, [business])
 
@@ -74,7 +71,7 @@ export default function StoreDetails({ business, open }) {
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
     });
 
-    const changeBusinessType = async (type) => {
+    const changeBusinessType = async (type:string) => {
         if (businessRef) {
             await businessRef.update({ businessType: type })
         }
@@ -87,13 +84,13 @@ export default function StoreDetails({ business, open }) {
         }
     }
 
-    const removeTag = async (tag) => {
+    const removeTag = async (tag:string) => {
         if (businessRef) {
             await businessRef.update({ tags: arrayRemove(tag) })
         }
     }
 
-    const submitDetails = async ({ phone, email, website }) => {
+    const submitDetails = async ({ phone, email, website }:{phone:number,email:string,website:string}) => {
         if (!address) {
             setAddressError(true);
             return;
@@ -126,19 +123,19 @@ export default function StoreDetails({ business, open }) {
         }
     }
 
-    const setDelay = async (delay) => {
+    const setDelay = async (delay:any) => {
         if (businessRef) {
             await businessRef.update({ delay: delay });
         }
     }
 
-    const setPaused = async (status) => {
+    const setPaused = async (status:any) => {
         if (businessRef) {
             await businessRef.update({ paused: status });
         }
     }
 
-    const addClosure = async ({ description, from, to }) => {
+    const addClosure = async ({ description, from, to }:any) => {
         reset({ description: '', from: '', to: '' });
         if (businessRef && parseInt(specialTime.open.hr) * 1000 + parseInt(specialTime.open.min) < parseInt(specialTime.close.hr) * 1000 + parseInt(specialTime.close.min)) {
             let data = {
@@ -151,7 +148,7 @@ export default function StoreDetails({ business, open }) {
         }
     }
 
-    const removeClosure = async (closure) => {
+    const removeClosure = async (closure:any) => {
         if (businessRef) {
             await businessRef.update({ closures: arrayRemove(closure) });
         }
@@ -163,7 +160,7 @@ export default function StoreDetails({ business, open }) {
             <Text>Edit store hours and tags</Text>
             <Stack mt="10" spacing="8" width="full" direction={{ base: "column", pxl: "row" }} >
                 <VStack alignItems="start" flex="1" spacing="4" p={4} borderRadius="xl" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-                    <Text as={'b'} fontSize="18px">{displayName}</Text>
+                    <Text as={'b'} fontSize="18px">{business?.businessName}</Text>
                     <HStack w="full" align="center" justify="space-between">
                         <Text >Business Type:</Text>
                         <Select w="50%" value={business ? business.businessType : "Boba"} onChange={(e) => changeBusinessType(e.target.value)}>
@@ -221,12 +218,12 @@ export default function StoreDetails({ business, open }) {
                     <HStack w="full" align="center" justify="space-between">
                         <Box></Box>
                         <Wrap w="50%" spacing="4">
-                            {business ? business.tags.map(tag =>
+                            {business ? business.tags.map((tag:string) =>
                                 <HStack key={tag} background="brand.100" px="11px" py="4px">
                                     <Text>
                                         {tag}
                                     </Text>
-                                    <IoCloseOutline id={tag} color='gray.300' cursor="pointer" onClick={(e) => removeTag(e.target.id)} />
+                                    <IoCloseOutline id={tag} color='gray.300' cursor="pointer" onClick={(e) => removeTag((e.target as Element).id)} />
                                 </HStack>
                             ) : null}
 
@@ -289,7 +286,7 @@ export default function StoreDetails({ business, open }) {
                             <InputGroup>
                                 <InputLeftElement
                                     pointerEvents='none'><AiOutlinePhone color='gray.300' /></InputLeftElement>
-                                <Input placeholder='Phone' name="phone" type="number" isDisabled={!editDetails}
+                                <Input placeholder='Phone' type="number" isDisabled={!editDetails}
                                     {...register('phone', {
                                         required: { value: true, message: "Phone number is required" },
                                         minLength: { value: 10, message: 'Phone number is too short' }, maxLength: { value: 10, message: 'Phone number is too long' }
@@ -302,7 +299,7 @@ export default function StoreDetails({ business, open }) {
                             <InputGroup>
                                 <InputLeftElement
                                     pointerEvents='none'><AiOutlineMail color='gray.300' /></InputLeftElement>
-                                <Input placeholder='Email' name="email" type="email" isDisabled={!editDetails}
+                                <Input placeholder='Email' type="email" isDisabled={!editDetails}
                                     {...register('email', { required: { value: true, message: "Email is required" }, pattern: { value: /^\S+@\S+$/i, message: "Please enter an appropriate email" } })}
                                 />
                             </InputGroup>
@@ -312,7 +309,7 @@ export default function StoreDetails({ business, open }) {
                             <InputGroup>
                                 <InputLeftElement
                                     pointerEvents='none'><AiOutlineLink color='gray.300' /></InputLeftElement>
-                                <Input placeholder='Website' name="website" type="url" isDisabled={!editDetails}
+                                <Input placeholder='Website' type="url" isDisabled={!editDetails}
                                     {...register('website', { required: false })} />
                             </InputGroup>
                             <FormErrorMessage>{errors.website?.message}</FormErrorMessage>
@@ -673,7 +670,7 @@ export default function StoreDetails({ business, open }) {
                         <HStack w="full" align="center" justify="space-between">
                             <Text >Hours</Text>
                             <HStack w="70%">
-                                {specialTime.open.hr !== 0 ?
+                                {specialTime.open.hr !== '0' ?
                                     <>
 
                                         <Input p="2" type="time" value={`${specialTime.open.hr}:${specialTime.open.min}`} onChange={(e) => setSpecialTime(prev => ({ ...prev, open: { hr: e.target.value.split(":")[0], min: e.target.value.split(":")[1] } }))} />
@@ -693,12 +690,12 @@ export default function StoreDetails({ business, open }) {
                                         variant="ghost"
                                     />
                                     <MenuList>
-                                        <MenuItem onClick={() => specialTime.open.hr === 0 ?
+                                        <MenuItem onClick={() => specialTime.open.hr === '0' ?
                                             setSpecialTime({ open: { hr: '11', min: '00' }, close: { hr: '21', min: '00' } })
                                             : null}>
                                             Hours
                                         </MenuItem>
-                                        <MenuItem onClick={() => setSpecialTime(prev => ({ ...prev, open: { ...prev.open, hr: 0 } }))}>
+                                        <MenuItem onClick={() => setSpecialTime(prev => ({ ...prev, open: { ...prev.open, hr: '0' } }))}>
                                             Closed
                                         </MenuItem>
                                     </MenuList>
@@ -721,7 +718,7 @@ export default function StoreDetails({ business, open }) {
                     <VStack spacing="4" w="full">
                         {business && business.closures.length > 0 ?
 
-                            business.closures.map((closure, i) => {
+                            business.closures.map((closure:any, i:any) => {
                                 return (
                                     <HStack key={i} w="full" align="flex-start">
                                         <VStack flex="1" w="full" align="flex-start" p="4" borderRadius="xl" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
@@ -762,7 +759,7 @@ export default function StoreDetails({ business, open }) {
     )
 }
 
-function Delay({ isOpen, onClose, setDelay, delay }) {
+function Delay({ isOpen, onClose, setDelay, delay }:any) {
     const [value, setValue] = useState(delay)
 
     const saveChanges = () => {
@@ -825,7 +822,7 @@ function Delay({ isOpen, onClose, setDelay, delay }) {
     )
 }
 
-function Pause({ isOpen, onClose, setPaused, paused }) {
+function Pause({ isOpen, onClose, setPaused, paused }:any) {
     const saveChanges = () => {
         setPaused(!paused);
         onClose();

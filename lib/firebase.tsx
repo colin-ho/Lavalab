@@ -28,10 +28,3 @@ export const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
 export const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
 export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
 export const increment = firebase.firestore.FieldValue.increment;
-
-export async function getBusinessWithBusinessId(businessId) {
-  const businessRef = firestore.collection('businesses');
-  const query = businessRef.where('uid', '==', businessId).limit(1);
-  const businessDoc = (await query.get()).docs[0];
-  return businessDoc;
-}

@@ -28,7 +28,6 @@ export default function ImageUploader({setPhotoUrl}) {
     const ref = storage.ref(`uploads/${auth.currentUser.uid}/${Date.now()}.${extension}`);
     setLastRef(ref);
     setUploading(true);
-    console.log(file)
     // Starts the upload
     const task = ref.put(file);
 

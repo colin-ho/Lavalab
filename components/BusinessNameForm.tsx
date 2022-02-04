@@ -24,7 +24,7 @@ export default function BusinessNameForm() {
     const [addressError,setAddressError] = useState(false);
     const [showSuggestions,setShowSuggestions] = useState(false);
 
-    const createShop = async ({businessName,description,businessType,email,phone,website}) => {
+    const createShop = async ({businessName,description,businessType,email,phone,website}:any) => {
         if(!photoURL){
             setPhotoError(true);
             return;
@@ -41,15 +41,13 @@ export default function BusinessNameForm() {
         const {lat,lng} = (await Geocode.fromAddress(address)).results[0].geometry.location;
         const geohash = geofire.geohashForLocation([lat, lng]);
         // Create refs for both documents
-        const businessDoc = firestore.collection('businesses').doc(auth.currentUser.uid);
-        const userDoc = firestore.collection('users').doc(auth.currentUser.uid);
+        const businessDoc = firestore.collection('businesses').doc(auth.currentUser?.uid);
         // Commit both docs together as a batch write.
         const batch = firestore.batch();
-        batch.update(userDoc,{displayName:businessName,businessType:businessType})
-        batch.set(businessDoc, { uid:auth.currentUser.uid,businessType: businessType, 
+        batch.set(businessDoc, { businessType: businessType, 
             businessName: businessName, photoURL: photoURL, address: address,
             geohash: geohash,description:description,lat:lat,lng:lng,
-            totalCustomers:0,tags:[],phone:phone,email:email,website:website,delay:"0",paused:false,
+            totalPurchases:0,tags:[],phone:phone,email:email,website:website,delay:"0",paused:false,
         closures:[],times:{'mon':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
         'tue':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
         'wed':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},

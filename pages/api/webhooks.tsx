@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { buffer } from 'micro';
-import { firestore, increment, serverTimestamp } from '../../lib/firebase';
+import { arrayUnion, firestore, increment, serverTimestamp } from '../../lib/firebase';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET.toString();
@@ -50,9 +50,9 @@ export default async function handler(req, res) {
                     const customerSub = firestore.collection('customers').doc(metadata.customerId).collection('subscribedTo').doc(metadata.subscriptionId);
                     const newHistory = firestore.collection('customers').doc(metadata.customerId).collection('history').doc()
                     const batch = firestore.batch();
-                    batch.update(businessRef, { totalCustomers: increment(1) })
+                    batch.update(businessRef, { totalPurchases: increment(1) })
                     batch.update(subRef, { customerCount: increment(1) });
-                    batch.set(customerRef, { uid: metadata.customerId, name: metadata.name, redeeming: false, code: '', currentRef: '' });
+                    batch.set(customerRef, { uid: metadata.customerId, name: metadata.name, subscriptionsBought:arrayUnion(metadata.subscriptionId)},{merge:true});
                     batch.set(customerSub, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
                         start:new Date(start*1000),end:new Date(end*1000),status:'active'});
                     batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
@@ -80,6 +80,22 @@ export default async function handler(req, res) {
                     const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
     
                     sub.docs.forEach((doc)=>doc.ref.update({start:new Date(start*1000),end:new Date(end*1000),status:'active'}));
+                }
+                
+            }
+            catch(err){
+                console.log(`❌ Error message: ${err.message}`);
+                res.status(400).send(`Webhook Error: ${err.message}`);
+                return;
+            }
+        }
+        else if (event.type==="invoice.payment_failed"){
+            try{
+                if(event.data.object.billing_reason === 'subscription_cycle') {
+                    const subscription =  event.data.object.subscription;
+                    const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
+    
+                    sub.docs.forEach((doc)=>doc.ref.update({status:'incomplete'}));
                 }
                 
             }

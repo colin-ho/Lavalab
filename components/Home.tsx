@@ -7,7 +7,7 @@ import { AiOutlineTags } from 'react-icons/ai';
 import { Select } from '@chakra-ui/select';
 import * as d3 from 'd3';
 
-export default function Home({displayName, subscriptions,redemptions,open,delay}){
+export default function Home({businessName, subscriptions,redemptions,open,delay}:any){
     const {user,joined} = useContext(AuthContext)
     const [waitingCount,setWaitingCount] = useState(0);
     const [total,setTotal] = useState(0);
@@ -138,7 +138,7 @@ export default function Home({displayName, subscriptions,redemptions,open,delay}
     return(
     <Box>
         <Heading  size="lg" mb="10px"> Welcome Back</Heading>{console.log(open)}
-        <Text>{displayName} is currently<b>{!open ? ' closed': ' open and accepting redemptions'}
+        <Text>{businessName} is currently<b>{!open ? ' closed': ' open and accepting redemptions'}
         {open&&(parseInt(delay)>0) ? ` with ${delay} min delay` :null }</b></Text>
         <HStack w="full" my="20px" justify="space-between" spacing={12}>
                 <HStack align="center" flex="1"  p={8}  borderRadius="xl" spacing={12} boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
