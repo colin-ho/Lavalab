@@ -89,7 +89,7 @@ export default function Dashboard() {
                     })
                     let data = (await Promise.all(temp));
 
-                    data.forEach((snap) => {
+                    data.forEach((snap:any) => {
                         snap.forEach((doc:any) => {
                             if (customers.includes(doc.id) === false) customers.push(doc.id)
                         })
