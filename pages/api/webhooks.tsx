@@ -46,13 +46,13 @@ export default async function handler(req, res) {
 
                     const businessRef = firestore.collection('businesses').doc(metadata.businessId);
                     const subRef = firestore.collection('subscriptions').doc(metadata.subscriptionId);
-                    const customerSub = firestore.collection('subscribedTo').doc()
+                    const subscribedTo = firestore.collection('subscribedTo').doc(event.data.object.subscription)
                     const newHistory = firestore.collection('customers').doc(metadata.customerId).collection('history').doc()
-                    
+
                     const batch = firestore.batch();
                     batch.update(businessRef, { totalPurchases: increment(1) })
                     batch.update(subRef, { purchases: increment(1) });
-                    batch.set(customerSub, { uid:customerSub.id, boughtBy: metadata.name, businessId: metadata.businessId, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
+                    batch.set(subscribedTo, { customerName: metadata.name, customerId: metadata.customerId,businessId: metadata.businessId, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: event.data.object.subscription, redemptionCount: 0,
                         start:new Date(start*1000),end:new Date(end*1000),status:'active'});
                     batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business,type:'subscription' })
                     await batch.commit();
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
                 else{
                     const subscription =  event.data.object.subscription;
                     const {start,end} = event.data.object.lines.data[0].period;
-                    const sub = await firestore.collectionGroup('subscribedTo').where('stripeSubscriptionId','==',subscription).get();
+                    const sub = await firestore.collection('subscribedTo').doc(subscription).get();
     
                     sub.docs.forEach((doc)=>doc.ref.update({start:new Date(start*1000),end:new Date(end*1000),status:'active'}));
                 }
