@@ -47,7 +47,7 @@ export default async function handler(req: any, res: any) {
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
 
                     await subscribedTo.set({
-                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price/100, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
+                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     });
 
