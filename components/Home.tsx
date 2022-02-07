@@ -1,57 +1,35 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
-import { firestore } from '../lib/firebase';
-import { AuthContext } from '../lib/context';
-import { Box, Flex, Grid, GridItem, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
-import { BsArrowRight } from 'react-icons/bs';
-import { AiOutlineTags } from 'react-icons/ai';
-import { Select } from '@chakra-ui/select';
+import { Box, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
+import { AiOutlineConsoleSql, AiOutlineTags } from 'react-icons/ai';
 import * as d3 from 'd3';
 
-export default function Home({ businessName, subscriptions, redemptions, open, delay }: any) {
-    const { user,business } = useContext(AuthContext)
-    const [waitingCount, setWaitingCount] = useState(0);
-    const [total, setTotal] = useState(0);
+export default function Home({ joined,businessName, open, delay, customerData,waitingCount,numOfSubs }: any) {
+    const [total, setTotal] = useState('0');
     const [data, setData] = useState<any[]>([]);
     const d3Container = useRef(null);
     const contRef = useRef<any>(null);
+
     useEffect(() => {
-        let temp1 = 0;
-        let tempTotal = 0;
-        subscriptions.map((sub:any) => {
-            tempTotal += sub.purchases * sub.price;
-        })
-        redemptions.map((r:any) => {
-            if (!r.collected) temp1++;
-        })
-        setWaitingCount(temp1);
-        setTotal(tempTotal);
-
-        let unsubscribe;
-
-        if (user && subscriptions.length > 0) {
-            const ids = subscriptions.map((sub:any) => sub.id);
-            unsubscribe = firestore.collectionGroup('subscribedTo').where('subscriptionId', 'in', ids).orderBy('boughtAt').onSnapshot((snapshot) => {
-                let tempData = [];
-                let money = 0;
-                tempData.push({ date: business?.joined, value: 0 })
-                snapshot.forEach((doc) => {
-                    money += parseInt(subscriptions.filter((sub:any) => doc.data().subscriptionId == sub.id)[0].price);
-                    const item = { date: doc.data().boughtAt.toDate(), value: money }
-                    tempData.push(item)
-                })
-                tempData.push({ date: (new Date()), value: money })
-                setData(tempData)
+        if (customerData.length>0) {
+            let tempData = [];
+            let money = 0;
+            tempData.push({ date: joined.toDate(), value: 0 })
+            customerData.forEach((doc: any) => {
+                money += parseFloat(doc.amountPaid)
+                const item = { date: doc.boughtAt.toDate(), value: money }
+                tempData.push(item)
             })
+            tempData.push({ date: (new Date()), value: money })
+            setTotal(money.toFixed(2))
+            setData(tempData)
         }
-
-        return unsubscribe;
-    }, [subscriptions, redemptions, user, business])
+    }, [customerData])
 
 
     useEffect(() => {
         if (data.length > 0 && d3Container.current) {
 
-            const create = () =>{
+            const create = () => {
                 const width = contRef.current?.offsetWidth - 100
                 const height = 300
                 const margin = { top: 50, right: 50, bottom: 50, left: 50 };
@@ -137,7 +115,7 @@ export default function Home({ businessName, subscriptions, redemptions, open, d
 
     return (
         <Box>
-            <Heading size="lg" mb="10px"> Welcome Back</Heading>{console.log(open)}
+            <Heading size="lg" mb="10px"> Welcome Back</Heading>
             <Text>{businessName} is currently<b>{!open ? ' closed' : ' open and accepting redemptions'}
                 {open && (parseInt(delay) > 0) ? ` with ${delay} min delay` : null}</b></Text>
             <HStack w="full" my="20px" justify="space-between" spacing={12}>
@@ -146,7 +124,7 @@ export default function Home({ businessName, subscriptions, redemptions, open, d
                     <Text>Open orders</Text>
                 </HStack>
                 <HStack flex="1" p={8} borderRadius="xl" spacing={12} boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-                    <Text fontSize='32' as={'b'}>{subscriptions.length}</Text>
+                    <Text fontSize='32' as={'b'}>{numOfSubs}</Text>
                     <Text>Active subscriptions</Text>
                 </HStack>
 

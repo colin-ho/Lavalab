@@ -32,74 +32,9 @@ export default function Dashboard() {
     const { user, business } = useContext<AuthContextInterface>(AuthContext);
     const [subscriptions, setSubscriptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
+    const [customerData,setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [customerData, setCustomerData] = useState<any>([])
-    const [customerIds, setCustomerIds] = useState([])
-    const [total, setTotal] = useState(0)
     const [open, setOpen] = useState(true);
-
-    useEffect(() => {
-        const getNestedStuff =
-            async (doc:any, ids:any) => {
-
-                const [data, subQuery] = await Promise.all([(firestore.collection('customers').doc(doc.id).get()), (firestore.collection('customers').doc(doc.id).collection('subscribedTo').where('subscriptionId', 'in', ids).get())])
-                let subs:any = []
-                subQuery.forEach((sub) => {
-                    subs.push(sub.data())
-                })
-                let all = { name: data.data()?.displayName, email: data.data()?.email, subs: subs };
-                return all;
-            }
-
-        const getstuff = (
-            async (snapshot:any, ids:any) => {
-                let temp:any = [];
-                snapshot.forEach(async (doc:any) => {
-
-                    temp.push(getNestedStuff(doc, ids))
-                });
-                return await Promise.all(temp);
-            })
-
-        let unsubscribe;
-        if (customerIds.length > 0) {
-            let ids = subscriptions.map((sub) => sub.id);
-            if (!ids.includes(undefined)) {
-                unsubscribe = firestore.collection('customers').where('uid', 'in', customerIds).onSnapshot(async (snapshot) => {
-                    setCustomerData(await getstuff(snapshot, ids))
-                })
-            }
-        }
-
-        return unsubscribe
-    }, [customerIds, subscriptions])
-
-    useEffect(() => {
-
-        let unsubscribe;
-        if (subscriptions.length > 0 && user) {
-            let ids = subscriptions.map((sub) => sub.id);
-            if (!ids.includes(undefined)) {
-                let customers:any = []
-                unsubscribe = firestore.collectionGroup('subscriptions').where('id', 'in', ids).onSnapshot(async (snapshot) => {
-
-                    let temp:any = []
-                    snapshot.forEach((sub) => {
-                        if (temp.includes(sub.id) === false) temp.push(firestore.collection('businesses').doc(user.uid).collection('subscriptions').doc(sub.id).collection('customers').get());
-                    })
-                    let data = (await Promise.all(temp));
-
-                    data.forEach((snap:any) => {
-                        snap.forEach((doc:any) => {
-                            if (customers.includes(doc.id) === false) customers.push(doc.id)
-                        })
-                    })
-                    setCustomerIds(customers);
-                })
-            }
-        }
-        return unsubscribe;
-    }, [subscriptions, user])
 
     const handleRedemptionChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
         let temp:firebase.default.firestore.DocumentData[] = []
@@ -120,20 +55,32 @@ export default function Dashboard() {
         setSubscriptions(temp);
     };
 
+    const handleCustomerChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
+        let temp:firebase.default.firestore.DocumentData[] = []
+        snapshot.forEach((doc) => {
+            temp.push(doc.data())
+        });
+        // Use the setState callback 
+        setCustomerData(temp);
+    };
+
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
 
-        let subscriptionListener:()=>void, redemptionListener:()=>void;
+        let subscriptionListener:()=>void, redemptionListener:()=>void, customerListener:()=>void;
         if (user) {
             const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
             var d = new Date();
             d.setHours(0, 0, 0, 0);
             const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('redeemedAt', '>=', d).orderBy('redeemedAt', 'desc')
-            
+            const customerQuery = firestore.collection('subscribedTo').where('businessId', '==', user.uid).orderBy('boughtAt')
+
             subscriptionListener = redemptionsQuery.onSnapshot(handleRedemptionChanges,
                 err => console.log(err));
             redemptionListener = subscriptionsQuery.onSnapshot(handleSubscriptionChanges,
                 err => console.log(err));
+            customerListener = customerQuery.onSnapshot(handleCustomerChanges,
+                err=>console.log(err))
         }
 
         return ()=>{
@@ -144,7 +91,6 @@ export default function Dashboard() {
 
     useEffect(() => {
         if (business) {
-            setTotal(business.totalCustomers);
             let times = business?.times;
             let hours = null;
             const today = new Date()
@@ -173,7 +119,7 @@ export default function Dashboard() {
     return (
         <BusinessCheck>
             {business ?
-                <Box minH="100vh">{console.log(redemptions)}
+                <Box minH="100vh">
                     <SidebarContent
                         onClose={() => onClose}
                         display={{ base: 'none', md: 'block' }}
@@ -195,10 +141,10 @@ export default function Dashboard() {
                     {/* mobilenav */}
                     <MobileNav onOpen={onOpen} businessName={business.businessName} />
                     <Box ml={{ base: 0, md: 60 }} p="10">
-                        {pageState === 'Home' ? <Home businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
+                        {pageState === 'Home' ? <Home businessName={business.businessName} joined={business.joined} subscriptions={subscriptions} delay={business.delay} open={open} customerData={customerData} waitingCount={redemptions.filter((r: any) => !r.collected).length} numOfSubs={subscriptions.length}/> :
                             pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions.filter(redemption => !redemption.collected)} delay={business.delay} open={open} /> :
-                                pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} /> :
-                                    pageState === 'Customers' ? <Customers customerData={customerData} total={total} /> :
+                                pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} activeIds={customerData.filter(customer=>customer.status === 'active').map(item => item.subscriptionId)} inactiveIds={customerData.filter(customer=>customer.status !== 'active').map(item => item.subscriptionId)}/> :
+                                    pageState === 'Customers' ? <Customers customerData={customerData.filter(customer=>customer.status === 'active')} total={customerData.length} /> :
                                         <StoreDetails open={open} />}
                     </Box>
                 </Box> : null}

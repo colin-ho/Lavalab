@@ -25,11 +25,13 @@ export function useData() {
                     setBusinessRef(snapshot.ref)
                     setBusiness(snapshot.data())
                 } else{
+                    setBusinessRef(null)
                     setBusiness(null)
                 }
             },err=>console.log(err))
         } else{
             setBusiness(null)
+            setBusinessRef(null)
         }
     }, [user]);
 

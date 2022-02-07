@@ -59,7 +59,8 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
             <Heading mt="30px" size="lg" mb="30px"> Open Orders</Heading>
             <Flex direction="column" w="100%">
                 {redemptions.length !== 0 ? redemptions.map((redemption:any)=>{
-                    return <OrderItem key={redemption.code} redemption={redemption} subscription={subscriptions.filter((subscription:any)=>subscription.id == redemption.subscriptionId)[0]}/>
+                    const sub =subscriptions.filter((subscription:any)=>subscription.id == redemption.subscriptionId)[0]
+                    if (sub) return <OrderItem key={redemption.code} redemption={redemption} title={sub.title} content={sub.content}/>
                 }) : <Text>Waiting for new orders ...</Text>}
             </Flex>
         </Flex>
@@ -67,7 +68,7 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
 }
 
 
-function OrderItem({ redemption,subscription }:any) {
+function OrderItem({ redemption,title,content }:any) {
     const now:any = new Date();
     const redemptionTime = typeof redemption?.redeemedAt === 'number' ? new Date(redemption.redeemedAt) : redemption.redeemedAt.toDate();
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
@@ -95,8 +96,8 @@ function OrderItem({ redemption,subscription }:any) {
                 </VStack>
                 <VStack spacing={1} alignItems="start">
                     <Text as="b">Overview</Text>
-                    <Text >{subscription.title}</Text>
-                    <Text>{"1x "+subscription.content}</Text>
+                    <Text >{title}</Text>
+                    <Text>{"1x "+content}</Text>
                 </VStack>
                 <VStack spacing={1} alignItems="start">
                     <Text as="b">Customer Message</Text>

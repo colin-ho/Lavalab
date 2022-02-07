@@ -44,20 +44,12 @@ export default async function handler(req: any, res: any) {
                     const metadata = dataObject.lines.data[0].metadata;
                     const { start, end } = dataObject.lines.data[0].period;
 
-                    const businessRef = firestore.collection('businesses').doc(metadata.businessId);
-                    const subRef = firestore.collection('subscriptions').doc(metadata.subscriptionId);
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
-                    const newHistory = firestore.collection('customers').doc(metadata.customerId).collection('history').doc()
 
-                    const batch = firestore.batch();
-                    batch.update(businessRef, { totalPurchases: increment(1) })
-                    batch.update(subRef, { purchases: increment(1) });
-                    batch.set(subscribedTo, {
-                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
+                    await subscribedTo.set({
+                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price/100, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     });
-                    batch.set(newHistory, { subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, time: serverTimestamp(), price: metadata.price, business: metadata.business, type: 'subscription' })
-                    await batch.commit();
 
                     const subscription_id = dataObject.subscription
                     const payment_intent_id = dataObject.payment_intent
