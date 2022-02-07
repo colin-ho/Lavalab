@@ -49,7 +49,6 @@ export default function SubscriptionForm({ editableSub, setFormMode }: any) {
             dayConstrain: dayConstrain,
             updatedAt: serverTimestamp(),
             published: false,
-            purchases: 0,
             redemptionCount: 0,
             archived: false,
         }
