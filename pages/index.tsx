@@ -32,7 +32,7 @@ export default function Home() {
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
                     <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
-                        <Image layout="fill" priority={true} placeholder="blur" objectFit="cover" src={dimsum} alt="" />
+                        <Image layout="fill" objectFit="cover" src={dimsum} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">

@@ -32,7 +32,7 @@ export default function ForMerchantsPage() {
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
                     <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
-                        <Image priority={true} placeholder="blur" layout="fill" objectFit="cover" src={barista} alt="" />
+                        <Image priority={true} layout="fill" objectFit="cover" src={barista} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
