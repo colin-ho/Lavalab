@@ -6,7 +6,15 @@ import { Button, IconButton } from '@chakra-ui/button';
 import { arrayRemove, arrayUnion, firestore } from '../lib/firebase';
 import { useDisclosure } from '@chakra-ui/hooks';
 
-export default function ActiveSales({ businessName,subscriptions,redemptions,open,delay}:any) {
+interface ActiveSalesProps{
+    businessName:string,
+    subscriptions:firebase.default.firestore.DocumentData[],
+    redemptions:firebase.default.firestore.DocumentData[],
+    open:boolean,
+    delay:string,
+}
+
+export default function ActiveSales({ businessName,subscriptions,redemptions,open,delay}:ActiveSalesProps) {
     const [newOrderCount,setNewOrderCount] = useState(0);
     const [inProgressCount,setInProgressCount] = useState(0);
     const [lateCount,setLateCount] = useState(0);
@@ -15,14 +23,14 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
         setLateCount(0);
         setInProgressCount(0);
         setNewOrderCount(0);
-        redemptions.map((r:any)=>{
+        redemptions.map((r:firebase.default.firestore.DocumentData)=>{
             if(!r.confirmed ) setNewOrderCount(newOrderCount=>newOrderCount+1);
             else setInProgressCount(inProgressCount=>inProgressCount+1);
             if(r.collectBy.toDate() < new Date()) setLateCount(lateCount=>lateCount+1);
         })
         let interval = setInterval(() => {
             setLateCount(0);
-            redemptions.map((r:any)=>{
+            redemptions.map((r:firebase.default.firestore.DocumentData)=>{
                 if(r.collectBy.toDate() < new Date()) setLateCount(lateCount=>lateCount+1);
             })
           }, 10000);
@@ -58,8 +66,8 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
 
             <Heading mt="30px" size="lg" mb="30px"> Open Orders</Heading>
             <Flex direction="column" w="100%">
-                {redemptions.length !== 0 ? redemptions.map((redemption:any)=>{
-                    const sub =subscriptions.filter((subscription:any)=>subscription.id == redemption.subscriptionId)[0]
+                {redemptions.length !== 0 ? redemptions.map((redemption:firebase.default.firestore.DocumentData)=>{
+                    const sub =subscriptions.filter((subscription:firebase.default.firestore.DocumentData)=>subscription.id == redemption.subscriptionId)[0]
                     if (sub) return <OrderItem key={redemption.code} redemption={redemption} title={sub.title} content={sub.content}/>
                 }) : <Text>Waiting for new orders ...</Text>}
             </Flex>
@@ -67,13 +75,18 @@ export default function ActiveSales({ businessName,subscriptions,redemptions,ope
     )
 }
 
+interface OrderItemProps{
+    redemption:firebase.default.firestore.DocumentData,
+    title:string,
+    content:string,
+}
 
-function OrderItem({ redemption,title,content }:any) {
-    const now:any = new Date();
+function OrderItem({ redemption,title,content }:OrderItemProps) {
+    const now:Date = new Date();
     const redemptionTime = typeof redemption?.redeemedAt === 'number' ? new Date(redemption.redeemedAt) : redemption.redeemedAt.toDate();
     const collectionTime = typeof redemption?.collectBy === 'number' ? new Date(redemption.collectBy) : redemption.collectBy.toDate();
-    const received = Math.floor((now - redemptionTime) / (1000 * 60));
-    const due = (collectionTime - now) / (1000 * 60);
+    const received = Math.floor((+now - redemptionTime) / (1000 * 60));
+    const due = (collectionTime - +now) / (1000 * 60);
 
     const confirm = async ()=>{
         const ref = firestore.collection('redemptions').doc(redemption.id);

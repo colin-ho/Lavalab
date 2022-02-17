@@ -123,13 +123,13 @@ export default function StoreDetails({ open }:any) {
         }
     }
 
-    const setDelay = async (delay:any) => {
+    const setDelay = async (delay:string) => {
         if (businessRef) {
             await businessRef.update({ delay: delay });
         }
     }
 
-    const setPaused = async (status:any) => {
+    const setPaused = async (status:boolean) => {
         if (businessRef) {
             await businessRef.update({ paused: status });
         }
@@ -718,7 +718,7 @@ export default function StoreDetails({ open }:any) {
                     <VStack spacing="4" w="full">
                         {business && business.closures.length > 0 ?
 
-                            business.closures.map((closure:any, i:any) => {
+                            business.closures.map((closure:any, i:number) => {
                                 return (
                                     <HStack key={i} w="full" align="flex-start">
                                         <VStack flex="1" w="full" align="flex-start" p="4" borderRadius="xl" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
@@ -759,7 +759,14 @@ export default function StoreDetails({ open }:any) {
     )
 }
 
-function Delay({ isOpen, onClose, setDelay, delay }:any) {
+interface DelayProps{
+    isOpen:boolean,
+    onClose:()=>void,
+    setDelay:(delay: string) => Promise<void>,
+    delay:string
+}
+
+function Delay({ isOpen, onClose, setDelay, delay }:DelayProps) {
     const [value, setValue] = useState(delay)
 
     const saveChanges = () => {
@@ -822,7 +829,15 @@ function Delay({ isOpen, onClose, setDelay, delay }:any) {
     )
 }
 
-function Pause({ isOpen, onClose, setPaused, paused }:any) {
+interface PauseProps{
+    isOpen:boolean,
+    onClose:()=>void,
+    setPaused:(status: boolean) => Promise<void>,
+    paused:boolean
+
+}
+
+function Pause({ isOpen, onClose, setPaused, paused }:PauseProps) {
     const saveChanges = () => {
         setPaused(!paused);
         onClose();

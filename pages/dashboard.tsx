@@ -17,6 +17,7 @@ import AllSubscriptions from '../components/AllSubscriptions';
 import StoreDetails from '../components/StoreDetails';
 import { useRouter } from 'next/router';
 import Customers from '../components/Customers';
+import { IconType } from 'react-icons';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
@@ -70,9 +71,7 @@ export default function Dashboard() {
         let subscriptionListener:()=>void, redemptionListener:()=>void, customerListener:()=>void;
         if (user) {
             const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
-            var d = new Date();
-            d.setHours(0, 0, 0, 0);
-            const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('redeemedAt', '>=', d).orderBy('redeemedAt', 'desc')
+            const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('collected', '==', false).orderBy('redeemedAt', 'desc')
             const customerQuery = firestore.collection('subscribedTo').where('businessId', '==', user.uid).orderBy('boughtAt')
 
             subscriptionListener = redemptionsQuery.onSnapshot(handleRedemptionChanges,
@@ -93,8 +92,23 @@ export default function Dashboard() {
         if (business) {
             let times = business?.times;
             let hours = null;
-            const today = new Date()
-            business.closures.forEach((closure: any) => {
+            const today = new Date() 
+            interface ClosureInterface{
+                description:string,
+                from:string,
+                to:string,
+                hours:{
+                    close:{
+                        min:string,
+                        hr:string
+                    },
+                    open:{
+                        min:string,
+                        hr:string
+                    },
+                }
+            }
+            business.closures.forEach((closure:ClosureInterface) => {
                 if (today.getUTCDate() >= (new Date(closure.from)).getUTCDate() || today.getUTCDate() <= (new Date(closure.to)).getUTCDate()) {
                     hours = closure.hours;
                 }
@@ -141,10 +155,10 @@ export default function Dashboard() {
                     {/* mobilenav */}
                     <MobileNav onOpen={onOpen} businessName={business.businessName} />
                     <Box ml={{ base: 0, md: 60 }} p="10">
-                        {pageState === 'Home' ? <Home businessName={business.businessName} joined={business.joined} subscriptions={subscriptions} delay={business.delay} open={open} customerData={customerData} waitingCount={redemptions.filter((r: any) => !r.collected).length} numOfSubs={subscriptions.length}/> :
-                            pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions.filter(redemption => !redemption.collected)} delay={business.delay} open={open} /> :
+                        {pageState === 'Home' ? <Home businessName={business.businessName} joined={business.joined} delay={business.delay} open={open} customerData={customerData} waitingCount={redemptions.length} numOfSubs={subscriptions.length}/> :
+                            pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
                                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} activeIds={customerData.filter(customer=>customer.status === 'active').map(item => item.subscriptionId)} inactiveIds={customerData.filter(customer=>customer.status !== 'active').map(item => item.subscriptionId)}/> :
-                                    pageState === 'Customers' ? <Customers customerData={customerData.filter(customer=>customer.status === 'active')} total={customerData.length} /> :
+                                    pageState === 'Customers' ? <Customers customerData={customerData.filter(customer=>customer.status === 'active')} total={customerData.length} subTitles={subscriptions.map((sub)=>{return sub.title})}/> :
                                         <StoreDetails open={open} />}
                     </Box>
                 </Box> : null}
@@ -152,7 +166,17 @@ export default function Dashboard() {
     )
 }
 
-const SidebarContent = ({ onClose, setPageState, display, pageState }:any) => {
+interface SidebarProps {
+    onClose:() => void,
+    setPageState:React.Dispatch<React.SetStateAction<string>>,
+    display: {
+        base: string,
+        md: string,
+    },
+    pageState:string,
+}
+
+const SidebarContent = ({ onClose, setPageState, display, pageState }:SidebarProps) => {
     return (
         <Box
             transition="3s ease"
@@ -177,7 +201,16 @@ const SidebarContent = ({ onClose, setPageState, display, pageState }:any) => {
     );
 };
 
-const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:any) => {
+interface NavItemProps {
+    onClose:() => void,
+    setPageState:React.Dispatch<React.SetStateAction<string>>,
+    pageState:string,
+    page:string,
+    children:string,
+    icon:IconType,
+}
+
+const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:NavItemProps) => {
     return (
         <Link onClick={() => {
             setPageState(page);
@@ -214,7 +247,12 @@ const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:any)
     );
 };
 
-const MobileNav = ({ onOpen, businessName }:any) => {
+interface MobileNavProps {
+    onOpen:()=>void,
+    businessName:string
+}
+
+const MobileNav = ({ onOpen, businessName }:MobileNavProps) => {
     const router = useRouter();
     return (
         <Flex
@@ -234,14 +272,6 @@ const MobileNav = ({ onOpen, businessName }:any) => {
                 aria-label="open menu"
                 icon={<FiMenu />}
             />
-
-            <Text
-                display={{ base: 'flex', md: 'none' }}
-                fontSize="2xl"
-                fontFamily="monospace"
-                fontWeight="bold">
-                Logo
-            </Text>
 
             <HStack spacing={{ base: '0', md: '6' }}>
                 <Flex alignItems={'center'}>

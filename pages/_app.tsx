@@ -6,44 +6,49 @@ import { ChakraProvider } from "@chakra-ui/react"
 import { useRouter } from 'next/router'
 import { extendTheme } from "@chakra-ui/react"
 import NewNavbar from '../components/NewNavbar';
+import { Fonts } from '../styles/Fonts';
 
-const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY&&loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 const theme = extendTheme({
-  colors: {
-    brand: {
-      100: "#f4f6fa",
-      200:"#FE7886",
-      300:"#ACFFDC",
-      400:"#FCE86B",
-      900: "#1a202c",
+    fonts: {
+        heading: "Roobert",
+        body: "Roobert",
     },
-  },
-  breakpoints:{
-    sm: "30em",
-    md: "48em",
-    lg: "62em",
-    pxl:"70em",
-    xl: "80em",
-    "2xl": "96em",
-  }
+    colors: {
+        brand: {
+            100: "#f4f6fa",
+            200: "#FE7886",
+            300: "#ACFFDC",
+            400: "#FCE86B",
+            900: "#1a202c",
+        },
+    },
+    breakpoints: {
+        sm: "36em",
+        md: "48em",
+        lg: "62em",
+        pxl: "70em",
+        xl: "80em",
+        "2xl": "96em",
+    }
 })
 
-function MyApp({ Component, pageProps }:any) {
-  const userData = useData();
-  const router = useRouter()
-  return (
-      stripePromise?
-    <ChakraProvider theme = {theme}>
-      <AuthContext.Provider value={userData}>
-        <Elements stripe={stripePromise}>
-          {router.asPath === '/dashboard' ? null: <NewNavbar />}
-          <Component {...pageProps} />
-          <Toaster />
-        </Elements>
-      </AuthContext.Provider>
-    </ChakraProvider> : null
-  );
+function MyApp({ Component, pageProps }: any) {
+    const userData = useData();
+    const router = useRouter()
+    return (
+        stripePromise ?
+            <ChakraProvider theme={theme}>
+                <Fonts/>
+                <AuthContext.Provider value={userData}>
+                    <Elements stripe={stripePromise}>
+                        <Component {...pageProps} />
+                        <Toaster />
+                    </Elements>
+                </AuthContext.Provider>
+            </ChakraProvider> : null
+    );
 }
 
 export default MyApp

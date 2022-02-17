@@ -77,14 +77,14 @@ function SignInForm({setIsSignIn}:any) {
 
   return (
     <Flex
-      minH={'calc(100vh - 60px)'}
+      minH={'100vh'}
       justify={'center'}
       bg={'gray.50'}
       >
       <Stack spacing={8} mx={'auto'} w = {'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={{ base: "2xl",sm:"3xl", md: "4xl"}}>Sign in to your account</Heading>
-          <Text fontSize={'lg'} color={'gray.600'}>
+          <Text fontSize={'ls'} color={'gray.600'}>
             to start managing subscriptions ✌️
           </Text>
         </Stack>
@@ -143,7 +143,7 @@ function SignOutButton({businessName}:any) {
   return (
   <div>
     <Flex
-      minH={'calc(100vh - 60px)'}
+      minH={'100vh'}
       justify={'center'}
       bg={'gray.50'}>
       <Stack spacing={8} mx={'auto'} w = {'lg'}  py={12} px={6}>
@@ -201,7 +201,7 @@ function SignUpForm({setIsSignIn}:any) {
 
   return (
     <Flex
-      minH={'calc(100vh - 60px)'}
+      minH={'100vh'}
       justify={'center'}
       bg={'gray.50'}>
       <Stack spacing={8} mx={'auto'} w = {'lg'}  py={12} px={6}>

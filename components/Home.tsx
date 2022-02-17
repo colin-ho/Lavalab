@@ -3,23 +3,37 @@ import { Box, Heading, HStack, Text, VStack } from '@chakra-ui/layout'
 import { AiOutlineConsoleSql, AiOutlineTags } from 'react-icons/ai';
 import * as d3 from 'd3';
 
-export default function Home({ joined,businessName, open, delay, customerData,waitingCount,numOfSubs }: any) {
+interface HomeProps {
+    joined: firebase.default.firestore.Timestamp,
+    businessName: string,
+    open: boolean,
+    delay: string,
+    customerData: firebase.default.firestore.DocumentData[],
+    waitingCount: number,
+    numOfSubs: number
+}
+
+interface DataInterface {
+    date: number,
+    value: number,
+}
+export default function Home({ joined, businessName, open, delay, customerData, waitingCount, numOfSubs }: HomeProps) {
     const [total, setTotal] = useState('0');
-    const [data, setData] = useState<any[]>([]);
-    const d3Container = useRef(null);
-    const contRef = useRef<any>(null);
+    const [data, setData] = useState<DataInterface[]>([]);
+    const d3Container = useRef<HTMLDivElement>(null);
+    const contRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (customerData.length>0) {
+        if (customerData.length > 0) {
             let tempData = [];
             let money = 0;
-            tempData.push({ date: joined.toDate(), value: 0 })
-            customerData.forEach((doc: any) => {
+            tempData.push({ date: joined.toDate().getTime(), value: 0 })
+            customerData.forEach((doc: firebase.default.firestore.DocumentData) => {
                 money += parseFloat(doc.amountPaid)
-                const item = { date: doc.boughtAt.toDate(), value: money }
+                const item = { date: doc.boughtAt.toDate().getTime(), value: money }
                 tempData.push(item)
             })
-            tempData.push({ date: (new Date()), value: money })
+            tempData.push({ date: (new Date()).getTime(), value: money })
             setTotal(money.toFixed(2))
             setData(tempData)
         }
@@ -27,10 +41,10 @@ export default function Home({ joined,businessName, open, delay, customerData,wa
 
 
     useEffect(() => {
-        if (data.length > 0 && d3Container.current) {
+        if (data.length > 0) {
 
             const create = () => {
-                const width = contRef.current?.offsetWidth - 100
+                const width = contRef.current ? contRef.current.offsetWidth - 100 : 0;
                 const height = 300
                 const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
@@ -45,25 +59,25 @@ export default function Home({ joined,businessName, open, delay, customerData,wa
                     .attr('transform', `translate(${margin.left},${margin.top})`);
 
 
-                const yMinValue = d3.min(data, (d: any) => d.value);
-                const yMaxValue = d3.max(data, (d: any) => d.value);
-                const xMinValue = d3.min(data, (d: any) => d.date);
-                const xMaxValue = d3.max(data, (d: any) => d.date);
+                const yMinValue = d3.min(data, (d: DataInterface) => d.value);
+                const yMaxValue = d3.max(data, (d: DataInterface) => d.value);
+                const xMinValue = d3.min(data, (d: DataInterface) => d.date);
+                const xMaxValue = d3.max(data, (d: DataInterface) => d.date);
 
                 const xScale = d3
                     .scaleLinear()
-                    .domain([xMinValue, xMaxValue])
+                    .domain([xMinValue as number, xMaxValue as number])
                     .range([0, width]);
                 const yScale = d3
                     .scaleLinear()
                     .range([height, 0])
-                    .domain([yMinValue, yMaxValue * 1.2]);
+                    .domain([yMinValue as number, yMaxValue as number * 1.2]);
 
                 const line = d3
-                    .area()
-                    .x((d: any) => xScale(d.date))
+                    .area<DataInterface>()
+                    .x((d: DataInterface) => xScale(d.date))
                     .y0(yScale(0))
-                    .y1((d: any) => yScale(d.value))
+                    .y1((d: DataInterface) => yScale(d.value))
                     .curve(d3.curveMonotoneX);
 
                 svg
@@ -76,6 +90,11 @@ export default function Home({ joined,businessName, open, delay, customerData,wa
                     .append('g')
                     .attr('class', 'y-axis')
                     .call(d3.axisLeft(yScale).tickSize(5));
+
+                interface GradientData {
+                    offset: string,
+                    color: string
+                }[]
 
                 svg.append("linearGradient")
                     .attr("id", "gradient")
@@ -92,8 +111,8 @@ export default function Home({ joined,businessName, open, delay, customerData,wa
                         { offset: "65%", color: "transparent" }
                     ])
                     .enter().append("stop")
-                    .attr("offset", function (d: any) { return d.offset; })
-                    .attr("stop-color", function (d: any) { return d.color; });
+                    .attr("offset", function (d: GradientData) { return d.offset; })
+                    .attr("stop-color", function (d: GradientData) { return d.color; });
 
                 svg
                     .append('path')
