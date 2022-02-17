@@ -9,6 +9,7 @@ export default function Metatags({
   return (
     <Head>
       <title>{title}</title>
+      <link rel="shortcut icon" href="/favicon.ico" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@fireship_dev" />
       <meta name="twitter:title" content={title} />
