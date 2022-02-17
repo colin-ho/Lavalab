@@ -28,7 +28,7 @@ export default function ForMerchantsPage(props: any) {
                         <Box flex="1" />
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
-                    <Image height={{ base: 390, sm: 615, lg: 1100 }} objectFit='cover' src={"/barista.jpeg"} alt="" />
+                    <Image height={{ base: 390, sm: 615, lg: 1100 }} objectFit='cover' src={"/Barista.jpeg"} alt="" />
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
@@ -243,23 +243,6 @@ export default function ForMerchantsPage(props: any) {
             <MobileDrawer isOpen={isOpen1} onClose={onClose1} openContact={onOpen2} />
             <Contact isOpen={isOpen2} onClose={onClose2} />
         </Box>
-        /*
-      <Flex justify="center" align="center" h={'calc(100vh - 60px)'} flex="1">
-        
-        <VStack w="sm" align="center" zIndex="1" p ="6" bg="white" borderRadius="xl" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)">
-          <Image src={"/logo2.png"} w="50px" alt=""/>
-          <Heading py="20px" textAlign="center" fontSize="20">Create subscriptions for your loyal customers</Heading>
-          <Link href="/businessLogin">
-              <Button p="7"w="full" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)" fontSize={'md'} fontWeight={500} color={'white'} bg={'black'} _hover={{bg: 'black',color:'white'}}>
-                Join Us</Button>
-          </Link>
-          <Link href="/businessLogin">
-            <Button p="7" w="full" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.12)" fontSize={'md'} fontWeight={500} color={'black'} bg={'white'} _hover={{bg: 'white',color:'black'}}>
-            Sign in</Button>
-          </Link>
-        </VStack>
-      </Flex>
-      */
     );
 }
 
