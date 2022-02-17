@@ -1,8 +1,7 @@
 import { Button } from "@chakra-ui/button";
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Image } from "@chakra-ui/image";
 import { Flex, Heading, VStack, Grid, GridItem, HStack, Text, Box, Divider } from "@chakra-ui/layout";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, toast, useDisclosure, useToast } from "@chakra-ui/react";
+import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, toast, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
