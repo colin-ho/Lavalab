@@ -1,9 +1,10 @@
 import Head from 'next/head';
+import logo from '../public/punch-card-logo 1.svg'
 
 export default function Metatags({
   title = 'PunchCard',
   description = 'Discover and purchase subscriptions from local businesses',
-  image = 'https://fireship.io/courses/react-next-firebase/img/featured.png',
+  image = logo,
 }) {
   return (
     <Head>

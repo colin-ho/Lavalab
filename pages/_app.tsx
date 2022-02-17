@@ -3,10 +3,9 @@ import { AuthContext, useData } from '../lib/context';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { ChakraProvider } from "@chakra-ui/react"
-import { useRouter } from 'next/router'
 import { extendTheme } from "@chakra-ui/react"
-import NewNavbar from '../components/NewNavbar';
 import { Fonts } from '../styles/Fonts';
+import Metatags from '../components/Metatags';
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -36,13 +35,13 @@ const theme = extendTheme({
 
 function MyApp({ Component, pageProps }: any) {
     const userData = useData();
-    const router = useRouter()
     return (
         stripePromise ?
             <ChakraProvider theme={theme}>
                 <Fonts/>
                 <AuthContext.Provider value={userData}>
                     <Elements stripe={stripePromise}>
+                        <Metatags/>
                         <Component {...pageProps} />
                         <Toaster />
                     </Elements>
