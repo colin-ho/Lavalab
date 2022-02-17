@@ -67,7 +67,7 @@ export function Contact({ isOpen, onClose }: any) {
                         <CloseIcon cursor="pointer" onClick={onClose} />
                     </HStack>
                     <Heading>Contact us</Heading>
-                    <Text>We're happy to help! Please leave a message below and we will get back to you as soon as possible.</Text>
+                    <Text>We&apos;re happy to help! Please leave a message below and we will get back to you as soon as possible.</Text>
                     <form style={{ width: "100%" }} onSubmit={(e) => handleSubmit(e)}>
                         <VStack align="end" w="full" spacing="4">
                             <FormControl isInvalid={nameError}>
