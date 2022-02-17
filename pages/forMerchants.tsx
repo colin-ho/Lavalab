@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/button";
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Image } from "@chakra-ui/image";
+import Image from 'next/image'
 import { Flex, Heading, VStack, Grid, GridItem, HStack, Text, Box, Divider } from "@chakra-ui/layout";
 import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea, toast, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
@@ -28,7 +28,9 @@ export default function ForMerchantsPage(props: any) {
                         <Box flex="1" />
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
-                    <Image height={{ base: 390, sm: 615, lg: 1100 }} objectFit='cover' src={"/Barista.jpeg"} alt="" />
+                    <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
+                        <Image layout="fill" objectFit="cover" src={"/Barista.jpeg"} alt="" />
+                    </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
@@ -183,7 +185,9 @@ export default function ForMerchantsPage(props: any) {
             </Box>
             <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
                 <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
-                    <Image height="615px" objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                    <Box height="615px" position="relative">
+                        <Image layout="fill" objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                    </Box>
                 </GridItem>
                 <GridItem colSpan={2} w={{ base: "80%", lg: "100%" }} mx="auto" position="relative" background="white">
                     <VStack alignItems="stretch" h="full">
@@ -223,7 +227,9 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1} display={{ base: 'block', lg: 'none' }} mt={{ sm: "-400px", lg: 0 }}>
-                    <Image width="100vw" mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                    <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
+                        <Image layout="fill" objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                    </Box>
                     <VStack align="end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
                             <Text cursor="pointer">
@@ -280,7 +286,7 @@ function MerchantWaitList({ isOpen, onClose }: any) {
                     Name: name,
                     CompanyName: companyName,
                     Email: email,
-                    Message:message,
+                    Message: message,
                 })
                 setLoading(false)
                 toast({

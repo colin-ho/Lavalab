@@ -1,12 +1,15 @@
 import { Button } from "@chakra-ui/button";
+import Image from 'next/image'
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Flex, Heading, VStack, Grid, GridItem, HStack, Text, Box, Divider } from "@chakra-ui/layout";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, toast, useDisclosure, useToast } from "@chakra-ui/react";
+import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, toast, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
+import dimsum from "../public/dimsum.png"
+import food from '../public/food.png'
 
 export default function Home(props: any) {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -27,7 +30,9 @@ export default function Home(props: any) {
                         <Box flex="1" />
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
-                    <Image height={{ base: 390, sm: 615, lg: 1100 }} objectFit='cover' src={"/dimsum.png"} alt="" />
+                    <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
+                        <Image layout="fill" placeholder="blur" objectFit="cover" src={dimsum} alt="" />
+                    </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
@@ -79,7 +84,7 @@ export default function Home(props: any) {
                 </HStack>
             </Box>
             <Heading position="relative" ml="10%" mt="80px">What to expect</Heading>
-            <Grid mt="50px" mb={{base:'100px',sm:'150px',lg:"250px"}} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
+            <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="start" spacing="4">
                         <Text>.0&#8202;1</Text>
@@ -114,7 +119,7 @@ export default function Home(props: any) {
                 </HStack>
             </Box>
             <Heading ml="10%" mt="80px">How it works</Heading>
-            <Grid mt="50px" mb={{base:'100px',sm:'150px',lg:"250px"}} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
+            <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="start" spacing="4">
                         <Text>.01</Text>
@@ -150,7 +155,9 @@ export default function Home(props: any) {
             </Box>
             <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
                 <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
-                    <Image height="615px" objectFit='cover' src={"/food.png"} alt="" />
+                    <Box height="615px" position="relative">
+                        <Image placeholder="blur" layout="fill" objectFit='cover' src={food} alt="" />
+                    </Box>
                 </GridItem>
                 <GridItem colSpan={2} w={{ base: "80%", lg: "100%" }} mx="auto" position="relative" background="white">
                     <VStack alignItems="stretch" h="full">
@@ -190,7 +197,9 @@ export default function Home(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1} display={{ base: 'block', lg: 'none' }} mt={{ sm: "-400px", lg: 0 }}>
-                    <Image width="100vw" mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} objectFit='cover' src={"/food.png"} alt="" />
+                    <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
+                        <Image placeholder="blur" layout="fill" objectFit='cover' src={food} alt="" />
+                    </Box>
                     <VStack align="end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
                             <Text cursor="pointer">
@@ -313,9 +322,10 @@ function MobileDrawer({ onClose, isOpen, openContact }: any) {
                         <Box w="full" height="1px" background="black" />
                     </Box>
                     <Box w="full">
-                        <HStack justify="space-between" cursor="pointer" onClick={()=>{
+                        <HStack justify="space-between" cursor="pointer" onClick={() => {
                             onClose()
-                            openContact()}}>
+                            openContact()
+                        }}>
                             <Text>
                                 Contact Us
                             </Text>
