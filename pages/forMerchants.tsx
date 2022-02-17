@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
+import barista from '../public/Barista.jpeg'
+import counter from '../public/Counter.jpeg'
 
 export default function ForMerchantsPage(props: any) {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -29,7 +31,7 @@ export default function ForMerchantsPage(props: any) {
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
                     <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
-                        <Image layout="fill" objectFit="cover" src={"/Barista.jpeg"} alt="" />
+                        <Image priority={true} placeholder="blur" layout="fill" objectFit="cover" src={barista} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
@@ -186,7 +188,7 @@ export default function ForMerchantsPage(props: any) {
             <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
                 <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
                     <Box height="615px" position="relative">
-                        <Image layout="fill" objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                        <Image placeholder="blur" layout="fill" objectFit='cover' src={counter} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} w={{ base: "80%", lg: "100%" }} mx="auto" position="relative" background="white">
@@ -228,7 +230,7 @@ export default function ForMerchantsPage(props: any) {
                 </GridItem>
                 <GridItem colSpan={1} display={{ base: 'block', lg: 'none' }} mt={{ sm: "-400px", lg: 0 }}>
                     <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
-                        <Image layout="fill" objectFit='cover' src={"/Counter.jpeg"} alt="" />
+                        <Image placeholder="blur" layout="fill" objectFit='cover' src={counter} alt="" />
                     </Box>
                     <VStack align="end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
