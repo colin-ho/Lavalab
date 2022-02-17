@@ -1,18 +1,18 @@
 import { Button } from "@chakra-ui/button";
 import Image from 'next/image'
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Flex, Heading, VStack, Grid, GridItem, HStack, Text, Box, Divider } from "@chakra-ui/layout";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, toast, useDisclosure, useToast } from "@chakra-ui/react";
+import { Heading, VStack, Grid, GridItem, HStack, Text, Box, } from "@chakra-ui/layout";
+import { Drawer, DrawerContent, DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay,IconButton, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
-import dimsum from "../public/dimsum.png"
-import food from '../public/food.png'
+import dimsum from "../public/dimsum.jpg"
+import food from '../public/food.jpg'
 import logo from '../public/punch-card-logo 1.svg'
 
-export default function Home(props: any) {
+export default function Home() {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isOpen1, onOpen: onOpen1, onClose: onClose1 } = useDisclosure()
@@ -32,7 +32,7 @@ export default function Home(props: any) {
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
                     <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
-                        <Image layout="fill" priority={true} placeholder="blur" objectFit="cover" src={dimsum} alt="" />
+                        <Image layout="fill" loading="eager" placeholder="blur" objectFit="cover" src={dimsum} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
@@ -87,7 +87,7 @@ export default function Home(props: any) {
             <Heading position="relative" ml="10%" mt="80px">What to expect</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;1</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Save on your daily purchases</Text>
@@ -95,7 +95,7 @@ export default function Home(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;2</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Support your local businesses</Text>
@@ -103,7 +103,7 @@ export default function Home(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;3</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Discover hidden gems</Text>
@@ -122,7 +122,7 @@ export default function Home(props: any) {
             <Heading ml="10%" mt="80px">How it works</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.01</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Find and purchase subscriptions </Text>
@@ -130,7 +130,7 @@ export default function Home(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.02</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Redeem your subscription</Text>
@@ -138,7 +138,7 @@ export default function Home(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-" spacing="4">
                         <Text>.03</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Pick up in-store</Text>
@@ -182,7 +182,7 @@ export default function Home(props: any) {
                                 <Box height="1px" background="black" />
                             </Box>
                         </Box>
-                        <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="end" spacing={8}>
+                        <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="flex-end" spacing={8}>
                             <Link href="/forMerchants">
                                 <Text cursor="pointer">
                                     For Merchants
@@ -201,7 +201,7 @@ export default function Home(props: any) {
                     <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
                         <Image placeholder="blur" layout="fill" objectFit='cover' src={food} alt="" />
                     </Box>
-                    <VStack align="end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
+                    <VStack align="flex-end" py={4} px={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
                             <Text cursor="pointer">
                                 For Merchants
@@ -271,15 +271,15 @@ function Waitlist({ isOpen, onClose }: any) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent p="8">
-                <VStack spacing="8" alignItems="start">
-                    <HStack w="full" justify="end">
-                        <CloseIcon cursor="pointer" onClick={onClose} />
+            <ModalContent p="8" mx="4">
+                <VStack spacing="8" alignItems="flex-start">
+                    <HStack w="full" justify="flex-end">
+                        <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />} onClick={onClose} />
                     </HStack>
                     <Heading>Join our waitlist</Heading>
                     <Text>Get first access to our platform, special deals, and limited time offers.</Text>
                     <form style={{ width: "100%" }} onSubmit={(e) => handleSubmit(e)}>
-                        <VStack align="end" w="full" spacing="4">
+                        <VStack align="flex-end" w="full" spacing="4">
                             <FormControl isInvalid={nameError}>
                                 <FormErrorMessage>Name cannot be empty</FormErrorMessage>
                                 <Input placeholder="Name*" type="text" value={name} onChange={(e) => setName(e.target.value)} borderColor="black" variant="flushed" />
@@ -313,7 +313,7 @@ function MobileDrawer({ onClose, isOpen, openContact }: any) {
                     <Box flex="1" />
                     <CloseIcon cursor="pointer" onClick={onClose} />
                 </HStack>
-                <VStack w="full" mt="50px" align="start" px="50px" spacing="5">
+                <VStack w="full" mt="50px" align="flex-start" px="50px" spacing="5">
                     <Box w="full">
                         <Link href="/forMerchants" >
                             <HStack justify="space-between" cursor="pointer">

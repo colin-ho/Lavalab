@@ -1,8 +1,8 @@
 import { Button } from "@chakra-ui/button";
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import Image from 'next/image'
-import { Flex, Heading, VStack, Grid, GridItem, HStack, Text, Box, Divider } from "@chakra-ui/layout";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea, toast, useDisclosure, useToast } from "@chakra-ui/react";
+import { Heading, VStack, Grid, GridItem, HStack, Text, Box } from "@chakra-ui/layout";
+import { Drawer, DrawerContent,  DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, Textarea , useDisclosure, useToast,IconButton } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
@@ -12,7 +12,7 @@ import barista from '../public/Barista.jpeg'
 import counter from '../public/Counter.jpeg'
 import logo from '../public/punch-card-logo 1.svg'
 
-export default function ForMerchantsPage(props: any) {
+export default function ForMerchantsPage() {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isOpen1, onOpen: onOpen1, onClose: onClose1 } = useDisclosure()
@@ -32,7 +32,7 @@ export default function ForMerchantsPage(props: any) {
                         <HamburgerIcon cursor="pointer" onClick={onOpen1} />
                     </HStack>
                     <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
-                        <Image priority={true} placeholder="blur" layout="fill" objectFit="cover" src={barista} alt="" />
+                        <Image loading="eager" placeholder="blur" layout="fill" objectFit="cover" src={barista} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
@@ -87,7 +87,7 @@ export default function ForMerchantsPage(props: any) {
             <Heading position="relative" ml="10%" mt="80px">What to expect</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;1</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Predictable revenue</Text>
@@ -95,7 +95,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;2</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Build customer relationships</Text>
@@ -103,7 +103,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;3</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Be discovered</Text>
@@ -111,7 +111,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;4</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Increase sales</Text>
@@ -119,7 +119,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.0&#8202;5</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Analyze product performance</Text>
@@ -138,7 +138,7 @@ export default function ForMerchantsPage(props: any) {
             <Heading ml="10%" mt="80px">How it works</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.01</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Create a subscription</Text>
@@ -146,7 +146,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.02</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Customers buy and redeem subscriptions</Text>
@@ -154,7 +154,7 @@ export default function ForMerchantsPage(props: any) {
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
-                    <VStack w="full" alignItems="start" spacing="4">
+                    <VStack w="full" alignItems="flex-start" spacing="4">
                         <Text>.03</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Complete the sale</Text>
@@ -172,10 +172,10 @@ export default function ForMerchantsPage(props: any) {
             </Box>
             <HStack ml="10%" mt="80px" mb={{ base: '100px', sm: '150px', lg: "250px" }}>
                 <Heading flex="1" >Pricing</Heading>
-                <VStack align="start" px="10%">
+                <VStack align="flex-start" px="10%">
                     <Text fontSize={20}>.0&#8202;1</Text>
                     <Box height="1px" w="full" background="black" />
-                    <Text fontSize={20}>We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
+                    <Text fontSize={{sm:20}}>We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
                 </VStack>
             </HStack>
             <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative" zIndex="1">
@@ -214,7 +214,7 @@ export default function ForMerchantsPage(props: any) {
                                 <Box height="1px" background="black" />
                             </Box>
                         </Box>
-                        <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="end" spacing={8}>
+                        <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="flex-end" spacing={8}>
                             <Link href="/forMerchants">
                                 <Text cursor="pointer">
                                     For Merchants
@@ -233,7 +233,7 @@ export default function ForMerchantsPage(props: any) {
                     <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
                         <Image placeholder="blur" layout="fill" objectFit='cover' src={counter} alt="" />
                     </Box>
-                    <VStack align="end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
+                    <VStack align="flex-end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
                             <Text cursor="pointer">
                                 For Merchants
@@ -316,15 +316,15 @@ function MerchantWaitList({ isOpen, onClose }: any) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent p="8">
-                <VStack spacing="8" alignItems="start">
-                    <HStack w="full" justify="end">
-                        <CloseIcon cursor="pointer" onClick={onClose} />
+            <ModalContent p="8" mx="4">
+                <VStack spacing="8" alignItems="flex-start">
+                    <HStack w="full" justify="flex-end">
+                    <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />}onClick={onClose}/>
                     </HStack>
                     <Heading>Become a merchant</Heading>
                     <Text>Please fill out the form below and a Punchcard representative will be in touch with you soon.</Text>
                     <form style={{ width: "100%" }} onSubmit={(e) => handleSubmit(e)}>
-                        <VStack align="end" w="full" spacing="4">
+                        <VStack align="flex-end" w="full" spacing="4">
                             <FormControl isInvalid={nameError}>
                                 <FormErrorMessage>Name cannot be empty</FormErrorMessage>
                                 <Input placeholder="Name*" type="text" value={name} onChange={(e) => setName(e.target.value)} borderColor="black" variant="flushed" />
@@ -365,7 +365,7 @@ function MobileDrawer({ onClose, isOpen, openContact }: any) {
                     <Box flex="1" />
                     <CloseIcon cursor="pointer" onClick={onClose} />
                 </HStack>
-                <VStack w="full" mt="50px" align="start" px="50px" spacing="5">
+                <VStack w="full" mt="50px" align="flex-start" px="50px" spacing="5">
                     <Box w="full">
                         <Link href="/forMerchants" >
                             <HStack justify="space-between" cursor="pointer">

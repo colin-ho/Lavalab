@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/button";
 import { ArrowForwardIcon, CloseIcon} from "@chakra-ui/icons";
 import {  Heading, VStack,  HStack, Text,  } from "@chakra-ui/layout";
-import {  FormControl, FormErrorMessage, Input, Modal, ModalContent,ModalOverlay, Textarea, useToast } from "@chakra-ui/react";
+import {  FormControl, FormErrorMessage, Input, Modal, ModalContent,ModalOverlay, Textarea, useToast,IconButton } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 
 import{ sendForm } from '@emailjs/browser';
@@ -60,15 +60,15 @@ export function Contact({ isOpen, onClose }: any) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent p="8">
-                <VStack spacing="8" alignItems="start">
-                    <HStack w="full" justify="end">
-                        <CloseIcon cursor="pointer" onClick={onClose} />
+            <ModalContent p="8" mx="4">
+                <VStack spacing="8" alignItems="flex-start">
+                    <HStack w="full" justify="flex-end">
+                        <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />}onClick={onClose}/>
                     </HStack>
                     <Heading>Contact us</Heading>
                     <Text>We&apos;re happy to help! Please leave a message below and we will get back to you as soon as possible.</Text>
                     <form style={{ width: "100%" }} onSubmit={(e) => handleSubmit(e)}>
-                        <VStack align="end" w="full" spacing="4">
+                        <VStack align="flex-end" w="full" spacing="4">
                             <FormControl isInvalid={nameError}>
                                 <FormErrorMessage>Name cannot be empty</FormErrorMessage>
                                 <Input name="user_name" placeholder="Name*" type="text" value={name} onChange={(e) => setName(e.target.value)} borderColor="black" variant="flushed" />
