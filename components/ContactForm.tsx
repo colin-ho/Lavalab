@@ -62,8 +62,7 @@ export function Contact({ isOpen, onClose }: any) {
             <ModalOverlay />
             <ModalContent p="8">
                 <VStack spacing="8" alignItems="start">
-                    <HStack w="full" justify="space-between">
-                        <Heading fontSize="20px">punchcard</Heading>
+                    <HStack w="full" justify="end">
                         <CloseIcon cursor="pointer" onClick={onClose} />
                     </HStack>
                     <Heading>Contact us</Heading>

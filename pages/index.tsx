@@ -10,6 +10,7 @@ import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
 import dimsum from "../public/dimsum.png"
 import food from '../public/food.png'
+import logo from '../public/punch-card-logo 1.svg'
 
 export default function Home(props: any) {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -22,9 +23,9 @@ export default function Home(props: any) {
             <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }} >
                 <GridItem colSpan={1}>
                     <HStack display={{ base: 'flex', sm: 'none' }} px="50" py="4" w="full" spacing={6}>
-                        <Box>
+                        <Box cursor="pointer">
                             <Link href="/" >
-                                <Heading cursor="pointer">punchcard</Heading>
+                                <Image width="165px" height="50px" src={logo} alt="" />
                             </Link>
                         </Box>
                         <Box flex="1" />
@@ -37,9 +38,9 @@ export default function Home(props: any) {
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
                         <HStack display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
-                            <Box>
+                            <Box cursor="pointer">
                                 <Link href="/" >
-                                    <Heading cursor="pointer">punchcard</Heading>
+                                    <Image width="165px" height="30px" src={logo} alt="" />
                                 </Link>
                             </Box>
                             <Box flex="1" />
@@ -272,8 +273,7 @@ function Waitlist({ isOpen, onClose }: any) {
             <ModalOverlay />
             <ModalContent p="8">
                 <VStack spacing="8" alignItems="start">
-                    <HStack w="full" justify="space-between">
-                        <Heading fontSize="20px">punchcard</Heading>
+                    <HStack w="full" justify="end">
                         <CloseIcon cursor="pointer" onClick={onClose} />
                     </HStack>
                     <Heading>Join our waitlist</Heading>
@@ -305,8 +305,10 @@ function MobileDrawer({ onClose, isOpen, openContact }: any) {
             <DrawerOverlay />
             <DrawerContent>
                 <HStack px="50px" py="4" w="full" spacing={6}>
-                    <Box>
-                        <Heading>punchcard</Heading>
+                    <Box cursor="pointer">
+                        <Link href="/" >
+                            <Image width="165px" height="30px" src={logo} alt="" />
+                        </Link>
                     </Box>
                     <Box flex="1" />
                     <CloseIcon cursor="pointer" onClick={onClose} />
