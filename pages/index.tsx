@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import Image from 'next/image'
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Heading, VStack, Grid, GridItem, HStack, Text, Box, } from "@chakra-ui/layout";
-import { Drawer, DrawerContent, DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, IconButton, useDisclosure, useToast } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, IconButton, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
