@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import Image from 'next/image'
 import { Heading, VStack, Grid, GridItem, HStack, Text, Box } from "@chakra-ui/layout";
-import { Drawer, DrawerContent,  DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, Textarea , useDisclosure, useToast,IconButton } from "@chakra-ui/react";
+import { Drawer, DrawerContent, DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, Textarea, useDisclosure, useToast, IconButton } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
@@ -12,6 +12,8 @@ import barista from '../public/Barista.jpeg'
 import counter from '../public/Counter.jpeg'
 import logo from '../public/punch-card-logo 1.svg'
 import { MobileDrawer } from "../components/MobileDrawer";
+import Head from 'next/head'
+
 
 export default function ForMerchantsPage() {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -21,6 +23,10 @@ export default function ForMerchantsPage() {
 
     return (
         <Box>
+            <Head>
+                <meta name="twitter:description" content="Punchcard is a online subscription marketplace the connects customers to local businesses." key="twitterDescription" />
+                <meta property="og:description" content="Punchcard is a online subscription marketplace the connects customers to local businesses." key="description" />
+            </Head>
             <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }} >
                 <GridItem colSpan={1}>
                     <HStack display={{ base: 'flex', sm: 'none' }} px="50" py="4" w="full" spacing={6}>
@@ -38,7 +44,7 @@ export default function ForMerchantsPage() {
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
-                    <HStack display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
+                        <HStack display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
                             <Box cursor="pointer">
                                 <Link href="/" >
                                     <Image width="165px" height="30px" src={logo} alt="" />
@@ -177,7 +183,7 @@ export default function ForMerchantsPage() {
                 <VStack align="flex-start" px="10%">
                     <Text fontSize={20}>.0&#8202;1</Text>
                     <Box height="1px" w="full" background="black" />
-                    <Text fontSize={{sm:20}}>We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
+                    <Text fontSize={{ sm: 20 }}>We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
                 </VStack>
             </HStack>
             <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative" zIndex="1">
@@ -321,7 +327,7 @@ function MerchantWaitList({ isOpen, onClose }: any) {
             <ModalContent p="8" mx="4">
                 <VStack spacing="8" alignItems="flex-start">
                     <HStack w="full" justify="flex-end">
-                    <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />}onClick={onClose}/>
+                        <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />} onClick={onClose} />
                     </HStack>
                     <Heading>Become a merchant</Heading>
                     <Text>Please fill out the form below and a Punchcard representative will be in touch with you soon.</Text>
