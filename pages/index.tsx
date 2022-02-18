@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import Image from 'next/image'
 import { ArrowForwardIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Heading, VStack, Grid, GridItem, HStack, Text, Box, } from "@chakra-ui/layout";
-import { Drawer, DrawerContent, DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay,IconButton, useDisclosure, useToast } from "@chakra-ui/react";
+import { Drawer, DrawerContent, DrawerOverlay, FormControl, FormErrorMessage, Input, Modal, ModalContent, ModalOverlay, IconButton, useDisclosure, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Link from 'next/link';
 import { FormEvent, useState } from "react";
@@ -11,6 +11,7 @@ import { Contact } from "../components/ContactForm";
 import dimsum from "../public/dimsum.jpg"
 import food from '../public/food.jpg'
 import logo from '../public/punch-card-logo 1.svg'
+import { MobileDrawer } from "../components/MobileDrawer";
 
 export default function Home() {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -29,9 +30,9 @@ export default function Home() {
                             </Link>
                         </Box>
                         <Box flex="1" />
-                        <HamburgerIcon cursor="pointer" onClick={onOpen1} />
+                        <IconButton aria-label='Open drawer' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                     </HStack>
-                    <Box height={{ base: 390, sm: 615, lg: 1100 }} position="relative">
+                    <Box height={{ base: 266, sm: 615, lg: 1100 }} position="relative">
                         <Image layout="fill" priority={true} objectFit="cover" src={dimsum} alt="" />
                     </Box>
                 </GridItem>
@@ -45,13 +46,14 @@ export default function Home() {
                             </Box>
                             <Box flex="1" />
                             <Link href="/forMerchants">
-                                <Text cursor="pointer">
+                                <Text cursor="pointer" display={{ base: 'none', lg: 'inline-block' }}>
                                     For Merchants
                                 </Text>
                             </Link>
-                            <Text cursor="pointer" onClick={onOpen2}>
+                            <Text display={{ base: 'none', lg: 'inline-block' }} cursor="pointer" onClick={onOpen2}>
                                 Contact Us
                             </Text>
+                            <IconButton display={{ base: 'block', lg: 'none' }} aria-label='Open drawer' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                         </HStack>
                         <Box px={{ sm: 50, lg: 100 }} w="full" pt="10%" >
                             <Heading fontSize={{ base: 37, sm: '45px', lg: '55px', xl: '65px' }} >
@@ -157,7 +159,7 @@ export default function Home() {
             <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
                 <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
                     <Box height="615px" position="relative">
-                        <Image placeholder="blur" layout="fill" objectFit='cover' src={food} alt="" />
+                        <Image layout="fill" objectFit='cover' src={food} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} w={{ base: "80%", lg: "100%" }} mx="auto" position="relative" background="white">
@@ -199,7 +201,7 @@ export default function Home() {
                 </GridItem>
                 <GridItem colSpan={1} display={{ base: 'block', lg: 'none' }} mt={{ sm: "-400px", lg: 0 }}>
                     <Box mt={{ base: "30px", sm: 0 }} height={{ base: "300px", sm: "670px" }} position="relative" zIndex="-1">
-                        <Image placeholder="blur" layout="fill" objectFit='cover' src={food} alt="" />
+                        <Image layout="fill" objectFit='cover' src={food} alt="" />
                     </Box>
                     <VStack align="flex-end" py={4} px={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/forMerchants">
@@ -295,48 +297,5 @@ function Waitlist({ isOpen, onClose }: any) {
             </ModalContent>
         </Modal>
 
-    )
-}
-
-function MobileDrawer({ onClose, isOpen, openContact }: any) {
-
-    return (
-        <Drawer onClose={onClose} isOpen={isOpen} size="full">
-            <DrawerOverlay />
-            <DrawerContent>
-                <HStack px="50px" py="4" w="full" spacing={6}>
-                    <Box cursor="pointer">
-                        <Link href="/" >
-                            <Image width="165px" height="30px" src={logo} alt="" />
-                        </Link>
-                    </Box>
-                    <Box flex="1" />
-                    <CloseIcon cursor="pointer" onClick={onClose} />
-                </HStack>
-                <VStack w="full" mt="50px" align="flex-start" px="50px" spacing="5">
-                    <Box w="full">
-                        <Link href="/forMerchants" >
-                            <HStack justify="space-between" cursor="pointer">
-                                <Text>For merchants</Text>
-                                <ArrowForwardIcon w={10} h={10} color='black' />
-                            </HStack>
-                        </Link>
-                        <Box w="full" height="1px" background="black" />
-                    </Box>
-                    <Box w="full">
-                        <HStack justify="space-between" cursor="pointer" onClick={() => {
-                            onClose()
-                            openContact()
-                        }}>
-                            <Text>
-                                Contact Us
-                            </Text>
-                            <ArrowForwardIcon w={10} h={10} color='black' />
-                        </HStack>
-                        <Box w="full" height="1px" background="black" />
-                    </Box>
-                </VStack>
-            </DrawerContent>
-        </Drawer>
     )
 }
