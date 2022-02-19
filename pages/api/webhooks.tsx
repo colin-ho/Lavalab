@@ -72,7 +72,7 @@ export default async function handler(req: any, res: any) {
                     const subscription = dataObject.subscription;
                     const { start, end } = dataObject.lines.data[0].period;
                     const sub = firestore.collection('subscribedTo').doc(subscription)
-                    sub.update({ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active' });
+                    await sub.update({ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active' });
                 }
 
             }
@@ -87,7 +87,7 @@ export default async function handler(req: any, res: any) {
                 if (dataObject.billing_reason === 'subscription_cycle') {
                     const subscription = dataObject.subscription;
                     const sub = firestore.collection('subscribedTo').doc(subscription);
-                    sub.update({ status: 'incomplete' });
+                    await sub.update({ status: 'incomplete' });
                 }
 
             }

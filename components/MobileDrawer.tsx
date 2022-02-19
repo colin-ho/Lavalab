@@ -11,7 +11,7 @@ export function MobileDrawer({ onClose, isOpen, openContact }: any) {
         <Drawer onClose={onClose} isOpen={isOpen} size="sm">
             <DrawerOverlay />
             <DrawerContent>
-                <HStack px="50px" py="4" w="full" spacing={6}>
+                <HStack px="50px" py="10" w="full" spacing={6}>
                     <Box cursor="pointer">
                         <Link href="/" >
                             <Image width="165px" height="30px" src={logo} alt="" />

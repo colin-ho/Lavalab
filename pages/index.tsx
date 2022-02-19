@@ -93,7 +93,7 @@ export default function Home() {
                         <Text>.0&#8202;1</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Save on your daily purchases</Text>
-                        <Text>That daily coffee gets expensive. We can help you save.</Text>
+                        <Text>All those coffees gets expensive. We can help you save.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
@@ -109,7 +109,7 @@ export default function Home() {
                         <Text>.0&#8202;3</Text>
                         <Box height="1px" w="full" background="black" />
                         <Text as="b">Discover hidden gems</Text>
-                        <Text>We make it easy to find local gems in your area.</Text>
+                        <Text>We make it easy to discover new local favorites.</Text>
                     </VStack>
                 </GridItem>
             </Grid>
