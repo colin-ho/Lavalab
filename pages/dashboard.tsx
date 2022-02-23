@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, } from 'react';
-import BusinessCheck from '../components/BusinessCheck';
 import { auth, firestore } from '../lib/firebase';
 import { AuthContext, AuthContextInterface } from '../lib/context';
 import {
@@ -33,12 +32,12 @@ export default function Dashboard() {
     const { user, business } = useContext<AuthContextInterface>(AuthContext);
     const [subscriptions, setSubscriptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
-    const [customerData,setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
+    const [customerData, setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [open, setOpen] = useState(true);
 
-    const handleRedemptionChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
-        let temp:firebase.default.firestore.DocumentData[] = []
+    const handleRedemptionChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
+        let temp: firebase.default.firestore.DocumentData[] = []
         snapshot.forEach((doc) => {
             temp.push(doc.data())
         });
@@ -46,8 +45,8 @@ export default function Dashboard() {
         // Use the setState callback 
         setRedemptions(temp);
     };
-    const handleSubscriptionChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
-        let temp:firebase.default.firestore.DocumentData[] = []
+    const handleSubscriptionChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
+        let temp: firebase.default.firestore.DocumentData[] = []
         snapshot.forEach((doc) => {
             temp.push(doc.data())
         });
@@ -56,8 +55,8 @@ export default function Dashboard() {
         setSubscriptions(temp);
     };
 
-    const handleCustomerChanges = (snapshot:firebase.default.firestore.QuerySnapshot) => {
-        let temp:firebase.default.firestore.DocumentData[] = []
+    const handleCustomerChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
+        let temp: firebase.default.firestore.DocumentData[] = []
         snapshot.forEach((doc) => {
             temp.push(doc.data())
         });
@@ -68,7 +67,7 @@ export default function Dashboard() {
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
 
-        let subscriptionListener:()=>void, redemptionListener:()=>void, customerListener:()=>void;
+        let subscriptionListener: () => void, redemptionListener: () => void, customerListener: () => void;
         if (user) {
             const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
             const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('collected', '==', false).orderBy('redeemedAt', 'desc')
@@ -79,10 +78,10 @@ export default function Dashboard() {
             redemptionListener = subscriptionsQuery.onSnapshot(handleSubscriptionChanges,
                 err => console.log(err));
             customerListener = customerQuery.onSnapshot(handleCustomerChanges,
-                err=>console.log(err))
+                err => console.log(err))
         }
 
-        return ()=>{
+        return () => {
             subscriptionListener?.();
             redemptionListener?.();
         }
@@ -92,23 +91,23 @@ export default function Dashboard() {
         if (business) {
             let times = business?.times;
             let hours = null;
-            const today = new Date() 
-            interface ClosureInterface{
-                description:string,
-                from:string,
-                to:string,
-                hours:{
-                    close:{
-                        min:string,
-                        hr:string
+            const today = new Date()
+            interface ClosureInterface {
+                description: string,
+                from: string,
+                to: string,
+                hours: {
+                    close: {
+                        min: string,
+                        hr: string
                     },
-                    open:{
-                        min:string,
-                        hr:string
+                    open: {
+                        min: string,
+                        hr: string
                     },
                 }
             }
-            business.closures.forEach((closure:ClosureInterface) => {
+            business.closures.forEach((closure: ClosureInterface) => {
                 if (today.getUTCDate() >= (new Date(closure.from)).getUTCDate() || today.getUTCDate() <= (new Date(closure.to)).getUTCDate()) {
                     hours = closure.hours;
                 }
@@ -131,7 +130,7 @@ export default function Dashboard() {
     }, [business])
 
     return (
-        <BusinessCheck>
+        <>
             {business ?
                 <Box minH="100vh">
                     <SidebarContent
@@ -155,28 +154,28 @@ export default function Dashboard() {
                     {/* mobilenav */}
                     <MobileNav onOpen={onOpen} businessName={business.businessName} />
                     <Box ml={{ base: 0, md: 60 }} p="10">
-                        {pageState === 'Home' ? <Home businessName={business.businessName} joined={business.joined} delay={business.delay} open={open} customerData={customerData} waitingCount={redemptions.length} numOfSubs={subscriptions.length}/> :
+                        {pageState === 'Home' ? <Home businessName={business.businessName} joined={business.joined} delay={business.delay} open={open} customerData={customerData} waitingCount={redemptions.length} numOfSubs={subscriptions.length} /> :
                             pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
-                                pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} activeIds={customerData.filter(customer=>customer.status === 'active').map(item => item.subscriptionId)} inactiveIds={customerData.filter(customer=>customer.status !== 'active').map(item => item.subscriptionId)}/> :
-                                    pageState === 'Customers' ? <Customers customerData={customerData.filter(customer=>customer.status === 'active')} total={customerData.length} subTitles={subscriptions.map((sub)=>{return sub.title})}/> :
+                                pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions} activeIds={customerData.filter(customer => customer.status === 'active').map(item => item.subscriptionId)} inactiveIds={customerData.filter(customer => customer.status !== 'active').map(item => item.subscriptionId)} /> :
+                                    pageState === 'Customers' ? <Customers customerData={customerData.filter(customer => customer.status === 'active')} total={customerData.length} subTitles={subscriptions.map((sub) => { return sub.title })} /> :
                                         <StoreDetails open={open} />}
                     </Box>
                 </Box> : null}
-        </BusinessCheck>
+        </>
     )
 }
 
 interface SidebarProps {
-    onClose:() => void,
-    setPageState:React.Dispatch<React.SetStateAction<string>>,
+    onClose: () => void,
+    setPageState: React.Dispatch<React.SetStateAction<string>>,
     display: {
         base: string,
         md: string,
     },
-    pageState:string,
+    pageState: string,
 }
 
-const SidebarContent = ({ onClose, setPageState, display, pageState }:SidebarProps) => {
+const SidebarContent = ({ onClose, setPageState, display, pageState }: SidebarProps) => {
     return (
         <Box
             transition="3s ease"
@@ -202,15 +201,15 @@ const SidebarContent = ({ onClose, setPageState, display, pageState }:SidebarPro
 };
 
 interface NavItemProps {
-    onClose:() => void,
-    setPageState:React.Dispatch<React.SetStateAction<string>>,
-    pageState:string,
-    page:string,
-    children:string,
-    icon:IconType,
+    onClose: () => void,
+    setPageState: React.Dispatch<React.SetStateAction<string>>,
+    pageState: string,
+    page: string,
+    children: string,
+    icon: IconType,
 }
 
-const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:NavItemProps) => {
+const NavItem = ({ icon, children, setPageState, page, pageState, onClose }: NavItemProps) => {
     return (
         <Link onClick={() => {
             setPageState(page);
@@ -248,11 +247,11 @@ const NavItem = ({ icon, children, setPageState, page, pageState, onClose }:NavI
 };
 
 interface MobileNavProps {
-    onOpen:()=>void,
-    businessName:string
+    onOpen: () => void,
+    businessName: string
 }
 
-const MobileNav = ({ onOpen, businessName }:MobileNavProps) => {
+const MobileNav = ({ onOpen, businessName }: MobileNavProps) => {
     const router = useRouter();
     return (
         <Flex

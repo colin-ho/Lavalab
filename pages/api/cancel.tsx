@@ -1,6 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next";
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function CancelSubscription(req:any, res:any) {
+export default async function CancelSubscription(req: NextApiRequest, res: NextApiResponse) {
     const { stripeSubscriptionId } = req.body;
     const subscription = await stripe.subscriptions.del(stripeSubscriptionId);
     // Cancel at end of period

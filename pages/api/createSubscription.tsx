@@ -1,6 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next";
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function CreateSubscription(req:any, res:any) {
+export default async function CreateSubscription(req: NextApiRequest, res: NextApiResponse) {
     const { stripeCustomerId,
         priceId,metadata } = req.body;
     try {

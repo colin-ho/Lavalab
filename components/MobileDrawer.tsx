@@ -5,7 +5,13 @@ import { Drawer, DrawerContent,  DrawerOverlay,  } from "@chakra-ui/react";
 import Link from 'next/link';
 import logo from '../public/punch-card-logo 1.svg'
 
-export function MobileDrawer({ onClose, isOpen, openContact }: any) {
+interface MobileDrawerProps{
+    onClose:()=>void
+    isOpen:boolean
+    openContact:()=>void;
+}
+
+export function MobileDrawer({ onClose, isOpen, openContact }: MobileDrawerProps) {
 
     return (
         <Drawer onClose={onClose} isOpen={isOpen} size="sm">

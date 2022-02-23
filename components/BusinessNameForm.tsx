@@ -47,7 +47,7 @@ export default function BusinessNameForm() {
         batch.set(businessDoc, { businessType: businessType, 
             businessName: businessName, photoURL: photoURL, address: address,
             geohash: geohash,description:description,lat:lat,lng:lng,
-            tags:[],phone:phone,email:email,website:website,delay:"0",paused:false,
+            tags:[],phone:phone,email:email,website:website,delay:"10",paused:false,
         closures:[],times:{'mon':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
         'tue':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},
         'wed':{'open':{'hr':0,'min':0},'close':{'hr':0,'min':0}},

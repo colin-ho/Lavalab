@@ -263,7 +263,12 @@ export default function ForMerchantsPage() {
     );
 }
 
-function MerchantWaitList({ isOpen, onClose }: any) {
+interface MerchantWaitListProps{
+    isOpen:boolean,
+    onClose:()=>void
+}
+
+function MerchantWaitList({ isOpen, onClose }: MerchantWaitListProps) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [message, setMessage] = useState('')

@@ -1,7 +1,6 @@
 import { createContext } from 'react';
 import { auth, firestore } from './firebase';
 import { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 export interface AuthContextInterface {
     user: firebase.default.User| null
@@ -12,12 +11,23 @@ export interface AuthContextInterface {
 export const AuthContext = createContext<AuthContextInterface>({ user:null,business:null,businessRef:null});
 
 export function useData() {
-    const [user] = useAuthState(auth);
+    const [user,setUser] = useState<firebase.default.User| null>(null)
     const [business, setBusiness] = useState<firebase.default.firestore.DocumentData | null | undefined>(null);
     const [businessRef,setBusinessRef] = useState<firebase.default.firestore.DocumentReference | null>(null)
+
+    useEffect(()=>{
+        const userListener = auth.onAuthStateChanged((user) => {
+            if(user){
+                setUser(user);
+            } else{
+                setUser(null)
+            }
+        });
+        return userListener
+    },[])
     useEffect(() => {
         // turn off realtime subscription
-        let businessListener:()=> void;
+        let businessListener:()=> void
         if (user) {
             const ref = firestore.collection('businesses').doc(user.uid)
             businessListener = ref.onSnapshot((snapshot)=>{
@@ -32,6 +42,10 @@ export function useData() {
         } else{
             setBusiness(null)
             setBusinessRef(null)
+        }
+
+        return ()=>{
+            businessListener?.()
         }
     }, [user]);
 

@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react"
 import { extendTheme } from "@chakra-ui/react"
 import { Fonts } from '../styles/Fonts';
 import Metatags from '../components/Metatags';
+import type { AppProps /*, AppContext */ } from 'next/app'
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -33,7 +34,7 @@ const theme = extendTheme({
     }
 })
 
-function MyApp({ Component, pageProps }: any) {
+function MyApp({ Component, pageProps }: AppProps) {
     const userData = useData();
     return (
         stripePromise ?

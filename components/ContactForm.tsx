@@ -6,7 +6,12 @@ import { FormEvent, useState } from "react";
 
 import{ sendForm } from '@emailjs/browser';
 
-export function Contact({ isOpen, onClose }: any) {
+interface ContactFormProps{
+    isOpen:boolean,
+    onClose:()=>void,
+}
+
+export function Contact({ isOpen, onClose }: ContactFormProps) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [message, setMessage] = useState('')

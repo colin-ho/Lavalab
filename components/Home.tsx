@@ -83,13 +83,17 @@ export default function Home({ joined, businessName, open, delay, customerData, 
                 svg
                     .append('g')
                     .attr('class', 'x-axis')
+                    .style('font-size',"14px")
                     .attr('transform', `translate(0,${height})`)
-                    .call(d3.axisBottom(xScale).tickSize(5).ticks(5).tickFormat(d3.timeFormat("%B %d") as (value: Date | { valueOf(): number; }, i: number) => string))
+                    .call(d3.axisBottom(xScale).tickSize(0).ticks(5).tickFormat(d3.timeFormat("%B %d") as (value: Date | { valueOf(): number; }, i: number) => string))
+                    .call(g => g.select(".domain").remove())
 
                 svg
                     .append('g')
                     .attr('class', 'y-axis')
-                    .call(d3.axisLeft(yScale).tickSize(5));
+                    .style('font-size',"14px")
+                    .call(d3.axisLeft(yScale).tickSize(0).ticks(5))
+                    .call(g => g.select(".domain").remove())
 
                 interface GradientData {
                     offset: string,

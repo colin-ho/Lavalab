@@ -225,7 +225,12 @@ export default function Home() {
     );
 }
 
-function Waitlist({ isOpen, onClose }: any) {
+interface WaitlistProps{
+    isOpen:boolean,
+    onClose:()=>void,
+}
+
+function Waitlist({ isOpen, onClose }: WaitlistProps) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [nameError, setNameError] = useState(false)
