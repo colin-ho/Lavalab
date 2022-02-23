@@ -46,7 +46,7 @@ export default function Home({ joined, businessName, open, delay, customerData, 
             const create = () => {
                 const width = contRef.current ? contRef.current.offsetWidth - 100 : 0;
                 const height = 300
-                const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+                const margin = { top: 50, right: 50, bottom: 50, left: 70 };
 
                 d3.select(d3Container.current).select('svg').remove()
 
@@ -73,27 +73,34 @@ export default function Home({ joined, businessName, open, delay, customerData, 
                     .range([height, 0])
                     .domain([yMinValue as number, yMaxValue as number * 1.2]);
 
-                const line = d3
+                const area = d3
                     .area<DataInterface>()
                     .x((d: DataInterface) => xScale(d.date))
                     .y0(yScale(0))
                     .y1((d: DataInterface) => yScale(d.value))
-                    .curve(d3.curveMonotoneX);
+                    .curve(d3.curveBasis);
+
+                const line = d3.line<DataInterface>()
+                    .x((d: DataInterface) => xScale(d.date))
+                    .y((d: DataInterface) => yScale(d.value))
+                    .curve(d3.curveBasis);
 
                 svg
                     .append('g')
                     .attr('class', 'x-axis')
-                    .style('font-size',"14px")
+                    .style('font-size', "14px")
                     .attr('transform', `translate(0,${height})`)
-                    .call(d3.axisBottom(xScale).tickSize(0).ticks(5).tickFormat(d3.timeFormat("%B %d") as (value: Date | { valueOf(): number; }, i: number) => string))
+                    .call(d3.axisBottom(xScale).tickSize(20).ticks(3).tickFormat(d3.timeFormat("%B %d") as (value: Date | { valueOf(): number; }, i: number) => string))
                     .call(g => g.select(".domain").remove())
+                    .call(g=>g.selectAll(".tick line").style('stroke','none'))
 
                 svg
                     .append('g')
                     .attr('class', 'y-axis')
-                    .style('font-size',"14px")
-                    .call(d3.axisLeft(yScale).tickSize(0).ticks(5))
+                    .style('font-size', "14px")
+                    .call(d3.axisLeft(yScale).tickSize(20).ticks(5))
                     .call(g => g.select(".domain").remove())
+                    .call(g=>g.selectAll(".tick line").style('stroke','none'))
 
                 interface GradientData {
                     offset: string,
@@ -110,7 +117,7 @@ export default function Home({ joined, businessName, open, delay, customerData, 
                     // mixed values will change the angle of the linear gradient. Adjust as needed.
                     .selectAll("stop")
                     .data([
-                        { offset: "0%", color: "#141414" },
+                        { offset: "0%", color: "#474747" },
                         // add additional steps as needed for gradient.
                         { offset: "65%", color: "transparent" }
                     ])
@@ -122,6 +129,12 @@ export default function Home({ joined, businessName, open, delay, customerData, 
                     .append('path')
                     .datum(data)
                     .attr('fill', 'url(#gradient)')
+                    .attr('d', area);
+
+                svg
+                    .append('path')
+                    .datum(data)
+                    .attr('fill','none')
                     .attr('stroke', '#000')
                     .attr('stroke-width', 2)
                     .attr('d', line);

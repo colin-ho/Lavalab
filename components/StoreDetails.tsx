@@ -78,10 +78,10 @@ export default function StoreDetails({ open }: { open: boolean }) {
     }
 
     const addTag = async () => {
-        setTag("")
-        if (businessRef) {
+        if (businessRef&& business && business.tags.length<2&&tag!="") {
             await businessRef.update({ tags: arrayUnion(tag) })
         }
+        setTag("")
     }
 
     const removeTag = async (tag: string) => {
@@ -187,9 +187,9 @@ export default function StoreDetails({ open }: { open: boolean }) {
                         </Select>
                     </HStack>
                     <HStack w="full" align="center" justify="space-between">
-                        <Text>Add Tags:</Text>
+                        <Text>Add Tags (2 max):</Text>
                         <InputGroup w="50%">
-                            <Input value={tag} onChange={(e) => setTag(e.target.value)} onKeyPress={(e) => { if (e.key === "Enter") addTag() }} list="browsers" />
+                            <Input value={tag} maxLength={15} onChange={(e) => setTag(e.target.value)} onKeyPress={(e) => { if (e.key === "Enter") addTag() }} list="browsers" />
                             <InputRightElement cursor="pointer" onClick={addTag} ><AiOutlinePlus /></InputRightElement>
                             <datalist id="browsers">
                                 <option value="American">American</option>
