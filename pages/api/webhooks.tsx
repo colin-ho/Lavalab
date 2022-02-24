@@ -73,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const subscription = dataObject.subscription;
                     const { start, end } = dataObject.lines.data[0].period;
                     const sub = firestore.collection('subscribedTo').doc(subscription)
-                    await sub.update({ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active' });
+                    await sub.update({ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0 });
                 }
 
             }
