@@ -87,9 +87,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 if (dataObject.billing_reason === 'subscription_cycle') {
                     const subscription = dataObject.subscription;
-                    const invoice_id = dataObject.id;
+                    const paymentIntentId = dataObject.payment_intent;
                     const sub = firestore.collection('subscribedTo').doc(subscription);
-                    await sub.set({ status: 'incomplete',invoice_id:invoice_id },{merge:true});
+                    await sub.set({ status: 'incomplete',paymentIntentId:paymentIntentId },{merge:true});
                 }
 
             }
