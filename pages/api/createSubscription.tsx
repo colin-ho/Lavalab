@@ -17,7 +17,7 @@ export default async function CreateSubscription(req: NextApiRequest, res: NextA
           metadata:metadata,
           payment_behavior: 'default_incomplete',
           expand: ['latest_invoice.payment_intent'],
-          trial_end: ((new Date()).getTime() + 60*1000)/1000,
+          trial_end: Math.round(((new Date()).getTime() + 60*1000)/1000),
         });
     
         res.json({
