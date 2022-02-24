@@ -99,6 +99,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return;
             }
         }
+        else if (event.type === "customer.subscription.deleted") {
+            try {
+                    const stripeSubscriptionId = dataObject.id;
+                    const sub = firestore.collection('subscribedTo').doc(stripeSubscriptionId)
+                    await sub.update({ status: 'canceled'});
+            }
+            catch (err:any) {
+                console.log(`❌ Error message: ${err.message}`);
+                res.status(400).send(`Webhook Error: ${err.message}`);
+                return;
+            }
+        }
         else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
         }

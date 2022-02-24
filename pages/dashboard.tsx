@@ -108,7 +108,7 @@ export default function Dashboard() {
                 }
             }
             business.closures.forEach((closure: ClosureInterface) => {
-                if (today.getUTCDate() >= (new Date(closure.from)).getUTCDate() || today.getUTCDate() <= (new Date(closure.to)).getUTCDate()) {
+                if (today.getUTCDate() >= (new Date(closure.from)).getUTCDate() && today.getUTCDate() <= (new Date(closure.to)).getUTCDate()) {
                     hours = closure.hours;
                 }
             })
