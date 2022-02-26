@@ -45,6 +45,7 @@
     "react-spring": "^9.4.3",
     "string-similarity": "^4.0.4",
     "stripe": "^8.186.1",
+    "use-sound": "^4.0.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@ import { auth, firestore } from '../lib/firebase';
 import { AuthContext, AuthContextInterface } from '../lib/context';
 import {
     IconButton, Box, CloseButton, Flex, HStack, VStack, Icon, useColorModeValue, Link, Drawer,
-    DrawerContent, Text, useDisclosure, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Image,
+    DrawerContent, Text, useDisclosure, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Image, useToast,
 } from '@chakra-ui/react';
 import {
     FiHome, FiTrendingUp, FiMenu, FiChevronDown,
@@ -17,6 +17,7 @@ import StoreDetails from '../components/StoreDetails';
 import { useRouter } from 'next/router';
 import Customers from '../components/Customers';
 import { IconType } from 'react-icons';
+import useSound from 'use-sound';
 
 const LinkItems = [
     { name: 'Home', icon: FiHome },
@@ -34,15 +35,37 @@ export default function Dashboard() {
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [customerData, setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [loaded, setLoaded] = useState(false)
     const [open, setOpen] = useState(true);
+    const toast = useToast()
+    const [play] = useSound("/Bell.mp3")
 
     const handleRedemptionChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
         let temp: firebase.default.firestore.DocumentData[] = []
         snapshot.forEach((doc) => {
             temp.push(doc.data())
         });
-
+        let added = false;
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+                added = true;
+            }
+        })
+        if (added && loaded) {
+            toast.closeAll()
+            toast({
+                id: 'orderToast',
+                title: 'New Order',
+                description: "Go to Active Sales to see this order.",
+                status: 'info',
+                position: 'top',
+                duration: null,
+                isClosable: true,
+            })
+            play()
+        }
         // Use the setState callback 
+        setLoaded(true)
         setRedemptions(temp);
     };
     const handleSubscriptionChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {

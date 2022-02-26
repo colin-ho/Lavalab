@@ -5,7 +5,7 @@ import 'firebase/compat/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBXd3zbEXOTjl9QIZiz8cL1rIUQIvM6M5A",
-  authDomain: "lavalab-23235.firebaseapp.com",
+  authDomain: "auth.punchcardapp.com",
   projectId: "lavalab-23235",
   storageBucket: "lavalab-23235.appspot.com",
   messagingSenderId: "882762476840",
