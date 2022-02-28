@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
-import dimsum from "../public/dimsum.jpg"
+import dimsum from "../public/dimsum2.jpeg"
 import food from '../public/food.jpg'
 import logo from '../public/punch-card-logo 1.svg'
 import { MobileDrawer } from "../components/MobileDrawer";
