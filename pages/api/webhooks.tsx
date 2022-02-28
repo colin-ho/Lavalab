@@ -1,7 +1,6 @@
-import Stripe from 'stripe';
 import { buffer } from 'micro';
-import { arrayUnion, firestore, increment, serverTimestamp } from '../../lib/firebase';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { firestore } from '../../lib/firebase-admin';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.toString();

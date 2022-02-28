@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, } from 'react';
+import React, { useState, useEffect, useContext, useRef, } from 'react';
 import { auth, firestore } from '../lib/firebase';
 import { AuthContext, AuthContextInterface } from '../lib/context';
 import {
@@ -35,7 +35,7 @@ export default function Dashboard() {
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [customerData, setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [loaded, setLoaded] = useState(false)
+    const loadedRef = useRef(false)
     const [open, setOpen] = useState(true);
     const toast = useToast()
     const [play] = useSound("/Bell.mp3")
@@ -45,27 +45,26 @@ export default function Dashboard() {
         snapshot.forEach((doc) => {
             temp.push(doc.data())
         });
-        let added = false;
-        snapshot.docChanges().forEach((change) => {
-            if (change.type === 'added') {
-                added = true;
-            }
-        })
-        if (added && loaded) {
-            toast.closeAll()
-            toast({
-                id: 'orderToast',
-                title: 'New Order',
-                description: "Go to Active Sales to see this order.",
-                status: 'info',
-                position: 'top',
-                duration: null,
-                isClosable: true,
+        if (loadedRef.current) {
+            snapshot.docChanges().every((change) => {
+                if (change.type === 'added') {
+                    toast.closeAll()
+                    toast({
+                        id: 'orderToast',
+                        title: 'New Order',
+                        description: "Go to Active Sales to see this order.",
+                        status: 'success',
+                        position: 'top',
+                        duration: null,
+                        isClosable: true,
+                    }) 
+                    play()
+                    return false;
+                }
             })
-            play()
         }
         // Use the setState callback 
-        setLoaded(true)
+        loadedRef.current = true
         setRedemptions(temp);
     };
     const handleSubscriptionChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
@@ -92,6 +91,7 @@ export default function Dashboard() {
 
         let subscriptionListener: () => void, redemptionListener: () => void, customerListener: () => void;
         if (user) {
+            
             const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
             const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('collected', '==', false).orderBy('redeemedAt', 'desc')
             const customerQuery = firestore.collection('subscribedTo').where('businessId', '==', user.uid).orderBy('boughtAt')

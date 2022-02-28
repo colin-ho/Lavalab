@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { firestore } from '../../lib/firebase';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
