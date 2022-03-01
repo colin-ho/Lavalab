@@ -63,9 +63,9 @@ export function Contact({ isOpen, onClose }: ContactFormProps) {
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} size="xl">
             <ModalOverlay />
-            <ModalContent p="8" mx="4">
+            <ModalContent py="8" px="12" borderRadius="none" mx="4">
                 <VStack spacing="8" alignItems="flex-start">
                     <HStack w="full" justify="flex-end">
                         <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />}onClick={onClose}/>

@@ -8,10 +8,11 @@ import logo from '../public/punch-card-logo 1.svg'
 interface MobileDrawerProps{
     onClose:()=>void
     isOpen:boolean
-    openContact:()=>void;
+    openContact:()=>void
+    isMerchant:boolean
 }
 
-export function MobileDrawer({ onClose, isOpen, openContact }: MobileDrawerProps) {
+export function MobileDrawer({ onClose, isOpen, openContact,isMerchant }: MobileDrawerProps) {
 
     return (
         <Drawer onClose={onClose} isOpen={isOpen} size="sm">
@@ -28,9 +29,9 @@ export function MobileDrawer({ onClose, isOpen, openContact }: MobileDrawerProps
                 </HStack>
                 <VStack w="full" mt="50px" align="flex-start" px="50px" spacing="5">
                     <Box w="full">
-                        <Link href="/forMerchants" >
+                        <Link href={isMerchant ? "/" : "/forMerchants"} >
                             <HStack justify="space-between" cursor="pointer">
-                                <Text>For merchants</Text>
+                                <Text>{isMerchant ? "For customers" : "For merchants"}</Text>
                                 <ArrowForwardIcon w={10} h={10} color='black' />
                             </HStack>
                         </Link>

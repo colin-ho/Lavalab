@@ -29,37 +29,37 @@ export default function ForMerchantsPage() {
             </Head>
             <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }} >
                 <GridItem colSpan={1}>
-                    <HStack display={{ base: 'flex', sm: 'none' }} px="50" py="4" w="full" spacing={6}>
+                    <HStack align="flex-start" display={{ base: 'flex', sm: 'none' }} px="50" pt="5" pb="3" w="full" spacing={6}>
                         <Box cursor="pointer">
                             <Link href="/" >
                                 <Image width="165px" height="50px" src={logo} alt="" />
                             </Link>
                         </Box>
                         <Box flex="1" />
-                        <HamburgerIcon cursor="pointer" onClick={onOpen1} />
+                        <IconButton  aria-label='Open drawer' variant="unstyled" size="lg"  _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                     </HStack>
-                    <Box height={{ base: 266, sm: 615, lg: 1100 }} position="relative">
+                    <Box height={{ base: 266, sm: 615, lg: '100vh' }} position="relative">
                         <Image priority={true} layout="fill" objectFit="cover" src={barista} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
-                        <HStack display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
+                        <HStack align={{ sm: 'flex-end', lg: 'flex-start' }} display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
                             <Box cursor="pointer">
                                 <Link href="/" >
                                     <Image width="165px" height="30px" src={logo} alt="" />
                                 </Link>
                             </Box>
                             <Box flex="1" />
-                            <Link href="/forMerchants">
+                            <Link href="/">
                                 <Text cursor="pointer" display={{ base: 'none', lg: 'inline-block' }}>
-                                    For Merchants
+                                    For Customers
                                 </Text>
                             </Link>
                             <Text display={{ base: 'none', lg: 'inline-block' }} cursor="pointer" onClick={onOpen2}>
                                 Contact Us
                             </Text>
-                            <IconButton display={{ base: 'block', lg: 'none' }} aria-label='Open drawer' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
+                            <IconButton display={{ base: 'block', lg: 'none' }} aria-label='Open drawer' variant="unstyled"size="lg" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                         </HStack>
                         <Box px={{ sm: 50, lg: 100 }} w="full" pt="10%" >
                             <Heading fontSize={{ base: 37, sm: '45px', lg: '55px', xl: '65px' }} >
@@ -71,6 +71,17 @@ export default function ForMerchantsPage() {
                                 Punchcard is a online subscription marketplace the connects customers to local businesses.
                             </Text>
                         </Box>
+                        <Box pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px"  >
+                            <HStack border="1px solid black" w="fit-content" py="5px" px="30px" spacing="10" cursor="pointer"
+                                onClick={onOpen}>
+                                <Text fontSize="20px">
+                                    Start selling
+                                </Text>
+                                <ArrowForwardIcon w={10} h={10} color='black' />
+                            </HStack>
+
+                        </Box>
+                        {/*
                         <Box w="full" flex="1" >
                             <Box w="70%" mt="60px" p="20px" ml={{ sm: 50, lg: "-15%" }} background="white" cursor="pointer" onMouseEnter={() => set({ ml: '20%' })}
                                 onMouseLeave={() => set({ ml: '0%' })} onClick={onOpen}>
@@ -81,15 +92,20 @@ export default function ForMerchantsPage() {
                                 <Box height="1px" background="black" />
                             </Box>
                         </Box>
+                        */}
                     </VStack>
                 </GridItem>
             </Grid>
             <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
                 <Box height="1px" background="black" />
-                <HStack spacing="12" mt="15px" ml={{ base: 10, sm: 0 }}>
-                    <Text fontSize={20}>0&#8202;1</Text>
-                    <Box width="1px" height="35px" background="black" />
-                    <Text fontSize={20}>What to expect</Text>
+                <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
+                    <Box pt="20px">
+                        <Text fontSize={20}>0&#8202;1</Text>
+                    </Box>
+                    <Box width="1px" height="50px" background="black" />
+                    <Box pt="20px">
+                        <Text fontSize={20}>What to expect</Text>
+                    </Box>
                 </HStack>
             </Box>
             <Heading position="relative" ml="10%" mt="80px">What to expect</Heading>
@@ -137,10 +153,14 @@ export default function ForMerchantsPage() {
             </Grid>
             <Box ml={{ sm: "10%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
                 <Box height="1px" background="black" />
-                <HStack spacing="12" mt="15px" ml={{ base: 10, sm: 0 }}>
-                    <Text fontSize={20}>0&#8202;2</Text>
-                    <Box width="1px" height="35px" background="black" />
-                    <Text fontSize={20}>How it works</Text>
+                <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
+                    <Box pt="20px">
+                        <Text fontSize={20}>0&#8202;2</Text>
+                    </Box>
+                    <Box width="1px" height="50px" background="black" />
+                    <Box pt="20px">
+                        <Text fontSize={20}>How it works</Text>
+                    </Box>
                 </HStack>
             </Box>
             <Heading ml="10%" mt="80px">How it works</Heading>
@@ -172,10 +192,14 @@ export default function ForMerchantsPage() {
             </Grid>
             <Box ml={{ sm: "10%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
                 <Box height="1px" background="black" />
-                <HStack spacing="12" mt="15px" ml={{ base: 10, sm: 0 }}>
-                    <Text fontSize={20}>0&#8202;3</Text>
-                    <Box width="1px" height="35px" background="black" />
-                    <Text fontSize={20}>Pricing</Text>
+                <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
+                    <Box pt="20px">
+                        <Text fontSize={20}>0&#8202;3</Text>
+                    </Box>
+                    <Box width="1px" height="50px" background="black" />
+                    <Box pt="20px">
+                        <Text fontSize={20}>Pricing</Text>
+                    </Box>
                 </HStack>
             </Box>
             <HStack ml="10%" mt="80px" mb={{ base: '100px', sm: '150px', lg: "250px" }}>
@@ -188,10 +212,14 @@ export default function ForMerchantsPage() {
             </HStack>
             <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative" zIndex="1">
                 <Box height="1px" background="black" />
-                <HStack spacing="12" mt="15px" ml={{ base: 10, sm: 0 }}>
-                    <Text fontSize={20}>0&#8202;4</Text>
-                    <Box width="1px" height="35px" background="black" />
-                    <Text fontSize={20}>Join us</Text>
+                <HStack spacing="12"  ml={{ base: 10, sm: 0 }}>
+                    <Box pt="20px">
+                        <Text fontSize={20}>0&#8202;4</Text>
+                    </Box>
+                    <Box width="1px" height="50px" background="black" />
+                    <Box pt="20px">
+                        <Text fontSize={20}>Join us</Text>
+                    </Box>
                 </HStack>
             </Box>
             <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
@@ -212,6 +240,17 @@ export default function ForMerchantsPage() {
                                 We will be offering significant discounts on our earliest users
                             </Text>
                         </Box>
+                        <Box pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px"  >
+                            <HStack border="1px solid black" w="fit-content" py="5px" px="30px" spacing="10" cursor="pointer"
+                                onClick={onOpen}>
+                                <Text fontSize="20px">
+                                    Start selling
+                                </Text>
+                                <ArrowForwardIcon w={10} h={10} color='black' />
+                            </HStack>
+
+                        </Box>
+                        {/*
                         <Box w="full"  >
                             <Box w="70%" mt={{ base: "10px", lg: 30 }} p="20px" ml={{ sm: 50, lg: "-15%" }} background="white" cursor="pointer" onMouseEnter={() => set({ ml: '20%' })}
                                 onMouseLeave={() => set({ ml: '0%' })} onClick={onOpen}>
@@ -222,6 +261,7 @@ export default function ForMerchantsPage() {
                                 <Box height="1px" background="black" />
                             </Box>
                         </Box>
+                        */}
                         <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="flex-end" spacing={8}>
                             <Link href="/forMerchants">
                                 <Text cursor="pointer">
@@ -257,15 +297,15 @@ export default function ForMerchantsPage() {
                 </GridItem>
             </Grid>
             <MerchantWaitList isOpen={isOpen} onClose={onClose} />
-            <MobileDrawer isOpen={isOpen1} onClose={onClose1} openContact={onOpen2} />
+            <MobileDrawer isOpen={isOpen1} onClose={onClose1} openContact={onOpen2} isMerchant={true} />
             <Contact isOpen={isOpen2} onClose={onClose2} />
         </Box>
     );
 }
 
-interface MerchantWaitListProps{
-    isOpen:boolean,
-    onClose:()=>void
+interface MerchantWaitListProps {
+    isOpen: boolean,
+    onClose: () => void
 }
 
 function MerchantWaitList({ isOpen, onClose }: MerchantWaitListProps) {
@@ -327,9 +367,9 @@ function MerchantWaitList({ isOpen, onClose }: MerchantWaitListProps) {
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} size="xl">
             <ModalOverlay />
-            <ModalContent p="8" mx="4">
+            <ModalContent py="8" px="12" borderRadius="none" mx="4">
                 <VStack spacing="8" alignItems="flex-start">
                     <HStack w="full" justify="flex-end">
                         <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />} onClick={onClose} />
