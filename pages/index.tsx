@@ -57,7 +57,7 @@ export default function Home() {
                         </HStack>
                         <Box px={{ sm: 50, lg: 100 }} w="full" pt="10%" >
                             <Heading fontSize={{ base: 37, sm: '45px', lg: '55px', xl: '65px' }} >
-                                Subscribe and save to the local businesses you love. No fees.
+                                Subscribe and save to the local businesses you love.
                             </Heading>
                         </Box>
                         <Box w="full" pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px" >

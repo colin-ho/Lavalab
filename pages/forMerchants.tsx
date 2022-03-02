@@ -263,9 +263,9 @@ export default function ForMerchantsPage() {
                         </Box>
                         */}
                         <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="flex-end" spacing={8}>
-                            <Link href="/forMerchants">
+                            <Link href="/">
                                 <Text cursor="pointer">
-                                    For Merchants
+                                    For Customers
                                 </Text>
                             </Link>
                             <Text cursor="pointer" onClick={onOpen2}>
@@ -282,9 +282,9 @@ export default function ForMerchantsPage() {
                         <Image layout="fill" objectFit='cover' src={counter} alt="" />
                     </Box>
                     <VStack align="flex-end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
-                        <Link href="/forMerchants">
+                        <Link href="/">
                             <Text cursor="pointer">
-                                For Merchants
+                                For Customers
                             </Text>
                         </Link>
                         <Text cursor="pointer" onClick={onOpen2}>
