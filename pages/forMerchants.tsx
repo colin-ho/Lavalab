@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
-import barista from '../public/images/Barista.jpeg'
-import counter from '../public/images/Counter.jpeg'
+import barista from '../public/images/barista.jpeg'
+import counter from '../public/images/counter.jpeg'
 import logo from '../public/images/logo.svg'
 import { MobileDrawer } from "../components/MobileDrawer";
 import Head from 'next/head'
