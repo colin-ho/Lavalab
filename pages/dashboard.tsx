@@ -211,7 +211,7 @@ const SidebarContent = ({ onClose, setPageState, display, pageState }: SidebarPr
             display={{ base: display.base, md: display.md }}
         >
             <Flex mt="20px" mb="60px" alignItems="center" mx="8" justifyContent="space-between">
-                <Image src={"../../punch-card-logo 1.svg"} alt="" />
+                <Image src={"../../images/logo.svg"} alt="" />
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
             {LinkItems.map((link) => (

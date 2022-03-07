@@ -1,7 +1,7 @@
 import { Box, VStack } from '@chakra-ui/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../public/punch-card-logo 1.svg'
+import logo from '../public/images/logo.svg'
 
 export default function Custom404() {
     return (

@@ -8,12 +8,12 @@ import Link from 'next/link';
 import { FormEvent, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { Contact } from "../components/ContactForm";
-import barista from '../public/Barista.jpeg'
-import counter from '../public/Counter.jpeg'
-import logo from '../public/punch-card-logo 1.svg'
+import barista from '../public/images/Barista.jpeg'
+import counter from '../public/images/Counter.jpeg'
+import logo from '../public/images/logo.svg'
 import { MobileDrawer } from "../components/MobileDrawer";
 import Head from 'next/head'
-
+import arrow from '../public/icons/icon-arrow-right.svg'
 
 export default function ForMerchantsPage() {
     const [{ ml }, set] = useSpring(() => ({ ml: '0%' }));
@@ -32,52 +32,52 @@ export default function ForMerchantsPage() {
                     <HStack align="flex-start" display={{ base: 'flex', sm: 'none' }} px="50" pt="5" pb="3" w="full" spacing={6}>
                         <Box cursor="pointer">
                             <Link href="/" >
-                                <Image width="165px" height="50px" src={logo} alt="" />
+                                <Image width="200px" height="50px" src={logo} alt="" />
                             </Link>
                         </Box>
                         <Box flex="1" />
-                        <IconButton  aria-label='Open drawer' variant="unstyled" size="lg"  _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
+                        <IconButton aria-label='Open drawer' variant="unstyled" size="lg" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                     </HStack>
-                    <Box height={{ base: 266, sm: 615, lg: '100vh' }} position="relative">
+                    <Box height={{ base: 266, sm: 615, lg: '95vh' }} position="relative">
                         <Image priority={true} layout="fill" objectFit="cover" src={barista} alt="" />
                     </Box>
                 </GridItem>
                 <GridItem colSpan={2} mt={{ sm: "-380px", lg: 0 }} w={{ base: "80%", lg: "100%" }} mx="auto" background="white" position="relative">
                     <VStack alignItems="stretch" h="full">
-                        <HStack align={{ sm: 'flex-end', lg: 'flex-start' }} display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: 100 }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
+                        <HStack align={{ sm: 'flex-start', lg: 'center' }} display={{ base: 'none', sm: 'flex' }} px={{ base: 50, lg: "10%" }} pt={{ base: 34, lg: 74 }} w="full" spacing={6}>
                             <Box cursor="pointer">
                                 <Link href="/" >
-                                    <Image width="165px" height="30px" src={logo} alt="" />
+                                    <Image width="200px" height="50px" src={logo} alt="" />
                                 </Link>
                             </Box>
                             <Box flex="1" />
                             <Link href="/">
-                                <Text cursor="pointer" display={{ base: 'none', lg: 'inline-block' }}>
+                                <Text cursor="pointer" fontSize="20px" display={{ base: 'none', lg: 'inline-block' }}>
                                     For Customers
                                 </Text>
                             </Link>
-                            <Text display={{ base: 'none', lg: 'inline-block' }} cursor="pointer" onClick={onOpen2}>
+                            <Text fontSize="20px" display={{ base: 'none', lg: 'inline-block' }} cursor="pointer" onClick={onOpen2}>
                                 Contact Us
                             </Text>
-                            <IconButton display={{ base: 'block', lg: 'none' }} aria-label='Open drawer' variant="unstyled"size="lg" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
+                            <IconButton display={{ base: 'block', lg: 'none' }} aria-label='Open drawer' variant="unstyled" size="lg" _focus={{ borderColor: 'none' }} icon={<HamburgerIcon />} onClick={onOpen1} />
                         </HStack>
-                        <Box px={{ sm: 50, lg: 100 }} w="full" pt="10%" >
+                        <Box px={{ sm: 50, lg: "10%" }} w="full" pt="5%" >
                             <Heading fontSize={{ base: 37, sm: '45px', lg: '55px', xl: '65px' }} >
                                 Turn customers into regulars in less than 15 minutes.
                             </Heading>
                         </Box>
-                        <Box w="full" pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px" >
+                        <Box w="full" pl={{ sm: 50, lg: "10%" }} pr={{ sm: '20%', lg: "30%" }} pt="40px" >
                             <Text fontSize="20px">
-                                Punchcard is a online subscription marketplace the connects customers to local businesses.
+                                Punchcard is a online subscription marketplace that connects customers to local businesses.
                             </Text>
                         </Box>
-                        <Box pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px"  >
-                            <HStack border="1px solid black" w="fit-content" py="5px" px="30px" spacing="10" cursor="pointer"
+                        <Box pl={{ sm: 50, lg: "10%" }} pr={{ sm: '20%', lg: "40%" }} pt="40px"  >
+                            <HStack border="1px solid black" w="fit-content" py="15px" px="40px" spacing="10" cursor="pointer"
                                 onClick={onOpen}>
-                                <Text fontSize="20px">
+                                <Text fontSize="20px" mr="50px">
                                     Start selling
                                 </Text>
-                                <ArrowForwardIcon w={10} h={10} color='black' />
+                                <Image src={arrow} width="25px" height="25px" />
                             </HStack>
 
                         </Box>
@@ -96,133 +96,134 @@ export default function ForMerchantsPage() {
                     </VStack>
                 </GridItem>
             </Grid>
-            <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
+            <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="20px" mt={{ base: 50, sm: "80px", lg: "-80px" }} background="white" position="relative">
                 <Box height="1px" background="black" />
                 <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
-                    <Box pt="20px">
+                    <Box >
                         <Text fontSize={20}>0&#8202;1</Text>
                     </Box>
-                    <Box width="1px" height="50px" background="black" />
-                    <Box pt="20px">
+                    <Box width="1px" height="40px" background="black" />
+                    <Box >
                         <Text fontSize={20}>What to expect</Text>
                     </Box>
                 </HStack>
             </Box>
-            <Heading position="relative" ml="10%" mt="80px">What to expect</Heading>
+            <Heading position="relative" mx="10%" mt="80px">We make loyalty easy</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.0&#8202;1</Text>
+                        <Text fontSize="20px">.0&#8202;1</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Predictable revenue</Text>
-                        <Text>Subscriptions help to create a predictable revenue stream.</Text>
+                        <Text as="b" fontSize="20px">Predictable revenue</Text>
+                        <Text fontSize="20px">Subscriptions help to create a predictable revenue stream.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.0&#8202;2</Text>
+                        <Text fontSize="20px">.0&#8202;2</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Build customer relationships</Text>
-                        <Text>Relationships go both ways. Increase your customers’ lifetime value through loyalty rewards.</Text>
+                        <Text as="b" fontSize="20px">Build customer relationships</Text>
+                        <Text fontSize="20px">Relationships go both ways. Increase your customers’ lifetime value through loyalty rewards.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.0&#8202;3</Text>
+                        <Text fontSize="20px">.0&#8202;3</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Be discovered</Text>
-                        <Text>Reach new customers and retain the ones your already have.</Text>
+                        <Text as="b" fontSize="20px">Be discovered</Text>
+                        <Text fontSize="20px">Reach new customers and retain the ones your already have.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.0&#8202;4</Text>
+                        <Text fontSize="20px">.0&#8202;4</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Increase sales</Text>
-                        <Text>Cross sell and upsell opportunities each time a customer redeems a subscription.</Text>
+                        <Text as="b" fontSize="20px">Increase sales</Text>
+                        <Text fontSize="20px">Cross sell and upsell opportunities each time a customer redeems a subscription.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.0&#8202;5</Text>
+                        <Text fontSize="20px">.0&#8202;5</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Analyze product performance</Text>
-                        <Text>We make it easy to analyze product performance.</Text>
+                        <Text as="b" fontSize="20px">Analyze product performance</Text>
+                        <Text fontSize="20px">We make it easy to analyze product performance.</Text>
                     </VStack>
                 </GridItem>
             </Grid>
-            <Box ml={{ sm: "10%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
+            <Box ml={{ sm: "10%" }} py="20px" mt={{ base: 50, sm: "80px", lg: "-80px" }} background="white" position="relative">
                 <Box height="1px" background="black" />
                 <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
-                    <Box pt="20px">
+                    <Box>
                         <Text fontSize={20}>0&#8202;2</Text>
                     </Box>
-                    <Box width="1px" height="50px" background="black" />
-                    <Box pt="20px">
+                    <Box width="1px" height="40px" background="black" />
+                    <Box>
                         <Text fontSize={20}>How it works</Text>
                     </Box>
                 </HStack>
             </Box>
-            <Heading ml="10%" mt="80px">How it works</Heading>
+            <Heading mx="10%" mt="80px">3 simple steps to securing loyal customers</Heading>
             <Grid mt="50px" mb={{ base: '100px', sm: '150px', lg: "250px" }} mx="10%" templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(2, 1fr)', lg: 'repeat(3,1fr)' }} gap={20}>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.01</Text>
+                        <Text fontSize="20px">.01</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Create a subscription</Text>
-                        <Text>Improve the customer experience by offering more options and added convenience.</Text>
+                        <Text fontSize="20px" as="b">Create a subscription</Text>
+                        <Text fontSize="20px">Improve the customer experience by offering more options and added convenience.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.02</Text>
+                        <Text fontSize="20px">.02</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Customers buy and redeem subscriptions</Text>
-                        <Text>Reach new customers and track live redemptions.</Text>
+                        <Text fontSize="20px" as="b">Customers buy and redeem subscriptions</Text>
+                        <Text fontSize="20px">Reach new customers and track live redemptions.</Text>
                     </VStack>
                 </GridItem>
                 <GridItem colSpan={1}>
                     <VStack w="full" alignItems="flex-start" spacing="4">
-                        <Text>.03</Text>
+                        <Text fontSize="20px">.03</Text>
                         <Box height="1px" w="full" background="black" />
-                        <Text as="b">Complete the sale</Text>
-                        <Text>Process orders and analyze sales performance.</Text>
+                        <Text fontSize="20px" as="b">Complete the sale</Text>
+                        <Text fontSize="20px">Process orders and analyze sales performance.</Text>
                     </VStack>
                 </GridItem>
             </Grid>
-            <Box ml={{ sm: "10%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative">
+            <Box ml={{ sm: "10%" }} py="20px" mt={{ base: 50, sm: "80px", lg: "-80px" }} background="white" position="relative">
                 <Box height="1px" background="black" />
                 <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
-                    <Box pt="20px">
+                    <Box >
                         <Text fontSize={20}>0&#8202;3</Text>
                     </Box>
-                    <Box width="1px" height="50px" background="black" />
-                    <Box pt="20px">
+                    <Box width="1px" height="40px" background="black" />
+                    <Box>
                         <Text fontSize={20}>Pricing</Text>
                     </Box>
                 </HStack>
             </Box>
-            <HStack ml="10%" mt="80px" mb={{ base: '100px', sm: '150px', lg: "250px" }}>
-                <Heading flex="1" >Pricing</Heading>
-                <VStack align="flex-start" px="10%">
-                    <Text fontSize={20}>.0&#8202;1</Text>
+            <VStack mt="80px" align="flex-start" px="10%" mb={{ base: '100px', sm: '150px', lg: "250px" }}>
+                <Heading flex="1" >Your success is our success</Heading>
+                <VStack align="flex-start" w="full">
+                    <Text fontSize="20px" mt="50px" >.0&#8202;1</Text>
                     <Box height="1px" w="full" background="black" />
-                    <Text fontSize={{ sm: 20 }}>We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
+                    <Text fontSize="20px">We charge 7.9% + $0.30 per purchased subscription purchased. No sign up fee, usuage fees, or hidden fees.</Text>
                 </VStack>
-            </HStack>
-            <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="30px" mt={{ base: 50, sm: "80px", lg: -110 }} background="white" position="relative" zIndex="1">
+            </VStack>
+
+            <Box ml={{ sm: "10%", lg: "7%" }} pl={{ lg: "3%" }} py="20px" mt={{ base: 50, sm: "80px", lg: "-80px" }} background="white" position="relative" zIndex="1">
                 <Box height="1px" background="black" />
-                <HStack spacing="12"  ml={{ base: 10, sm: 0 }}>
-                    <Box pt="20px">
+                <HStack spacing="12" ml={{ base: 10, sm: 0 }}>
+                    <Box >
                         <Text fontSize={20}>0&#8202;4</Text>
                     </Box>
-                    <Box width="1px" height="50px" background="black" />
-                    <Box pt="20px">
+                    <Box width="1px" height="40px" background="black" />
+                    <Box >
                         <Text fontSize={20}>Join us</Text>
                     </Box>
                 </HStack>
             </Box>
-            <Grid mt={{ base: 0, lg: -110 }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
+            <Grid mt={{ base: 0, lg: "-80px" }} templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(3, 1fr)' }}>
                 <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
                     <Box height="615px" position="relative">
                         <Image layout="fill" objectFit='cover' src={counter} alt="" />
@@ -235,20 +236,19 @@ export default function ForMerchantsPage() {
                                 Become a merchant
                             </Heading>
                         </Box>
-                        <Box w="full" pl={{ sm: 50, lg: 100 }} pr={{ base: "10%", lg: "40%" }} pt="40px" >
+                        <Box w="full" pl={{ sm: 50, lg: 100 }} pr={{ base: "30%", lg: "40%" }} pt="40px" >
                             <Text fontSize="20px">
                                 We will be offering significant discounts on our earliest users
                             </Text>
                         </Box>
                         <Box pl={{ sm: 50, lg: 100 }} pr={{ sm: '20%', lg: "40%" }} pt="40px"  >
-                            <HStack border="1px solid black" w="fit-content" py="5px" px="30px" spacing="10" cursor="pointer"
+                            <HStack border="1px solid black" w="fit-content" py="15px" px="40px" spacing="10" cursor="pointer"
                                 onClick={onOpen}>
-                                <Text fontSize="20px">
+                                <Text fontSize="20px" mr="50px">
                                     Start selling
                                 </Text>
-                                <ArrowForwardIcon w={10} h={10} color='black' />
+                                <Image src={arrow} width="25px" height="25px" />
                             </HStack>
-
                         </Box>
                         {/*
                         <Box w="full"  >
@@ -264,14 +264,14 @@ export default function ForMerchantsPage() {
                         */}
                         <HStack display={{ base: 'none', sm: 'flex' }} pb="50px" pt={{ base: "50px", lg: 100 }} px="100px" w="full" justify="flex-end" spacing={8}>
                             <Link href="/">
-                                <Text cursor="pointer">
+                                <Text fontSize="20px" cursor="pointer">
                                     For Customers
                                 </Text>
                             </Link>
-                            <Text cursor="pointer" onClick={onOpen2}>
+                            <Text fontSize="20px" cursor="pointer" onClick={onOpen2}>
                                 Contact Us
                             </Text>
-                            <Text>
+                            <Text fontSize="20px">
                                 ©2022 Punchcard
                             </Text>
                         </HStack>
@@ -283,14 +283,14 @@ export default function ForMerchantsPage() {
                     </Box>
                     <VStack align="flex-end" py={4} pr={8} spacing={4} display={{ base: 'flex', sm: 'none' }}>
                         <Link href="/">
-                            <Text cursor="pointer">
+                            <Text fontSize="20px" cursor="pointer">
                                 For Customers
                             </Text>
                         </Link>
-                        <Text cursor="pointer" onClick={onOpen2}>
+                        <Text fontSize="20px" cursor="pointer" onClick={onOpen2}>
                             Contact Us
                         </Text>
-                        <Text>
+                        <Text fontSize="20px">
                             ©2022 Punchcard
                         </Text>
                     </VStack>
@@ -393,7 +393,7 @@ function MerchantWaitList({ isOpen, onClose }: MerchantWaitListProps) {
                             <FormControl>
                                 <Textarea placeholder="Message" type="text" value={message} onChange={(e) => setMessage(e.target.value)} borderColor="black" variant="flushed" />
                             </FormControl>
-                            <Button isLoading={loading} type="submit" variant="unstyled" _focus={{ borderColor: 'none' }} rightIcon={<ArrowForwardIcon />}>Submit</Button>
+                            <Button isLoading={loading} type="submit" variant="ghost" _focus={{ borderColor: 'none' }} rightIcon={<ArrowForwardIcon />}>Submit</Button>
                         </VStack>
                     </form>
                 </VStack>

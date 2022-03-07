@@ -71,7 +71,7 @@ export function Contact({ isOpen, onClose }: ContactFormProps) {
                         <IconButton aria-label='Close form' variant="unstyled" _focus={{ borderColor: 'none' }} icon={<CloseIcon />}onClick={onClose}/>
                     </HStack>
                     <Heading>Contact us</Heading>
-                    <Text>We&apos;re happy to help! Please leave a message below and we will get back to you as soon as possible.</Text>
+                    <Text >We&apos;re happy to help! Please leave a message below and we will get back to you as soon as possible.</Text>
                     <form style={{ width: "100%" }} onSubmit={(e) => handleSubmit(e)}>
                         <VStack align="flex-end" w="full" spacing="4">
                             <FormControl isInvalid={nameError}>
@@ -86,7 +86,7 @@ export function Contact({ isOpen, onClose }: ContactFormProps) {
                                 <FormErrorMessage>Message cannot be empty</FormErrorMessage>
                                 <Textarea name="message" placeholder="Message*" type="text" value={message} onChange={(e) => setMessage(e.target.value)} borderColor="black" variant="flushed" />
                             </FormControl>
-                            <Button isLoading={loading} type="submit" variant="unstyled" _focus={{ borderColor: 'none' }} rightIcon={<ArrowForwardIcon />}>Submit</Button>
+                            <Button isLoading={loading}  type="submit" variant="ghost" _focus={{ borderColor: 'none' }} rightIcon={<ArrowForwardIcon />}>Submit</Button>
                         </VStack>
                     </form>
                 </VStack>

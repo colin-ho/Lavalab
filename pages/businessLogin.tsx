@@ -132,7 +132,7 @@ function SignInForm({ setIsSignIn}: { setIsSignIn: Dispatch<SetStateAction<boole
                         </form>
                         <Button variant="ghost" onClick={onGoogleSubmit}>
                             <HStack>
-                                <Image src={'/google.png'} alt="" width="30px" />
+                                <Image src={'/icons/google.png'} alt="" width="30px" />
                                 <Text>Sign in with Google</Text>
                             </HStack>
                         </Button>

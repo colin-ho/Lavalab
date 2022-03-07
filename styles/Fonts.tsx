@@ -7,12 +7,14 @@ export const Fonts = () => (
         @font-face {
         font-family: 'Roobert';
         font-weight:600;
-        src: url('/Roobert-Medium.ttf') format("truetype");
+        font-display:block;
+        src: url('/fonts/Roobert-Medium.ttf') format("truetype");
         }
         @font-face {
         font-family: 'Roobert';
         font-weight:400;
-        src: url('/Roobert-Regular.otf') format("opentype");
+        font-display:block;
+        src: url('/fonts/Roobert-Regular.otf') format("opentype");
         }
     `}
     />
