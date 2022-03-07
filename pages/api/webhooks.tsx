@@ -45,11 +45,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const { start, end } = dataObject.lines.data[0].period;
 
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
+                    const payments = firestore.collection('businesses').doc(metadata.businessId)
 
-                    await subscribedTo.set({
+                    const batch = firestore.batch()
+
+                    batch.set(subscribedTo,{
                         customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
-                    });
+                    })
+
+                    batch.set(payments,{
+                        customerName: metadata.name, customerId: metadata.customerId,amountPaid:metadata.price,subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId,
+                        date:new Date(),reason:"subscription_create"
+                    })
+
+                    await batch.commit();
 
                     const subscription_id = dataObject.subscription
                     const payment_intent_id = dataObject.payment_intent
@@ -70,9 +80,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
                 else {
                     const subscription = dataObject.subscription;
+                    const metadata = dataObject.lines.data[0].metadata;
                     const { start, end } = dataObject.lines.data[0].period;
+                    const payments = firestore.collection('businesses').doc(metadata.businessId)
+
+                    const batch = firestore.batch()
                     const sub = firestore.collection('subscribedTo').doc(subscription)
-                    await sub.update({ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0 });
+                    batch.set(payments,{
+                        customerName: metadata.name, customerId: metadata.customerId,amountPaid:metadata.price,subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId,
+                        date:new Date(),reason:"subscription_cycle"
+                    })
+
+                    batch.update(sub,{ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0 })
+
+                    await batch.commit();
                 }
 
             }
