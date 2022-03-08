@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const batch = firestore.batch()
 
                     batch.set(subscribedTo,{
-                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
+                        customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:parseFloat(metadata.price), subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     })
 
@@ -94,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         date:new Date(),reason:"subscription_cycle",businessId: metadata.businessId, businessName:metadata.business,
                     })
 
-                    batch.update(sub,{ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0 })
+                    batch.update(sub,{ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0,amountPaid:increment(parseFloat(metadata.price)) })
 
                     await batch.commit();
                 }
