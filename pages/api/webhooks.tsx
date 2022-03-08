@@ -46,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
                     const payment = firestore.collection('payments').doc()
-                    const subscription = firestore.collection('subscription').doc(metadata.subscriptionId)
+                    const subscription = firestore.collection('subscriptions').doc(metadata.subscriptionId)
 
                     const batch = firestore.batch()
 
@@ -127,7 +127,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const stripeSubscriptionId = dataObject.id;
                     const batch = firestore.batch()
 
-                    const subscription = firestore.collection('subscription').doc(dataObject.metadata.subscriptionId)
+                    const subscription = firestore.collection('subscriptions').doc(dataObject.metadata.subscriptionId)
                     const subscribedTo = firestore.collection('subscribedTo').doc(stripeSubscriptionId)
                     batch.update(subscribedTo,{ status: 'canceled'});
                     batch.update(subscription,{ activeSubscribers:increment(-1)});
