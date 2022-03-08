@@ -12,4 +12,6 @@ if (!admin.apps.length) {
 
 const firestore= admin.firestore();
 
-export { firestore }
+const increment = admin.firestore.FieldValue.increment;
+
+export { firestore,increment }
