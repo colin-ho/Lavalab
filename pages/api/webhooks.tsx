@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const { start, end } = dataObject.lines.data[0].period;
 
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
-                    const payments = firestore.collection('businesses').doc(metadata.businessId)
+                    const payments = firestore.collection('businesses').doc(metadata.businessId).collection('payments').doc()
 
                     const batch = firestore.batch()
 
@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const subscription = dataObject.subscription;
                     const metadata = dataObject.lines.data[0].metadata;
                     const { start, end } = dataObject.lines.data[0].period;
-                    const payments = firestore.collection('businesses').doc(metadata.businessId)
+                    const payments = firestore.collection('businesses').doc(metadata.businessId).collection('payments').doc()
 
                     const batch = firestore.batch()
                     const sub = firestore.collection('subscribedTo').doc(subscription)
