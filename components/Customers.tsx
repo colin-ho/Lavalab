@@ -5,20 +5,20 @@ import { Box, Divider, Flex, Grid, GridItem, Heading, HStack, Text, VStack } fro
 import { Modal, IconButton, ModalBody, ModalCloseButton, InputGroup, InputLeftElement, ModalContent, Input, ModalFooter, ModalHeader, ModalOverlay, RadioGroup, Radio, CheckboxGroup, Checkbox } from '@chakra-ui/react';
 import { StringOrNumber } from '@chakra-ui/utils';
 import { debounce } from 'lodash';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { AuthContext, AuthContextInterface } from '../lib/context';
+import { firestore } from '../lib/firebase';
 
 const stringSimilarity = require("string-similarity");
 
 interface CustomerProps {
-    customerData: firebase.default.firestore.DocumentData[],
-    total: number,
-    subTitles: string[]
+    subTitles: string[],
 }
 
 interface SubInterface {
     subscriptionTitle: string, subscriptionId: string,
     redemptionCount: number,
-    boughtAt: firebase.default.firestore.Timestamp ,
+    boughtAt: firebase.default.firestore.Timestamp,
     end: firebase.default.firestore.Timestamp,
     amountPaid: string, lastRedeemed: firebase.default.firestore.Timestamp
 }
@@ -26,47 +26,91 @@ interface SubInterface {
 interface CustomerInterface {
     customerId: string,
     name: string,
-    subs: SubInterface[]
+    subs: SubInterface[],
+
 }
 
-export default function Customers({ customerData, total, subTitles }: CustomerProps) {
+export default function Customers({ subTitles }: CustomerProps) {
     const [search, setSearch] = useState('')
+    const { user } = useContext<AuthContextInterface>(AuthContext);
     const [data, setData] = useState<CustomerInterface[]>([])
+    const [lastDoc, setLastDoc] = useState<firebase.default.firestore.QueryDocumentSnapshot<firebase.default.firestore.DocumentData> | null>(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [sort, setSort] = useState<String>('')
     const [sub, setSub] = useState<StringOrNumber[]>([])
+    const [page, setPage] = useState(1)
 
+    const arrangeData = async (customers:CustomerInterface[],customerData:firebase.default.firestore.QuerySnapshot<firebase.default.firestore.DocumentData>)=>{
+        const ids: string[] = []
+        customerData.forEach((doc) => {
+            const item = doc.data()
+            const index = customers.findIndex((c: firebase.default.firestore.DocumentData) => c.customerId === item.customerId)
+            ids.push(item.customerId)
+            if (index === -1) {
+                const customer = {
+                    customerId: String(item.customerId), name: String(item.customerName), subs: [
+                        {
+                            subscriptionTitle: String(item.subscriptionTitle), subscriptionId: String(item.subscriptionId), redemptionCount: parseInt(item.redemptionCount),
+                            boughtAt: item.boughtAt, end: item.end, amountPaid: String(item.amountPaid), lastRedeemed: item.lastRedeemed ? item.lastRedeemed : null
+                        }
+                    ]
+                }
+                customers.push(customer)
+            } else {
+                const sub = {
+                    subscriptionTitle: item.subscriptionTitle, subscriptionId: item.subscriptionId, redemptionCount: item.redemptionCount,
+                    boughtAt: item.boughtAt, end: item.end, amountPaid: item.amountPaid, lastRedeemed: item.lastRedeemed ? item.lastRedeemed : null
+                }
+                customers[index] = { ...customers[index], subs: [...customers[index].subs, sub] }
+            }
 
+        });
+        const topUpQuery = firestore.collection('subscribedTo').where('businessId', '==', user?.uid).where('status', '==', 'active')
+            .where('customerId', 'in', ids).orderBy('boughtAt')
+
+        const topUpData = await topUpQuery.get()
+        topUpData.forEach((doc) => {
+            const item = doc.data()
+            const index = customers.findIndex((c: firebase.default.firestore.DocumentData) => c.customerId === item.customerId)
+            ids.push(item.customerId)
+            const sub = {
+                subscriptionTitle: item.subscriptionTitle, subscriptionId: item.subscriptionId, redemptionCount: item.redemptionCount,
+                boughtAt: item.boughtAt, end: item.end, amountPaid: item.amountPaid, lastRedeemed: item.lastRedeemed ? item.lastRedeemed : null
+            }
+            customers[index] = { ...customers[index], subs: [...customers[index].subs, sub] }
+        });
+
+        setData(customers)
+        const newlast = customerData.docs.at(customerData.docs.length - 1)
+        if (newlast) {
+            setLastDoc(newlast)
+        }
+    }
+
+    const getMoreData = async () => {
+        const dataQuery = firestore.collection('subscribedTo').where('businessId', '==', user?.uid).where('status', '==', 'active').orderBy('boughtAt').limit(2).startAfter(lastDoc)
+
+        const newData = await dataQuery.get()
+
+        const customers = data
+        arrangeData(customers,newData);
+    }
+
+    const getInitialData = async () => {
+        const customerQuery = firestore.collection('subscribedTo').where('businessId', '==', user?.uid).where('status', '==', 'active').orderBy('boughtAt').limit(2)
+        const customerData = await customerQuery.get()
+
+        const customers: CustomerInterface[] = []
+        arrangeData(customers,customerData);
+    }
 
     useEffect(() => {
-        if (customerData) {
-            const customers: CustomerInterface[] = []
-            customerData.forEach((item: firebase.default.firestore.DocumentData) => {
-                const index = customers.findIndex((c: firebase.default.firestore.DocumentData) => c.customerId === item.customerId)
-                if (index === -1) {
-                    const customer = {
-                        customerId: String(item.customerId), name: String(item.customerName), subs: [
-                            {
-                                subscriptionTitle: String(item.subscriptionTitle), subscriptionId: String(item.subscriptionId), redemptionCount: parseInt(item.redemptionCount),
-                                boughtAt: item.boughtAt, end: item.end, amountPaid: String(item.amountPaid), lastRedeemed: item.lastRedeemed ? item.lastRedeemed : null
-                            }
-                        ]
-                    }
-                    customers.push(customer)
-                } else {
-                    const sub = {
-                        subscriptionTitle: item.subscriptionTitle, subscriptionId: item.subscriptionId, redemptionCount: item.redemptionCount,
-                        boughtAt: item.boughtAt, end: item.end, amountPaid: item.amountPaid, lastRedeemed: item.lastRedeemed ? item.lastRedeemed : null
-                    }
-                    customers[index] = { ...customers[index], subs: [...customers[index].subs, sub] }
-                }
-
-            });
-            setData(customers)
+        if (user) {
+            getInitialData()
         } else {
             setData([])
         }
-    }, [customerData])
+    }, [user])
 
     const debouncedSearch = debounce((query: string) => {
         setSearch(query);
@@ -135,47 +179,48 @@ export default function Customers({ customerData, total, subTitles }: CustomerPr
         setSub(sub)
     }
 
+    const nextPage = () => {
+        setPage(page + 1)
+        if (user && data.length - 2 * (page) == 0) {
+            getMoreData()
+
+        }
+    }
+
     return (
         <Flex direction="column" align="flex-start">
             <Heading size="lg" mb="10px"> Customers</Heading>
-            <Text>Current subscribers</Text>
-            <HStack w="full" my="20px" justify="space-between" spacing={12}>
-                <HStack align="center" flex="1" p={8} borderRadius="xl" spacing={12} boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-                    <Text fontSize='32' as={'b'}>{Object.keys(data).length}</Text>
-                    <Text>Current customers</Text>
-                </HStack>
-                <HStack flex="1" p={8} borderRadius="xl" spacing={12} boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)">
-                    <Text fontSize='32' as={'b'}>{total ? total : 0}</Text>
-                    <Text>All time Subscribers</Text>
-                </HStack>
-            </HStack>
+            <Text>Manage your active subscribers</Text>
             <InputGroup my="20px" >
                 <InputLeftElement pointerEvents='none' ><SearchIcon color='black' /></InputLeftElement>
                 <Input py="10px" mr="4" variant="unstyled" onChange={handleChange} bg="white" boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" borderRadius="xl" borderWidth="0" placeholder="Search by name or keyword" />
                 <IconButton onClick={onOpen} size="lg" borderRadius="xl" bg="white" aria-label='Drop down' boxShadow="0px 16px 50px rgba(0, 0, 0, 0.07)" icon={<HamburgerIcon />} />
             </InputGroup>
 
-
             {data.length > 0 ? sort != '' ?
-                data.sort((a: CustomerInterface, b: CustomerInterface) => { return sortCustomer(a, b) }).filter((customer: CustomerInterface) => filterCustomers(customer)).map((customer: CustomerInterface) => {
+                data.slice((page - 1) * 2, page * 2).sort((a: CustomerInterface, b: CustomerInterface) => { return sortCustomer(a, b) }).filter((customer: CustomerInterface) => filterCustomers(customer)).map((customer: CustomerInterface) => {
                     return <CustomerItem key={customer.name} customer={customer} />
                 })
                 :
-                data.filter((customer: CustomerInterface) => filterCustomers(customer)).map((customer: CustomerInterface) => {
+                data.slice((page - 1) * 2, page * 2).filter((customer: CustomerInterface) => filterCustomers(customer)).map((customer: CustomerInterface) => {
                     return <CustomerItem key={customer.name} customer={customer} />
                 })
                 : null}
-
+            <HStack>
+                <Text>{data.slice((page - 1) * 2, page * 2).length} results</Text>
+                {page > 1 ? <Button onClick={() => setPage(page - 1)}>Previous</Button> : null}
+                {data.length - 2 * page >= 0 ? <Button onClick={() => nextPage()}>Next</Button> : null}
+            </HStack>
             <Filter isOpen={isOpen} onClose={onClose} subTitles={subTitles} setFilter={setFilter} />
         </Flex>
     )
 }
 
-interface CustomerItemProps{
-    customer:CustomerInterface
+interface CustomerItemProps {
+    customer: CustomerInterface
 }
 
-function CustomerItem({ customer }:CustomerItemProps) {
+function CustomerItem({ customer }: CustomerItemProps) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [drop, setDrop] = useState(false)
 
@@ -221,10 +266,10 @@ function CustomerItem({ customer }:CustomerItemProps) {
     )
 }
 
-interface CustomerModalProps{
-    customer:CustomerInterface,
-    isOpen:boolean,
-    onClose:()=>void,
+interface CustomerModalProps {
+    customer: CustomerInterface,
+    isOpen: boolean,
+    onClose: () => void,
 }
 
 function CustomerModal({ customer, isOpen, onClose }: CustomerModalProps) {
@@ -252,11 +297,11 @@ function CustomerModal({ customer, isOpen, onClose }: CustomerModalProps) {
     )
 }
 
-interface FilterProps{
-    isOpen:boolean,
-    onClose:()=>void,
-    subTitles:string[],
-    setFilter:(sort: String, sub: StringOrNumber[]) => void,
+interface FilterProps {
+    isOpen: boolean,
+    onClose: () => void,
+    subTitles: string[],
+    setFilter: (sort: String, sub: StringOrNumber[]) => void,
 }
 
 function Filter({ isOpen, onClose, subTitles, setFilter }: FilterProps) {

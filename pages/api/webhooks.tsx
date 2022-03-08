@@ -129,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                     const subscription = firestore.collection('subscriptions').doc(dataObject.metadata.subscriptionId)
                     const subscribedTo = firestore.collection('subscribedTo').doc(stripeSubscriptionId)
-                    batch.update(subscribedTo,{ status: 'canceled'});
+                    batch.delete(subscribedTo);
                     batch.update(subscription,{ activeSubscribers:increment(-1)});
                     await batch.commit();
             }

@@ -100,14 +100,12 @@ function SubscriptionItem({ subscription, setFormMode, setEditableSub, }: Subscr
             const main = await firestore.collection('subscriptions').doc(subscription.id).get()
             const promises = [];
             const batch = firestore.batch();
-            const subs = await firestore.collection('subscribedTo').where('businessId','==',subscription.businessId).where('subscriptionId', '==', subscription.id)
-            .where('status','!=','canceled').get()
+            const subs = await firestore.collection('subscribedTo').where('businessId','==',subscription.businessId).where('subscriptionId', '==', subscription.id).get()
             subs.forEach((doc) => {
-                console.log(doc.id)
                 promises.push(axios.post('/api/cancel', {
                     stripeSubscriptionId: doc.id,
                 }))
-                batch.update(doc.ref,{status:'canceled'});
+                batch.delete(doc.ref);
             })
             batch.delete(main.ref);
             promises.push(batch.commit());
