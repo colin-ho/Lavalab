@@ -10,11 +10,10 @@ import axios from 'axios';
 
 interface AllSubscriptionsProps{
     subscriptions:firebase.default.firestore.DocumentData[],
-    activeIds:string[],
-    inactiveIds:string[]
+
 }
 
-export default function AllSubscriptions({ subscriptions, activeIds, inactiveIds }: AllSubscriptionsProps) {
+export default function AllSubscriptions({ subscriptions, }: AllSubscriptionsProps) {
     const [formMode, setFormMode] = useState(false);
     const [editableSub, setEditableSub] = useState<firebase.default.firestore.DocumentData|null>(null);
     const [activeCounts, setActiveCounts] = useState<idObjects>({})
@@ -26,20 +25,6 @@ export default function AllSubscriptions({ subscriptions, activeIds, inactiveIds
     interface idObjects{
         [key: string]: number,
     }
-
-    useEffect(() => {
-        const tempActives: idObjects = {}
-        for (const id of activeIds) {
-            tempActives[id] = tempActives[id] ? tempActives[id] + 1 : 1;
-        }
-        setActiveCounts(tempActives)
-
-        const tempInactives: idObjects = {}
-        for (const id of inactiveIds) {
-            tempInactives[id] = tempInactives[id] ? tempInactives[id] + 1 : 1;
-        }
-        setInactiveCounts(tempInactives)
-    }, [activeIds, inactiveIds])
 
     return (
         formMode ? <SubscriptionForm setFormMode={setFormMode} editableSub={editableSub} /> :
@@ -59,7 +44,7 @@ export default function AllSubscriptions({ subscriptions, activeIds, inactiveIds
                     <>
                         <Heading size="md" mb="30px" mt="10px"> Live Subscriptions</Heading>
                         <Flex direction="column" w="100%">
-                            {live.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id} actives={activeCounts[subscription.id]} inactives={inactiveCounts[subscription.id]} />)}
+                            {live.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}  />)}
                         </Flex>
                     </>
                     : null}
@@ -68,7 +53,7 @@ export default function AllSubscriptions({ subscriptions, activeIds, inactiveIds
                     <>
                         <Heading size="md" mb="30px" mt="10px"> Drafts</Heading>
                         <Flex direction="column" w="100%">
-                            {drafts.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id} actives={activeCounts[subscription.id]} inactives={inactiveCounts[subscription.id]} />)}
+                            {drafts.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id} />)}
                         </Flex>
                     </>
                     : null}
@@ -77,7 +62,7 @@ export default function AllSubscriptions({ subscriptions, activeIds, inactiveIds
                     <>
                         <Heading size="md" mb="30px" mt="10px"> Archive</Heading>
                         <Flex direction="column" w="100%">
-                            {archived.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id} actives={activeCounts[subscription.id]} inactives={inactiveCounts[subscription.id]} />)}
+                            {archived.map((subscription: firebase.default.firestore.DocumentData) => <SubscriptionItem setEditableSub={setEditableSub} setFormMode={setFormMode} subscription={subscription} key={subscription.id}/>)}
                         </Flex>
                     </> : null}
 
@@ -89,11 +74,9 @@ interface SubscriptionItemProps{
     subscription:firebase.default.firestore.DocumentData,
     setFormMode:React.Dispatch<React.SetStateAction<boolean>>,
     setEditableSub:React.Dispatch<React.SetStateAction<firebase.default.firestore.DocumentData | null>>
-    actives:number,
-    inactives:number
 }
 
-function SubscriptionItem({ subscription, setFormMode, setEditableSub, actives, inactives }: SubscriptionItemProps) {
+function SubscriptionItem({ subscription, setFormMode, setEditableSub, }: SubscriptionItemProps) {
     const { isOpen: isOpen1, onOpen: onOpen1, onClose: onClose1 } = useDisclosure()
     const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2 } = useDisclosure()
     const { isOpen: isOpen3, onOpen: onOpen3, onClose: onClose3 } = useDisclosure()
@@ -152,8 +135,8 @@ function SubscriptionItem({ subscription, setFormMode, setEditableSub, actives, 
                         </VStack>
                         <VStack align="start">
                             <Text fontWeight="500">Performance</Text>
-                            <Text >{actives && inactives ? actives + inactives : actives ? actives : inactives ? inactives : 0} total purchases</Text>
-                            <Text >{actives ? actives : 0} active subscribers</Text>
+                            <Text >{subscription.totalPurchases} total purchases</Text>
+                            <Text >{subscription.activeSubscribers} active subscribers</Text>
                             <Text >{subscription.redemptionCount + " redemptions"}</Text>
                         </VStack>
                     </Grid>

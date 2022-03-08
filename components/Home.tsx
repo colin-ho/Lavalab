@@ -8,36 +8,36 @@ interface HomeProps {
     businessName: string,
     open: boolean,
     delay: string,
-    customerData: firebase.default.firestore.DocumentData[],
     waitingCount: number,
     numOfSubs: number
+    paymentData:firebase.default.firestore.DocumentData[],
 }
 
 interface DataInterface {
     date: number,
     value: number,
 }
-export default function Home({ joined, businessName, open, delay, customerData, waitingCount, numOfSubs }: HomeProps) {
+export default function Home({ joined, businessName, open, delay, waitingCount, numOfSubs,paymentData }: HomeProps) {
     const [total, setTotal] = useState('0');
     const [data, setData] = useState<DataInterface[]>([]);
     const d3Container = useRef<HTMLDivElement>(null);
     const contRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (customerData.length > 0) {
+        if (paymentData.length > 0) {
             let tempData = [];
             let money = 0;
             tempData.push({ date: joined.toDate().getTime(), value: 0 })
-            customerData.forEach((doc: firebase.default.firestore.DocumentData) => {
+            paymentData.forEach((doc: firebase.default.firestore.DocumentData) => {
                 money += parseFloat(doc.amountPaid)
-                const item = { date: doc.boughtAt.toDate().getTime(), value: money }
+                const item = { date: doc.date.toDate().getTime(), value: money }
                 tempData.push(item)
             })
             tempData.push({ date: (new Date()).getTime(), value: money })
             setTotal(money.toFixed(2))
             setData(tempData)
         }
-    }, [customerData])
+    }, [paymentData])
 
 
     useEffect(() => {

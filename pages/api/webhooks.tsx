@@ -1,5 +1,6 @@
 import { buffer } from 'micro';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { increment } from '../../lib/firebase';
 import { firestore } from '../../lib/firebase-admin';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -46,6 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
                     const payment = firestore.collection('payments').doc()
+                    const subscription = firestore.collection('subscription').doc(metadata.subscriptionId)
 
                     const batch = firestore.batch()
 
@@ -53,6 +55,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         customerName: metadata.name, customerId: metadata.customerId, businessId: metadata.businessId, businessName:metadata.business, amountPaid:metadata.price, subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId, stripeSubscriptionId: dataObject.subscription, redemptionCount: 0,
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     })
+
+                    batch.update(subscription,{totalPurchases:increment(1),activeSubscribers:increment(1)})
 
                     batch.set(payment,{
                         customerName: metadata.name, customerId: metadata.customerId,amountPaid:metadata.price,subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId,
@@ -122,8 +126,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         else if (event.type === "customer.subscription.deleted") {
             try {
                     const stripeSubscriptionId = dataObject.id;
-                    const sub = firestore.collection('subscribedTo').doc(stripeSubscriptionId)
-                    await sub.update({ status: 'canceled'});
+                    const batch = firestore.batch()
+
+                    const subscription = firestore.collection('subscription').doc(dataObject.metadata.subscriptionId)
+                    const subscribedTo = firestore.collection('subscribedTo').doc(stripeSubscriptionId)
+                    batch.update(subscribedTo,{ status: 'canceled'});
+                    batch.update(subscription,{ activeSubscribers:increment(-1)});
+                    await batch.commit();
             }
             catch (err:any) {
                 console.log(`❌ Error message: ${err.message}`);
