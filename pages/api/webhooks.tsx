@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const { start, end } = dataObject.lines.data[0].period;
 
                     const subscribedTo = firestore.collection('subscribedTo').doc(dataObject.subscription)
-                    const payments = firestore.collection('businesses').doc(metadata.businessId).collection('payments').doc()
+                    const payment = firestore.collection('payments').doc()
 
                     const batch = firestore.batch()
 
@@ -54,9 +54,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         start: new Date(start * 1000),boughtAt: new Date(start * 1000), end: new Date(end * 1000), status: 'active'
                     })
 
-                    batch.set(payments,{
+                    batch.set(payment,{
                         customerName: metadata.name, customerId: metadata.customerId,amountPaid:metadata.price,subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId,
-                        date:new Date(),reason:"subscription_create"
+                        date:new Date(),reason:"subscription_create",businessId: metadata.businessId, businessName:metadata.business,
                     })
 
                     await batch.commit();
@@ -82,13 +82,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const subscription = dataObject.subscription;
                     const metadata = dataObject.lines.data[0].metadata;
                     const { start, end } = dataObject.lines.data[0].period;
-                    const payments = firestore.collection('businesses').doc(metadata.businessId).collection('payments').doc()
+                    const payment = firestore.collection('transactions').doc()
 
                     const batch = firestore.batch()
                     const sub = firestore.collection('subscribedTo').doc(subscription)
-                    batch.set(payments,{
+                    batch.set(payment,{
                         customerName: metadata.name, customerId: metadata.customerId,amountPaid:metadata.price,subscriptionTitle: metadata.title, subscriptionId: metadata.subscriptionId,
-                        date:new Date(),reason:"subscription_cycle"
+                        date:new Date(),reason:"subscription_cycle",businessId: metadata.businessId, businessName:metadata.business,
                     })
 
                     batch.update(sub,{ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0 })
