@@ -72,7 +72,7 @@ export default function Home() {
                                 <Text fontSize="20px" mr="50px">
                                     Join waitlist
                                 </Text>
-                                <Image src={arrow} width="25px" height="25px" />
+                                <Image src={arrow} width="25px" height="15px" />
                             </HStack>
 
                         </Box>
@@ -204,7 +204,7 @@ export default function Home() {
                                 <Text fontSize="20px" mr="50px">
                                     Join waitlist
                                 </Text>
-                                <Image src={arrow} width="25px" height="25px" />
+                                <Image src={arrow} width="25px" height="15px" />
                             </HStack>
 
                         </Box>

@@ -77,7 +77,7 @@ export default function ForMerchantsPage() {
                                 <Text fontSize="20px" mr="50px">
                                     Start selling
                                 </Text>
-                                <Image src={arrow} width="25px" height="25px" />
+                                <Image src={arrow} width="25px" height="15px" />
                             </HStack>
 
                         </Box>
@@ -247,7 +247,7 @@ export default function ForMerchantsPage() {
                                 <Text fontSize="20px" mr="50px">
                                     Start selling
                                 </Text>
-                                <Image src={arrow} width="25px" height="25px" />
+                                <Image src={arrow} width="25px" height="15px" />
                             </HStack>
                         </Box>
                         {/*

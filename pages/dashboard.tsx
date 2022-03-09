@@ -33,8 +33,7 @@ export default function Dashboard() {
     const { user, business } = useContext<AuthContextInterface>(AuthContext);
     const [subscriptions, setSubscriptions] = useState<firebase.default.firestore.DocumentData[]>([]);
     const [redemptions, setRedemptions] = useState<firebase.default.firestore.DocumentData[]>([]);
-    const [initCustomerData, setInitCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
-    const [firstLastDoc,setFirstLastDoc] = useState<firebase.default.firestore.QueryDocumentSnapshot<firebase.default.firestore.DocumentData> | undefined>()
+    const [customerData, setCustomerData] = useState<firebase.default.firestore.DocumentData[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const loadedRef = useRef(false)
     const [open, setOpen] = useState(true);
@@ -78,26 +77,40 @@ export default function Dashboard() {
         setSubscriptions(temp);
     };
 
+    const handleCustomerChanges = (snapshot: firebase.default.firestore.QuerySnapshot) => {
+        let temp: firebase.default.firestore.DocumentData[] = []
+        snapshot.forEach((doc) => {
+            temp.push(doc.data())
+        });
+        // Use the setState callback 
+        setCustomerData(temp);
+    };
+
+
+
     useEffect(() => {
         // Moved inside "useEffect" to avoid re-creating on render
 
-        let subscriptionListener: () => void, redemptionListener: () => void
+        let subscriptionListener: () => void, redemptionListener: () => void, customerListener: () => void
         if (user) {
             
             const subscriptionsQuery = firestore.collection('subscriptions').where('businessId', '==', user.uid);
             const redemptionsQuery = firestore.collection('redemptions').where('businessId', '==', user.uid).where('collected', '==', false).orderBy('redeemedAt', 'desc')
-            
+            const customerQuery = firestore.collection('subscribedTo').where('businessId', '==', user.uid).orderBy('boughtAt')
 
             subscriptionListener = redemptionsQuery.onSnapshot(handleRedemptionChanges,
                 err => console.log(err));
             redemptionListener = subscriptionsQuery.onSnapshot(handleSubscriptionChanges,
                 err => console.log(err));
+            customerListener = customerQuery.onSnapshot(handleCustomerChanges,
+                err => console.log(err))
 
         }
 
         return () => {
             subscriptionListener?.();
             redemptionListener?.();
+            customerListener?.();
         }
     }, [user]);
 
@@ -171,7 +184,7 @@ export default function Dashboard() {
                         {pageState === 'Home' ? <Home businessName={business.businessName} businessId={business.uid} joined={business.joined} delay={business.delay} open={open} waitingCount={redemptions.length} numOfSubs={subscriptions.length} subTitles={subscriptions.map((sub) => { return sub.title })} /> :
                             pageState === 'Active Sales' ? <ActiveSales businessName={business.businessName} subscriptions={subscriptions} redemptions={redemptions} delay={business.delay} open={open} /> :
                                 pageState === 'Subscriptions' ? <AllSubscriptions subscriptions={subscriptions}/> :
-                                    pageState === 'Customers' ? <Customers  subTitles={subscriptions.map((sub) => { return sub.title })} /> :
+                                    pageState === 'Customers' ? <Customers customerData={customerData} subTitles={subscriptions.map((sub) => { return sub.title })} /> :
                                         <StoreDetails open={open} />}
                     </Box>
                 </Box> : null}
