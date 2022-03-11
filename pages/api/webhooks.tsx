@@ -97,6 +97,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     batch.update(sub,{ start: new Date(start * 1000), end: new Date(end * 1000), status: 'active',redemptionCount:0,amountPaid:increment(parseFloat(metadata.price)) })
 
                     await batch.commit();
+
+                    const payment_intent_id = dataObject.payment_intent
+
+                    // Retrieve the payment intent used to pay the subscription
+                    const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
+
+                    if (payment_intent.payment_method) {
+                        await stripe.subscriptions.update(
+                            subscription,
+                            {
+                                default_payment_method: payment_intent.payment_method.toString(),
+                            },
+                        );
+                    }
+
+                    console.log("Default payment method set for subscription:" + payment_intent.payment_method);
                 }
 
             }
