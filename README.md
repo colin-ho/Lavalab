@@ -1,34 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="punchcardapp.com">
+    <img src="public/images/logo.svg" alt="Logo" width="40%">
+  </a>
+  <h3 align="center">
+    Merchant dashboard and website for Punchcard: An online subscription marketplace that connects customers to local businesses.
+  </h3>
+</p>
 
-## Getting Started
+![Product Name Screen Shot][product-screenshot1]
 
-First, run the development server:
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#key-features">Key Features</a></li>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-```bash
-npm run dev
-# or
-yarn dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+**[PunchCard](punchcardapp.com)** is an app enables local businesses to sell subscriptions to customers and generate recurring revenue.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+![Product Name Screen Shot][product-screenshot2]
 
-## Learn More
+### Key Features
+  - **Subscriptions**: Create a subscription e.g. 5 coffees per week for the price of 3 for your customers to purchase and redeem.
+  - **Order tracking**: Manage redemption orders on the 'Active Sales' page, let your customers how long you need and when their order will be ready.
+  - **Customers**: View and manage your loyal subscribers.
 
-To learn more about Next.js, take a look at the following resources:
+![Product Name Screen Shot][product-screenshot3]
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Built With
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+* [NextJS](https://nextjs.org/)
+* [Firebase](https://firebase.google.com/)
+* [Chakra UI](https://chakra-ui.com/)
 
-## Deploy on Vercel
+<!-- CONTACT -->
+## Contact
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Colin Ho** - [Linked-In](https://www.linkedin.com/in/colin-ho99/) - colin@punchcardapp.com
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[product-screenshot1]: public/images/PCW1.png
+[product-screenshot2]: public/images/PCW2.png
+[product-screenshot3]: public/images/PCW3.png
