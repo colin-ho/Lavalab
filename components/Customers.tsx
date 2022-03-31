@@ -187,7 +187,7 @@ function CustomerItem({ customer }: CustomerItemProps) {
                             <Text fontWeight="500">Active Subscriptions {customer.subs.length > 2 ? <Button ml="10px" size="xs" onClick={onOpen}>See All</Button> : null}</Text>
                             <IconButton size="sm" onClick={() => setDrop(!drop)} variant="ghost" aria-label='Drop down' icon={!drop ? <ChevronDownIcon /> : <ChevronUpIcon />} />
                         </HStack>
-                        <Text fontWeight="500">Total spent: ${customer.subs.map((sub: SubInterface) => { return parseFloat(sub.amountPaid) }).reduce((a: number, b: number) => a + b, 0)}</Text>
+                        <Text fontWeight="500">Total spent: ${customer.subs.map((sub: SubInterface) => { return parseFloat(sub.amountPaid) }).reduce((a: number, b: number) => a + b, 0).toFixed(2)}</Text>
                     </HStack>
                     <HStack spacing={12}>
                         {customer.subs.slice(0, 3).map((sub: SubInterface) => {
