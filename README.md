@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="punchcardapp.com">
+  <a href="https://punchcardapp.com/">
     <img src="public/images/logo.svg" alt="Logo" width="40%">
   </a>
   <h3 align="center">
@@ -31,7 +31,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-**[PunchCard](punchcardapp.com)** is an app enables local businesses to sell subscriptions to customers and generate recurring revenue.
+**[PunchCard](https://punchcardapp.com/)** is an app enables local businesses to sell subscriptions to customers and generate recurring revenue.
 
 ![Product Name Screen Shot][product-screenshot2]
 
