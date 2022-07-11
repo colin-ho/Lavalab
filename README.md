@@ -31,7 +31,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-**[PunchCard](https://punchcardapp.com/)** is an app enables local businesses to sell subscriptions to customers and generate recurring revenue.
+**[PunchCard](https://punchcardapp.com/)** is an app that enables local businesses to sell subscriptions to customers and generate recurring revenue.
 
 ![Product Name Screen Shot][product-screenshot2]
 
